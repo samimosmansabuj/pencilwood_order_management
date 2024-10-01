@@ -1,0 +1,166 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Add Order Request - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="container-fluid">
+            <h1 class="mt-4">Add Order Request</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Add Order Request</li>
+            </ol>
+
+            <!-- {{form}} -->
+
+            <div class="row">
+
+                <!-- ---------------Person Info Start--------------- -->
+                <div class="col-xl-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Personal Info
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.company.label}}</label>
+                                        {{form.company}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.name.label}}</label>
+                                        {{form.name}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.phone_number.label}}</label>
+                                        {{form.phone_number}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.source.label}}</label>
+                                        {{form.source}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                        </div>
+                    </div>
+                </div>
+                <!-- ---------------Person Info End--------------- -->
+
+                <!-- ---------------Product Info Start--------------- -->
+                <div class="col-xl-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Product info
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.product.label}}</label>
+                                        {{form.product}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.remark.label}}</label>
+                                        {{form.remark}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.status.label}}</label>
+                                        {{form.status}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                        </div>
+                    </div>
+                </div>
+                <!-- ---------------Product Info Start--------------- -->
+
+                <!-- ---------------Image Info Start--------------- -->
+                <div class="col-xl-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Image info
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.logo.label}} (Optional)</label>
+                                        {{form.logo}}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.picture1.label}} (Optional)</label>
+                                        {{form.picture1}}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.picture2.label}} (Optional)</label>
+                                        {{form.picture2}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.picture3.label}} (Optional)</label>
+                                        {{form.picture3}}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.picture4.label}} (Optional)</label>
+                                        {{form.picture4}}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{form.picture5.label}} (Optional)</label>
+                                        {{form.picture5}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+
+                        </div>
+                    </div>
+                </div>
+                <!-- ---------------Image Info Start--------------- -->
+
+            </div>
+            <div class="text-right mb-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="feather-send"></i> SAVE
+                </button>
+            </div>
+        </div>
+    </form>
+</main>
+{% endblock dashboard_body %}

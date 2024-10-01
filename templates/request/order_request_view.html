@@ -1,0 +1,213 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Order Request - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Order Request</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" style="text-decoration: none;">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Edit Order Request</li>
+        </ol>
+
+        {% if messages %}
+        {% for messages in messages %}
+        <ol class="breadcrumb mb-4">
+            <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+                <strong>Dear {{request.user}}!</strong> {{messages}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        </ol>
+        {% endfor %}
+        {% endif %}
+
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fa fa-table mr-1"></i>
+                        Order Request Details
+                    </div>
+                    <div class="card-body">
+                        <div class="card mb-4 order-list">
+                            <div class="gold-members p-4">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <div class="row">
+                                            <div class="col-md-2 col-lg-2">
+                                                {% if order_request.logo %}
+                                                <div style="height: 100%;" class="pb-3">
+                                                    <img src="{{order_request.logo}}" alt="" style="height: 100%;">
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-10 col-lg-10">
+                                                <a>
+                                                    <span class="float-right text-success">{{order_request.status}} on
+                                                        {{order_request.last_update}}
+                                                        <i class="fa fa-check-circle text-success"></i></span>
+                                                </a>
+                                                <h6 class="mb-3"><a>
+                                                    </a><a class="text-dark">{{order.item_name}}
+                                                    </a>
+                                                </h6>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
+                                                    Company: {{order_request.company}} | Name: {{order_request.name}}
+                                                </p>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
+                                                    Phone Number: {{order_request.phone_number}} | Request Create:
+                                                    {{order_request.request_at.first_name}}
+                                                    {{order_request.request_at.last_name}}
+                                                </p>
+                                                <p class="text-black-50 mb-3">
+                                                    <i class="fa fa-list-ul"></i> ORDER #{{order_request.id}}
+                                                    <i class="fa fa-clock-o ml-2" aria-hidden="true"></i>
+                                                    {{order_request.created_at}}
+                                                </p>
+                                                <hr>
+                                                <div class="float-right">
+                                                    <a class="btn btn-sm btn-warning">
+                                                        <i class="fa fa-message"></i> Source: {{order_request.source}}
+                                                    </a>
+                                                    <a class="btn btn-sm btn-success">
+                                                        <i class="fa fa-check-circle"></i> {{order_request.status}}
+                                                    </a>
+                                                    <a href="#0" class="btn btn-sm btn-info" data-toggle="modal"
+                                                        data-target="#edit_order_request">
+                                                        <i class="fa fa-edit"></i> Edit
+                                                    </a>
+                                                    <a href="#0" class="btn btn-sm btn-danger">
+                                                        <i class="fa fa-trash"></i> Cancel
+                                                    </a>
+                                                </div>
+                                                <p class="mb-0 text-dark text-dark pt-2"><span
+                                                        class="text-dark font-weight-bold">
+                                                        Total Paid:</span> {{order.shipping_charge}} BDT
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for product in order_request.product.all %}
+                                    <tr>
+                                        <td>{{product.name}}</td>
+                                        <td>2 </td>
+                                        <td>20 BDT</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <tr>
+                                        <td colspan="2">Total</td>
+                                        <td>
+                                            {% if order.shipping_charge_paid == True %}
+                                            0 BDT
+                                            {% else %}
+                                            {{order.shipping_charge}} BDT
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+<!-- Edit Order Modal -->
+<div class="modal fade" id="edit_order_request" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Update Order Request</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- {{form.as_p}} -->
+
+                    <div class="form-group">
+                        <label>Tracking ID</label>
+                        <input readonly type="text" class="form-control" value="{{order_request.tracking_ID}}"
+                            name="tracking_id">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        {{form.status}}
+
+                        <!-- <select name="status" id="" class="form-control" {% if order.status == 'Delivered' %}readonly{% endif %}>
+                     <option value="{{order.status}}">{{order.status}}</option>
+                     {% if order.status != 'Delivered' %}
+                     <option value="Pending">Pending</option>
+                     <option value="Received">Received</option>
+                     <option value="Shipped">Shipped</option>
+                     <option value="On The Way">On The Way</option>
+                     <option value="Receive at delivery point">Receive at delivery point</option>
+                     <option value="Out For Delivery">Out For Delivery</option>
+                     <option value="Delivered">Delivered</option>
+                     <option value="Return">Return</option>
+                     <option value="Cancel">Cancel</option>
+                     {% endif %}
+                 </select> -->
+                    </div>
+                    <div class="form-group">
+                        <label>Source</label>
+                        {{form.source}}
+                    </div>
+                    <div class="form-group">
+                        <label>Remark</label>
+                        {{form.remark}}
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="text" class="form-control" value="{{order_request.last_update}}" name="last_update"
+                            readonly>
+                    </div>
+                </div>
+
+                {% if order.status != 'Delivered' %}
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock dashboard_body %}

@@ -1,0 +1,68 @@
+<!-- Edit Order Modal -->
+<div class="modal fade" id="edit_order" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel" aria-hidden="true">
+   <form method="POST">
+      {% csrf_token %}
+    <div class="modal-dialog modal-dialog-centered" role="document">
+       <div class="modal-content">
+          <div class="modal-header">
+             <h5 class="modal-title" id="edit_bookingLabel">Update Order</h5>
+             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">×</span>
+             </button>
+          </div>
+          <div class="modal-body">
+             <div class="form-group">
+                <label>Tracking ID</label>
+                <input readonly type="text" class="form-control" value="{{order.tracking_ID}}" name="tracking_id">
+             </div>
+             <div class="form-group">
+                <label>Status</label>
+                <select name="status" id="" class="form-control" {% if order.status == 'Delivered' %}readonly{% endif %}>
+                    <option value="{{order.status}}">{{order.status}}</option>
+                    {% if order.status != 'Delivered' %}
+                    <option value="Pending">Pending</option>
+                    <option value="Received">Received</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="On The Way">On The Way</option>
+                    <option value="Receive at delivery point">Receive at delivery point</option>
+                    <option value="Out For Delivery">Out For Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Return">Return</option>
+                    <option value="Cancel">Cancel</option>
+                    {% endif %}
+                </select>
+             </div>
+             <div class="row">
+                <div class="col-md-6">
+                   <div class="form-group">
+                      <label>Comment</label>
+                      <input type="text" class="form-control" name="status_comment" value="{{order.status_details}}" {% if order.status == 'Delivered' %}readonly{% endif %}>
+                   </div>
+                </div>
+
+                <div class="col-md-6">
+                   <div class="form-group">
+                      <label>Date</label>
+                      <input type="datetime-local" class="form-control" id="today_date" name="update_date_time" readonly>
+                   </div>
+                </div>
+                <script>
+                    var currentDateAndTime = new Date().toISOString().substring(0, 16);
+                    document.getElementById('today_date').value = currentDateAndTime;
+                    </script>
+             </div>
+          </div>
+
+          {% if order.status != 'Delivered' %}
+          <div class="modal-footer">
+             <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+         {% endif %}
+
+
+       </div>
+    </div>
+   </form>
+ </div>
+
+

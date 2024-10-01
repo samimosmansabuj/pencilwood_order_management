@@ -1,0 +1,162 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Settings - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+   <div class="container-fluid">
+      <h1 class="mt-4">Settings</h1>
+
+
+      <ol class="breadcrumb mb-4">
+         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+         <li class="breadcrumb-item active">Settings</li>
+      </ol>
+
+      {% if messages %}
+      {% for messages in messages %}
+      <ol class="breadcrumb mb-4">
+         <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+            <strong>Dear User!</strong> {{messages}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+      </ol>
+      {% endfor %}
+      {% endif %}
+
+
+      <form method="POST" enctype="multipart/form-data">
+         {% csrf_token %}
+         <div class="row">
+            <div class="col-xl-12">
+
+               <div class="card mb-4 order-list">
+                  <div class="gold-members p-4">
+                     <a href="#">
+                     </a>
+                     <div class="row">
+
+
+                        <div class="col-md-6 col-sm-6 mb-4 pb-2">
+                           <div class="list-card bg-white rounded overflow-hidden position-relative shadow-sm">
+                              <div class="list-card-image p-2">
+                                 <img src="{{website_setting.logo.url}}" class="img-fluid item-img" style="width: auto; height: 120px;">
+                              </div>
+                              <div class="p-3 position-relative">
+                                 <div class="list-card-body">
+                                    <h6 class="mb-1">
+                                          Logo
+                                    </h6>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 mb-4 pb-2">
+                           <div class="list-card bg-white rounded overflow-hidden position-relative shadow-sm">
+                              <div class="list-card-image p-2">
+                                 <img src="{{website_setting.fav_icon.url}}" class="img-fluid item-img" style="width: auto; height: 120px;">
+                              </div>
+                              <div class="p-3 position-relative">
+                                 <div class="list-card-body">
+                                    <h6 class="mb-1">
+                                          Icon
+                                    </h6>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <div class="col-md-8 add_top_30">
+                           <div class="card mb-4 order-list">
+                              <div class="gold-members">
+                                 <div class="box_general padding_bottom">
+                                    <div class="header_box version_2 border-bottom p-3">
+                                       <h6 class="m-0">
+                                          <i class="fa fa-gears text-muted mr-2"></i>Website Settings
+                                       </h6>
+                                    </div>
+                                    <div class="p-3">
+
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Website Name</label>
+                                                {{form.website_name}}
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Website Title</label>
+                                                {{form.website_title}}
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Copyright Company Name</label>
+                                                {{form.copyright_company}}
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Copyright Year</label>
+                                                {{form.copyright_year}}
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                           <div class="card mb-4 order-list">
+                              <div class="gold-members">
+                                 <div class="box_general padding_bottom">
+                                    <div class="header_box version_2 border-bottom p-3">
+                                       <h6 class="m-0">
+                                          <i class="fa fa-font-awesome text-muted mr-2"></i>Logo & Icon
+                                       </h6>
+                                    </div>
+                                    <div class="p-3">
+                                       <div class="form-group">
+                                          <label>Fav Icon</label>
+                                          {{form.fav_icon}}
+                                          <!-- {{form.fav_icon.help_text}} -->
+                                       </div>
+                                       <div class="form-group">
+                                          <label>Website Logo</label>
+                                          {{form.logo}}
+                                          <!-- {{form.logo.help_text}} -->
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                     </div>
+                  </div>
+               </div>
+
+
+               <div class="save mb-2">
+                  <button type="submit" class="btn btn-success">Save</button>
+               </div>
+            </div>
+         </div>
+      </form>
+   </div>
+</main>
+{% endblock dashboard_body %}

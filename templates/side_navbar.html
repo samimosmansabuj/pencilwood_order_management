@@ -1,0 +1,113 @@
+{% url 'dashboard' as admin_dashboard_url %}
+{% url 'order_list' as order_list_url %}
+{% url 'my_profile' as my_profile_url %}
+
+<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+        <div class="nav">
+            <div class="sb-sidenav-menu-heading">Core</div>
+            <a class="nav-link Active" href="{{admin_dashboard_url}}">
+                <div class="sb-nav-link-icon"><i class="fa fa-home"></i></div>
+                Dashboard
+            </a>
+
+
+
+            <!-- --------------------Order Start---------------------- -->
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrder"
+                aria-expanded="false" aria-controls="collapseOrder">
+                <div class="sb-nav-link-icon"><i class="fa fa-th-list"></i></div>
+                Order list
+                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseOrder" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{% url 'order_list' %}">
+                        All Order <span class="badge badge-pill ml-2 badge-primary">6</span>
+                    </a>
+                    <a class="nav-link" href="{% url 'order_list' %}?filter=active">
+                        Active </span>
+                    </a>
+                    <a class="nav-link" href="{% url 'order_list' %}?filter=pending">
+                        Pending </a>
+                    <a class="nav-link" href="{% url 'order_list' %}?filter=delivered">
+                        Delivered </a>
+                </nav>
+            </div>
+            <!-- --------------------Order End---------------------- -->
+
+
+
+            <!-- --------------------Product Start---------------------- -->
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct"
+                aria-expanded="false" aria-controls="collapseProduct">
+                <div class="sb-nav-link-icon"><i class="fa fa-product-hunt"></i></div>
+                Product list
+                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseProduct" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{% url 'product_list' %}">
+                        All Product <span class="badge badge-pill ml-2 badge-primary">6</span>
+                    </a>
+                    <a class="nav-link" href="{% url 'product-create' %}">
+                        Add Product </span>
+                    </a>
+                </nav>
+            </div>
+            <!-- --------------------Product End---------------------- -->
+
+
+
+            <!-- --------------------Request Start---------------------- -->
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRequest"
+                aria-expanded="false" aria-controls="collapseRequest">
+                <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
+                Request list
+                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseRequest" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{% url 'order_request_list' %}">
+                        All Request <span class="badge badge-pill ml-2 badge-primary">6</span>
+                    </a>
+                    <a class="nav-link" href="{% url 'order_request_create' %}">
+                        Add Request </span>
+                    </a>
+                </nav>
+            </div>
+            <!-- --------------------Request End---------------------- -->
+
+            <a class="nav-link Active" href="{% url 'add_new_order' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-cart-plus"></i></div>
+                Add Order
+            </a>
+            <a class="nav-link Active" href="{% url 'member_list' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-users"></i></div>
+                Member List
+            </a>
+            <a class="nav-link Active" href="{% url 'addNewUser' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-user-plus"></i></div>
+                Add Member
+            </a>
+            <a class="nav-link Active" href="{% url 'my_profile' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-user"></i></div>
+                My Profile
+            </a>
+            <a class="nav-link Active" href="{% url 'settings' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-gears"></i></div>
+                Settings
+            </a>
+
+            <a class="nav-link" href="{% url 'logout' %}">
+                <div class="sb-nav-link-icon"><i class="fa fa-sign-out"></i></div>
+                Logout
+            </a>
+
+        </div>
+    </div>
+    <div class="sb-sidenav-footer">
+        <div class="small">Logged in as:</div>
+        {{request.user.first_name}} {{request.user.last_name}}
+    </div>
+</nav>

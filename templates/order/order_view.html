@@ -1,0 +1,156 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Add New Order - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Orders</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"
+                    style="text-decoration: none;">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Edit Orders</li>
+        </ol>
+
+        {% if messages %}
+        {% for messages in messages %}
+        <ol class="breadcrumb mb-4">
+            <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+                <strong>Dear {{request.user}}!</strong> {{messages}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        </ol>
+        {% endfor %}
+        {% endif %}
+
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fa fa-table mr-1"></i>
+                        Order Details
+                    </div>
+                    <div class="card-body">
+                        <div class="card mb-4 order-list">
+                            <div class="gold-members p-4">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <div class="row">
+                                            <div class="col-md-2 col-lg-2">
+                                                {% if order.qr_code %}
+                                                <div style="height: 100%;" class="pb-3">
+                                                    <img src="{{order.qr_code.url}}" alt="" style="height: 100%;">
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-10 col-lg-10">
+                                                <a>
+                                                    <span class="float-right text-success">{{order.status}} on
+                                                        {{order.order_update}}
+                                                        <i class="fa fa-check-circle text-success"></i></span>
+                                                </a>
+                                                <h6 class="mb-3"><a>
+                                                    </a><a class="text-dark">{{order.item_name}}
+                                                    </a>
+                                                </h6>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
+                                                    {{order.delivery_address.address_01}},
+                                                    {{order.delivery_address.upazila}},
+                                                    {{order.delivery_address.district}},
+                                                    {{order.delivery_address.country}}
+                                                </p>
+                                                <p class="text-black-50 mb-3">
+                                                    <i class="fa fa-list-ul"></i> ORDER #{{order.tracking_ID}}
+                                                    <i class="fa fa-clock-o ml-2" aria-hidden="true"></i>
+                                                    {{order.order_date}}
+                                                </p>
+                                                <hr>
+                                                <div class="float-right">
+
+                                                    {% if order.shipping_charge_paid == True %}
+                                                    <a class="btn btn-sm btn-primary"><i class="fa fa-check-circle"></i>
+                                                        Paid</a>
+                                                    {% else %}
+                                                    <a class="btn btn-sm btn-warning"><i class="fa fa-check-circle"></i>
+                                                        Unpaid</a>
+                                                    {% endif %}
+
+                                                    <a class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i>
+                                                        {{order.pay_for}}</a>
+
+                                                    <a href="#" class="btn btn-sm btn-info" data-toggle="modal"
+                                                        data-target="#edit_order"><i class="fa fa-edit"></i> Edit</a>
+                                                </div>
+                                                <p class="mb-0 text-dark text-dark pt-2"><span
+                                                        class="text-dark font-weight-bold">
+                                                        Total Paid:</span> {{order.shipping_charge}} BDT
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Order Tracking ID</th>
+                                        <th>Details</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>{{order.tracking_ID}} </td>
+                                        <td>Shipping Charge</td>
+                                        <td>{{order.shipping_charge}} BDT</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>{{order.tracking_ID}} </td>
+                                        <td>Online Payment</td>
+                                        <td>
+                                            {% if order.shipping_charge_paid == True %}
+                                            {{order.shipping_charge}} BDT
+                                            {% else %}
+                                            0 BDT
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>{{order.tracking_ID}} </td>
+                                        <td>Discount</td>
+                                        <td>0 BDT</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">Total</td>
+                                        <td>
+                                            {% if order.shipping_charge_paid == True %}
+                                            0 BDT
+                                            {% else %}
+                                            {{order.shipping_charge}} BDT
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock dashboard_body %}

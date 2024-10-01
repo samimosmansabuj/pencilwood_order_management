@@ -1,0 +1,58 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>
+   {% if object %}
+   Update
+   {% else %}
+   Add New
+   {% endif %}
+    Product - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+   <form method="POST">
+      {% csrf_token %}
+      <div class="container-fluid">
+         <h1 class="mt-4">{% if object %}Update{% else %}Add New{% endif %} Product</h1>
+         <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">{% if object %}Update{% else %}Add New{% endif %} Product</li>
+         </ol>
+         <div class="row">
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Product info
+                  </div>
+
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Product Name</label>
+                              {{form.name}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+
+
+               </div>
+            </div>
+         </div>
+
+
+         <div class="text-right mb-4">
+            <button type="submit" class="btn btn-success">
+               <i class="feather-send"></i> SAVE
+            </button>
+         </div>
+      </div>
+   </form>
+</main>
+{% endblock dashboard_body %}

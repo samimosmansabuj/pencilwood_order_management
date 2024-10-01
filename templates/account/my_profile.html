@@ -1,0 +1,165 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>My Profile - Ghorer Khabar</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+   <div class="container-fluid">
+      <h1 class="mt-4">My Profile</h1>
+
+
+      <ol class="breadcrumb mb-4">
+         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+         <li class="breadcrumb-item active">My Profile</li>
+      </ol>
+
+      {% if messages %}
+      {% for messages in messages %}
+      <ol class="breadcrumb mb-4">
+         <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+            <strong>Dear User!</strong> {{messages}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+      </ol>
+      {% endfor %}
+      {% endif %}
+
+
+      <form method="POST">
+         {% csrf_token %}
+         <div class="row">
+            <div class="col-xl-12">
+               <div class="card mb-4 order-list">
+                  <div class="gold-members p-4">
+                     <a href="#">
+                     </a>
+                     <div class="row">
+
+                        <div class="col-md-8 add_top_30">
+                           <div class="card mb-4 order-list">
+                              <div class="gold-members">
+                                 <div class="box_general padding_bottom">
+                                    <div class="header_box version_2 border-bottom p-3">
+                                       <h6 class="m-0">
+                                          <i class="fa fa-user-circle text-muted mr-2"></i>Profile Details
+                                       </h6>
+                                    </div>
+                                    <div class="p-3">
+
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Firt Name</label>
+                                                <input type="text" class="form-control"
+                                                   value="{{request.user.first_name}}" name="first_name">
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Last Name</label>
+                                                <input type="text" class="form-control" value="{{request.user.last_name}}"
+                                                   name="last_name">
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Username</label>
+                                                <input type="text" class="form-control"
+                                                   value="{{request.user.username}}" readonly name="username">
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Email Address</label>
+                                                <input type="email" class="form-control" value="{{request.user.email}}"
+                                                   name="email">
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+
+
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Phone Number</label>
+                                                <input type="text" class="form-control"
+                                                   value="{{request.user.phone_number}}" name="phone_number">
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>User Type</label>
+                                                <input type="text" class="form-control" readonly
+                                                   value="{{request.user.user_type}}">
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+                                       <div class="row">
+                                          <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Joined date</label>
+                                                <input type="text" class="form-control"
+                                                   value="{{request.user.date_joined}}" readonly disabled>
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                          </div>
+                                       </div>
+                                       <!-- /row-->
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                           <div class="card mb-4 order-list">
+                              <div class="gold-members">
+                                 <div class="box_general padding_bottom">
+                                    <div class="header_box version_2 border-bottom p-3">
+                                       <h6 class="m-0">
+                                          <i class="fa fa-lock text-muted mr-2"></i>Change password
+                                       </h6>
+                                    </div>
+                                    <div class="p-3">
+                                       <div class="form-group">
+                                          <label>Old password</label>
+                                          <input class="form-control" type="password" name="old_password">
+                                       </div>
+                                       <div class="form-group">
+                                          <label>New password</label>
+                                          <input class="form-control" type="password" name="new_password">
+                                       </div>
+                                       <div class="form-group">
+                                          <label>Confirm new password</label>
+                                          <input class="form-control" type="password" name="confirm_new_password">
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                     </div>
+                  </div>
+               </div>
+               <div class="save mb-2">
+                  <button type="submit" class="btn btn-success">Save</button>
+               </div>
+            </div>
+         </div>
+      </form>
+   </div>
+</main>
+{% endblock dashboard_body %}

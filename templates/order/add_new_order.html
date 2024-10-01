@@ -1,0 +1,27 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Add New Order - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid">
+       <h1 class="mt-4">Add listing</h1>
+       <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+          <li class="breadcrumb-item active">Add listing</li>
+       </ol>
+       
+
+       {{form}}
+
+
+       <div class="text-right mb-4">
+          <button type="button" class="btn btn-success">
+          <i class="feather-send"></i> SAVE
+          </button>
+       </div>
+    </div>
+ </main>
+{% endblock dashboard_body %}

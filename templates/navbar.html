@@ -1,0 +1,78 @@
+{% load static %}
+<nav class="sb-topnav navbar navbar-expand navbar-light bg-white shadow-sm">
+
+    <a class="navbar-brand" href="{% url 'dashboard' %}">
+        <!-- <img alt="logo" src="{% static 'assets/img/logo.png' %}"> -->
+        <img alt="logo" src="{{website_setting.logo.url}}" width="60%">
+    </a>
+
+    <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"
+        style="font-size: 30px !important;"><i class="fa fa-bars"></i></button>
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search"
+                aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary btn-sm" type="button"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Navbar-->
+    <ul class="navbar-nav ml-auto ml-md-0">
+        <li class="nav-item dropdown no-arrow d-sm-none">
+            <a class="nav-link dropdown-toggle" id="searchDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-search mr-2"></i>
+            </a>
+            <!-- Dropdown - Messages -->
+            <div class="dropdown-menu dropdown-menu-right p-3 shadow-sm animated--grow-in"
+                aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-0 shadow-none"
+                            placeholder="Search people, jobs and more..." aria-label="Search"
+                            aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </li>
+
+
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow ml-1 osahan-profile-dropdown">
+            <a class="nav-link dropdown-toggle pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <i class="fa fa-user-circle" style="font-size: 35px;"></i>
+                <!-- <img class="img-profile rounded-circle" src="{% static 'dashboard/img/user/1.png' %}"> -->
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                <div class="p-3 d-flex align-items-center">
+                    <div class="dropdown-list-image mr-3">
+                        <i class="fa fa-user-circle" style="font-size: 35px;"></i>
+                        <!-- <img class="rounded-circle" src="{% static 'dashboard/img/user/1.png' %}" alt="">
+                         -->
+                        <div class="status-indicator bg-success"></div>
+                    </div>
+                    <div class="font-weight-bold">
+                        <div class="text-truncate">{{request.user.first_name}} {{request.user.last_name}}</div>
+                        <div class="small text-gray-500">{{request.user.user_type}}</div>
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'my_profile' %}"><i class="fa fa-edit"></i> My Account</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>
+                    Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>

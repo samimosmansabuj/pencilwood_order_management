@@ -1,0 +1,100 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Add New Order - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+   <form method="POST">
+      {% csrf_token %}
+      <div class="container-fluid">
+         <h1 class="mt-4">Add listing</h1>
+         <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Add New Member</li>
+         </ol>
+         <div class="row">
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Basic info
+                  </div>
+
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>First Name</label>
+                              {{form.last_name}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Last Name</label>
+                              {{form.first_name}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Username</label>
+                              {{form.username}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Email Address</label>
+                              {{form.email}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Phone Number</label>
+                              {{form.phone_number}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>User Type</label>
+                              {{form.user_type}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>Password</label>
+                              {{form.password}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+
+
+               </div>
+            </div>
+         </div>
+
+
+         <div class="text-right mb-4">
+            <button type="submit" class="btn btn-success">
+               <i class="feather-send"></i> SAVE
+            </button>
+         </div>
+      </div>
+   </form>
+</main>
+{% endblock dashboard_body %}

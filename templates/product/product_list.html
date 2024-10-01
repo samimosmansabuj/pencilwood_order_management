@@ -1,0 +1,128 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Product - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Product Listings</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Product Listings</li>
+        </ol>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fa fa-table mr-1"></i>
+                        All Listings
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="dataTables_length" id="dataTable_length"><label>Show <select
+                                                    name="dataTable_length" aria-controls="dataTable"
+                                                    class="custom-select custom-select-sm form-control form-control-sm">
+                                                    <option value="10">10</option>
+                                                    <option value="25">25</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select> entries</label></div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div id="dataTable_filter" class="dataTables_filter"><label>Search:<input
+                                                    type="search" class="form-control form-control-sm" placeholder=""
+                                                    aria-controls="dataTable"></label></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-bordered dataTable no-footer" id="dataTable"
+                                            width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info"
+                                            style="width: 100%;">
+                                            <thead>
+                                                <tr class="text-uppercase" role="row">
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="No: activate to sort column ascending"
+                                                        style="width: fixed;">No</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Name: activate to sort column ascending" ">Name</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Slug: activate to sort column ascending" ">Slug</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Created Date: activate to sort column ascending">
+                                                        Created Date</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Action: activate to sort column ascending">Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!---->
+                                                {% for product in products %}
+                                                <tr role="row" class="odd">
+                                                    <td> {{product.id}}</td>
+                                                    <td>{{product.name}}</td>
+                                                    <td>
+                                                        {{product.slug}}
+                                                    </td>
+                                                    <td>
+                                                        {{product.created_date}}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'product-update' product.id %}"
+                                                            class="btn btn-primary btn-sm">
+                                                            Edit
+                                                        </a>
+                                                        <a href="{% url 'product-delete' product.id %}"
+                                                            class="btn btn-primary btn-sm">
+                                                            Delete
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                <!---->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-5">
+                                        <div class="dataTables_info" id="dataTable_info" role="status"
+                                            aria-live="polite">Showing 1 to 10 of 10 entries</div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-7">
+                                        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                            <ul class="pagination">
+                                                <li class="paginate_button page-item previous disabled"
+                                                    id="dataTable_previous"><a href="#" aria-controls="dataTable"
+                                                        data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+                                                <li class="paginate_button page-item active"><a href="#"
+                                                        aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+                                                        class="page-link">1</a></li>
+                                                <li class="paginate_button page-item next disabled" id="dataTable_next">
+                                                    <a href="#" aria-controls="dataTable" data-dt-idx="2" tabindex="0"
+                                                        class="page-link">Next</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock dashboard_body %}
