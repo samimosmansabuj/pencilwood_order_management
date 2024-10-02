@@ -75,6 +75,27 @@ class OrderForm(forms.ModelForm):
     }))
 
 
+class OrderStatusUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [
+            'status', 'work_assign', 'remark', 'delivery_date'
+        ]
+    
+    status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
+        'class': 'form-control', 'id': 'inputStatus'
+    }))
+    work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
+        'class': 'form-control', 'id': 'inputWorkAssign'
+    }))
+    remark = forms.CharField(required=False, widget=forms.Textarea(attrs={
+        'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
+    }))
+    delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryDate', 'placeholder': 'Select Delivery Date', 'type': 'date'
+    }))
+
+
 class OrderRequestForm(forms.ModelForm):
     class Meta:
         model = OrderRequest

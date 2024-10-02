@@ -4,10 +4,11 @@ from django.db.models import Q
 from .models import Order, OrderRequest
 from django.contrib import messages
 from django.utils import timezone
-from .forms import OrderForm, OrderRequestForm, OrderRequestStatusUpdateForm
+from .forms import OrderForm, OrderRequestForm, OrderRequestStatusUpdateForm, OrderStatusUpdateForm
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic import ListView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 @login_required
 def order_list(request):
@@ -26,27 +27,39 @@ def order_list(request):
         order = Order.objects.filter(status='Delivered').order_by('-id')
     else:
         order = Order.objects.all().order_by('-id')
-    return render(request, 'order/order.html', {'order': order})
+    
+    return render(request, 'order/order.html', {'orders': order})
 
 
 @login_required
 def order_view(request, id):
     order = get_object_or_404(Order, id=id)
-    
     if request.method == 'POST':
-        if request.POST['status'] == 'Received':
-            if order.pay_for == 'Pickup':
-                order.shipping_charge_paid = True
-        elif request.POST['status'] == 'Delivered':
-            order.shipping_charge_paid = True
-        
-        order.status = request.POST['status']
-        order.status_details = request.POST['status_comment']
-        order.order_update = request.POST['update_date_time']
-        order.save()
-        messages.success(request, 'Order Update Successfully!')
+        form = OrderStatusUpdateForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Order Update Successfully!')
+        else:
+            messages.error(request, 'Somethings is wrong, please try again!')
         return redirect(request.META['HTTP_REFERER'])
-    return render(request, 'order/order_view.html', {'order': order})
+    else:
+        form = OrderStatusUpdateForm(instance=order)
+    
+    # if request.method == 'POST':
+    #     if request.POST['status'] == 'Received':
+    #         if order.pay_for == 'Pickup':
+    #             order.shipping_charge_paid = True
+    #     elif request.POST['status'] == 'Delivered':
+    #         order.shipping_charge_paid = True
+        
+    #     order.status = request.POST['status']
+    #     order.status_details = request.POST['status_comment']
+    #     order.order_update = request.POST['update_date_time']
+    #     order.save()
+    #     messages.success(request, 'Order Update Successfully!')
+    #     return redirect(request.META['HTTP_REFERER'])
+    
+    return render(request, 'order/order_view.html', {'order': order, 'form': form})
 
 
 @login_required
@@ -58,13 +71,13 @@ def add_new_order(request):
 
 
 
-class OrderRequestListView(ListView):
+class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'  # Define your template here
     context_object_name = 'order_requests'
     ordering = ['-id']
 
-class OrderRequestCreateView(CreateView):
+class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     model = OrderRequest
     form_class = OrderRequestForm
     template_name = 'request/order_request_form.html'
@@ -75,11 +88,12 @@ class OrderRequestCreateView(CreateView):
         return super().form_valid(form)
 
 
-class OrderRequestDeleteView(DeleteView):
+class OrderRequestDeleteView(LoginRequiredMixin, DeleteView):
     model = OrderRequest
     template_name = 'request/order_request_confirm_delete.html'
     success_url = reverse_lazy('order_request_list')
 
+@login_required
 def order_request_view(request, pk):
     order_request = get_object_or_404(OrderRequest, id=pk)
     
@@ -96,7 +110,7 @@ def order_request_view(request, pk):
         
     return render(request, 'request/order_request_view.html', {'order_request': order_request, 'form': form, 'form2': form2})
 
-
+@login_required
 def request_to_order(request, pk):
     if request.method == 'POST':
         order_request = get_object_or_404(OrderRequest, id=pk)

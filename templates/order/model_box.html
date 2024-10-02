@@ -1,0 +1,57 @@
+<!-- Order Request Edit Modal -->
+<div class="modal fade" id="edit_order" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Update Order</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- {{form.as_p}} -->
+
+                    <div class="form-group">
+                        <label>Tracking ID</label>
+                        <input readonly type="text" class="form-control" value="{{order.tracking_ID}}"
+                            name="tracking_id">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        {{form.status}}
+                    </div>
+                    <div class="form-group">
+                        <label>Work Assign</label>
+                        {{form.work_assign}}
+                    </div>
+                    <div class="form-group">
+                        <label>Remark</label>
+                        {{form.remark}}
+                    </div>
+                    <div class="form-group">
+                        <label>Approximately Delivery Date</label>
+                        {{form.delivery_date}}
+                    </div>
+                    <div class="form-group">
+                        <label>Last Update Date</label>
+                        <input type="text" class="form-control" value="{{order.last_update}}" name="last_update"
+                            readonly>
+                    </div>
+                </div>
+
+                {% if order.status != 'Delivered' %}
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Order Request Edit Modal -->

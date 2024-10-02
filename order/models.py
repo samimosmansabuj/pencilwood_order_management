@@ -133,6 +133,10 @@ class Order(models.Model):
         advance_amount = self.advance_amount or 0
         delivery_charge = self.delivery_charge or 0
         self.due_amount = (deal_value + delivery_charge) - advance_amount
+        if self.request_order:
+            self.tracking_ID = self.request_order.tracking_ID
+            self.request_order.order_created = True
+            self.request_order.save()
         super(Order, self).save(*args, **kwargs)
     
     def __str__(self):

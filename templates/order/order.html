@@ -48,76 +48,71 @@
                                                 <tr class="text-uppercase" role="row">
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="User Name: activate to sort column ascending"
-                                                        style="width: 51.2px;">User Name</th>
+                                                        aria-label="ID: activate to sort column ascending"
+                                                        style="width: fixed;">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Tracking ID: activate to sort column ascending"
-                                                        style="width: 94.2px;">Tracking ID</th>
+                                                        aria-label="Company: activate to sort column ascending" ">Company</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Name: activate to sort column ascending" ">Name</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Product: activate to sort column ascending" ">Product</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Status: activate to sort column ascending" ">Status</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Deal Value: activate to sort column ascending" ">Deal Value</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Created Date: activate to sort column ascending">
+                                                        Created Date</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending"
-                                                        style="width: 50.2px;">Status</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Ordered on: activate to sort column ascending"
-                                                        style="width: 76.2px;">Ordered on</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Charge: activate to sort column ascending"
-                                                        style="width: 42.2px;">Charge</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Charge Pay: activate to sort column ascending"
-                                                        style="width: 67.2px;">Charge Pay</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Charge Status: activate to sort column ascending"
-                                                        style="width: 67.2px;">Charge Status</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Action: activate to sort column ascending"
-                                                        style="width: 50px;">Action</th>
+                                                        aria-label="Action: activate to sort column ascending">Action
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <!----><!---->
-                                                {% for order in order %}
+                                                <!---->
+                                                {% for order in orders %}
                                                 <tr role="row" class="odd">
-                                                    <td> {{order.user.username}} </td>
-                                                    <td>{{order.tracking_ID}}</td>
                                                     <td>
-                                                        <button disabled="" type="button" class="btn btn-sm btn-success btn-round">
-                                                            {{order.delivery_status}}
-                                                        </button>
+                                                        {{order.tracking_ID}}
+                                                    </td>
+                                                    <td>
+                                                        {{order.request_order.company}}
+                                                    </td>
+                                                    <td>
+                                                        {{order.request_order.name}}
+                                                    </td>
+                                                    <td>
+                                                        {{order.request_order.product}}
+                                                    </td>
+                                                    <td>
+                                                        {{order.status}}
+                                                    </td>
+                                                    <td>
+                                                        {{order.deal_value}}
                                                     </td>
                                                     <td>
                                                         {{order.order_date}}
                                                     </td>
                                                     <td>
-                                                        {{order.shipping_charge}}
-                                                    </td>
-                                                    <td>
-                                                        {{order.pay_for}}
-                                                    </td>
-                                                    <td>
-                                                        {% if order.shipping_charge_paid == True %}
-                                                        <button disabled="" type="button" class="btn btn-sm btn-success btn-round">
-                                                        Paid
-                                                        </button>
-                                                        {% else %}
-                                                        <button disabled="" type="button" class="btn btn-sm btn-warning btn-round">
-                                                        Unpaid
-                                                        </button>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{% url 'order_view' order.id %}" class="btn btn-primary btn-sm">
+                                                        <a href="{% url 'order_view' order.id %}"
+                                                            class="btn btn-primary btn-sm">
                                                             View
                                                         </a>
+                                                        <!-- <a href=""
+                                                            class="btn btn-primary btn-sm">
+                                                            Delete
+                                                        </a> -->
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
+                                                <!---->
                                             </tbody>
                                         </table>
                                     </div>
@@ -153,3 +148,4 @@
     </div>
 </main>
 {% endblock dashboard_body %}
+
