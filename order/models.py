@@ -62,26 +62,46 @@ class OrderRequest(models.Model):
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"OrderRequest {self.id} from {self.company} ({self.name})"
+        return f"OrderRequest#{self.tracking_ID} from {self.company} ({self.name})"
     
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
             self.tracking_ID = ''.join(random.choices(string.digits, k=10))
         super().save(*args, **kwargs)
 
-    # def convert_to_order(self):
-    #     if self.status == 'done':
-    #         order = Order.objects.create(
-    #             tracking_ID=self.tracking_ID,
-    #             remark=self.remark,
-    #         )
-    #         self.order_created = True
-    #         self.save()
-    #         # self.delete()  # Delete the order request after conversion
 
+
+
+class OrderCustomer(models.Model):
+    SOURCE = (
+        ('Facebook', 'Facebook'),
+        ('Whatsapp', 'Whatsapp'),
+        ('Website', 'Website'),
+        ('Others', 'Others'),
+    )
+    tracking_ID = models.CharField(max_length=10, blank=True, null=True)
+    company = models.CharField(max_length=250)
+    name = models.CharField(max_length=250)
+    phone_number = models.CharField(max_length=20)
+    source = models.CharField(choices=SOURCE, max_length=50, default='Others')
+    product = models.ManyToManyField(Product)
+    
+    logo = models.URLField(max_length=300, blank=True, null=True)
+    picture1 = models.URLField(max_length=300, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.tracking_ID:
+            self.tracking_ID = ''.join(random.choices(string.digits, k=12))
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Order#{self.tracking_ID} from {self.company} ({self.name})"
+    
 
 class Order(models.Model):
     STATUS = (
+        ('None', 'None'),
         ('Got Design', 'Got Design'),
         ('Cutting', 'Cutting'),
         ('Cutout Ready', 'Cutout Ready'),
@@ -92,8 +112,8 @@ class Order(models.Model):
         ('Return', 'Return'),
     )
     PAYMENT_STATUS = (
-        ('Paid', 'Paid'),
         ('Unpaid', 'Unpaid'),
+        ('Paid', 'Paid'),
     )
     PAYMENT_METHOD = (
         ('COD', 'COD'),
@@ -103,6 +123,7 @@ class Order(models.Model):
         ('Upay', 'Upay'),
     )
     request_order = models.OneToOneField(OrderRequest, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
+    order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     tracking_ID = models.CharField(max_length=10, blank=True, null=True)
     delivery_address = models.CharField(max_length=500)
     special_instructions = models.TextField(blank=True, null=True)
@@ -132,15 +153,23 @@ class Order(models.Model):
         deal_value = self.deal_value or 0
         advance_amount = self.advance_amount or 0
         delivery_charge = self.delivery_charge or 0
+        
         self.due_amount = (deal_value + delivery_charge) - advance_amount
         if self.request_order:
             self.tracking_ID = self.request_order.tracking_ID
             self.request_order.order_created = True
             self.request_order.save()
+        elif self.order_customer:
+            self.tracking_ID = self.order_customer.tracking_ID
         super(Order, self).save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.id} - Order {self.tracking_ID} for {self.request_order}"
+        if self.request_order:
+            return f"Order#{self.tracking_ID} for {self.request_order}"
+        elif self.order_customer:
+            return f"Order#{self.tracking_ID} with {self.order_customer}"
+        else:
+            return f"Order#{self.tracking_ID}"
 
 
 class OrderUpdateNote(models.Model):

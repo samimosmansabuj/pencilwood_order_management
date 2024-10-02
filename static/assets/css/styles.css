@@ -1,3 +1,7 @@
+/* -----------------Some of our customized CCS
+are placed below this file----------------- */
+
+
 @charset "UTF-8";
 :root {
   --blue: #007bff;
@@ -10544,4 +10548,35 @@ box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 6%);
 .input-group-append button.btn {
     padding: 0.25rem 0.5rem;
 }
+
+
+
+
+
+
+
+/* Here are some of our customized CCS------------------ */
+.form-check-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.form-check-inline input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.form-check-inline label {
+  font-size: 10px;
+}
+
+.form-check-inline li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+
+
 

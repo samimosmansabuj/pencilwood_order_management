@@ -1,19 +1,23 @@
 {% extends '../base.html' %}
 
 {% block dashboard_title %}
-<title>Member Profile Profile - Pencilwood</title>
+<title>{{member.first_name}} {{member.last_name}} Profile - Pencilwood</title>
 {% endblock dashboard_title %}
 
 {% block dashboard_body %}
 <main>
    <div class="container-fluid">
-      <h1 class="mt-4">Member Profile View</h1>
+      <h1 class="mt-4">{{member.first_name}} {{member.last_name}} Profile</h1>
 
-
-      <ol class="breadcrumb mb-4">
-         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-         <li class="breadcrumb-item active">Member Profile</li>
-      </ol>
+      <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+         <div class="d-flex align-items-center">
+             <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+             <li class="breadcrumb-item"><a href="{% url 'member_list' %}">All Member</a></li>
+         </div>
+         <li class="breadcrumb-item ml-auto">
+             <a href="{% url 'addNewUser' %}" class="btn btn-primary" style="margin-left: 10px;">Add Member</a>
+         </li>
+     </ol>
 
       {% if messages %}
       {% for messages in messages %}
@@ -150,6 +154,7 @@
 
                <div class="save mb-2">
                   <button type="submit" class="btn btn-success">Save</button>
+                  <a href="{% url 'user_delete' member.id %}" class="btn btn-danger">Delete</a>
                </div>
             </div>
          </div>

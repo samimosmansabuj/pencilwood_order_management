@@ -16,10 +16,18 @@
       {% csrf_token %}
       <div class="container-fluid">
          <h1 class="mt-4">{% if object %}Update{% else %}Add New{% endif %} Product</h1>
-         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li class="breadcrumb-item active">{% if object %}Update{% else %}Add New{% endif %} Product</li>
-         </ol>
+         
+         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'product_list' %}">All Product</a></li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+                <a href="{% url 'product-create' %}" class="btn btn-primary" style="margin-left: 10px;">Add Product</a>
+            </li>
+        </ol>
+
+
          <div class="row">
             <div class="col-xl-12">
                <div class="card mb-4">

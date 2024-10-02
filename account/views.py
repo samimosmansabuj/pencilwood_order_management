@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from .models import Custom_User
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
+from django.views.generic import ListView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def LogIn(request):
@@ -41,7 +44,7 @@ def addNewUser(request):
                 user.is_staff = True
                 user.is_superuser = True
             user.save()
-            return redirect('dashboard')
+            return redirect('member_list')
         else:
             return redirect(request.META['HTTP_REFERER'])
     else:
@@ -98,11 +101,17 @@ def member_list(request):
     context = {'member': member}
     return render(request, 'account/member_list.html', context)
 
+class MemberDeleteView(LoginRequiredMixin, DeleteView):
+    model = Custom_User
+    template_name = 'account/user_confirm_delete.html'
+    success_url = reverse_lazy('member_list')
+
 
 @login_required
 def member_view(request, id):
+    member = get_object_or_404(Custom_User, id=id)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=get_object_or_404(Custom_User, id=id))
+        form = UserProfileForm(request.POST, instance=member)
         print(form)
         if form.is_valid():
             member = form.save(commit=False)
@@ -120,8 +129,8 @@ def member_view(request, id):
             messages.error(request, f'{form.errors}')
             return redirect(request.META['HTTP_REFERER'])
     else:
-        form = UserProfileForm(instance=get_object_or_404(Custom_User, id=id))
-    return render(request, 'account/member_view.html', {'form': form})
+        form = UserProfileForm(instance=member)
+    return render(request, 'account/member_view.html', {'form': form, 'member': member})
 
 
 

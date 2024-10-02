@@ -10,12 +10,17 @@
         {% csrf_token %}
         <div class="container-fluid">
             <h1 class="mt-4">Add Order Request</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Add Order Request</li>
+            <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'order_request_list' %}">All Order Request</a></li>
+                </div>
+                <li class="breadcrumb-item ml-auto">
+                    <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add
+                        Request</a>
+                </li>
             </ol>
 
-            <!-- {{form}} -->
 
             <div class="row">
 
@@ -61,24 +66,19 @@
                 </div>
                 <!-- ---------------Person Info End--------------- -->
 
-                <!-- ---------------Product Info Start--------------- -->
+                <!-- ---------------Product & Status Info Start--------------- -->
                 <div class="col-xl-12">
                     <div class="card mb-4">
                         <div class="card-header">
-                            Product info
+                            Product & Status info
                         </div>
                         <div class="card-body">
+
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label>{{form.product.label}}</label>
                                         {{form.product}}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>{{form.remark.label}}</label>
-                                        {{form.remark}}
                                     </div>
                                 </div>
                             </div>
@@ -93,18 +93,17 @@
                                 </div>
                             </div>
                             <!-- /row-->
-                        </div>
-                    </div>
-                </div>
-                <!-- ---------------Product Info Start--------------- -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>{{form.remark.label}}</label>
+                                        {{form.remark}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
 
-                <!-- ---------------Image Info Start--------------- -->
-                <div class="col-xl-12">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Image info
-                        </div>
-                        <div class="card-body">
+
 
                             <div class="row">
                                 <div class="col-md-4">
@@ -152,7 +151,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- ---------------Image Info Start--------------- -->
+                <!-- ---------------Product & Status Info Start--------------- -->
 
             </div>
             <div class="text-right mb-4">

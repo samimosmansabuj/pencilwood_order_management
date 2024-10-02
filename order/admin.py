@@ -15,5 +15,6 @@ from .models import *
 
 admin.site.register(Product)
 admin.site.register(OrderRequest)
+admin.site.register(OrderCustomer)
 admin.site.register(Order)
 admin.site.register(OrderUpdateNote)

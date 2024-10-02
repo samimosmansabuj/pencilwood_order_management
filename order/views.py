@@ -4,7 +4,7 @@ from django.db.models import Q
 from .models import Order, OrderRequest
 from django.contrib import messages
 from django.utils import timezone
-from .forms import OrderForm, OrderRequestForm, OrderRequestStatusUpdateForm, OrderStatusUpdateForm
+from .forms import *
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic import ListView, DeleteView
@@ -34,6 +34,7 @@ def order_list(request):
 @login_required
 def order_view(request, id):
     order = get_object_or_404(Order, id=id)
+    
     if request.method == 'POST':
         form = OrderStatusUpdateForm(request.POST, instance=order)
         if form.is_valid():
@@ -45,27 +46,37 @@ def order_view(request, id):
     else:
         form = OrderStatusUpdateForm(instance=order)
     
-    # if request.method == 'POST':
-    #     if request.POST['status'] == 'Received':
-    #         if order.pay_for == 'Pickup':
-    #             order.shipping_charge_paid = True
-    #     elif request.POST['status'] == 'Delivered':
-    #         order.shipping_charge_paid = True
-        
-    #     order.status = request.POST['status']
-    #     order.status_details = request.POST['status_comment']
-    #     order.order_update = request.POST['update_date_time']
-    #     order.save()
-    #     messages.success(request, 'Order Update Successfully!')
-    #     return redirect(request.META['HTTP_REFERER'])
-    
     return render(request, 'order/order_view.html', {'order': order, 'form': form})
 
 
 @login_required
 def add_new_order(request):
-    form = OrderForm()
-    return render(request, 'order/add_new_order.html', {'form': form})
+    if request.method == 'POST':
+        order_customer_form = OrderCustomerForm(request.POST)
+        order_form = OrderForm(request.POST)
+
+        if order_customer_form.is_valid() and order_form.is_valid():
+            order_customer = order_customer_form.save()
+
+            order = order_form.save(commit=False)
+            order.order_customer = order_customer
+            order.save()
+
+            return redirect('order_success')
+        else:
+            messages.warning(request, f"{order_customer_form.errors} and {order_form.errors}")
+            return redirect(request.META['HTTP_REFERER'])
+    else:
+        order_customer_form = OrderCustomerForm()
+        order_form = OrderForm()
+
+    return render(request, 'order/add_new_order.html', {
+        'order_customer_form': order_customer_form,
+        'order_form': order_form
+    })
+
+def order_success(request):
+    return render(request, 'order/order_success.html')
 
 
 
@@ -84,7 +95,7 @@ class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('order_request_list')
     
     def form_valid(self, form):
-        form.instance.request_at = self.request.user  # Automatically set request_at
+        form.instance.request_created_by = self.request.user  # Automatically set request_at
         return super().form_valid(form)
 
 

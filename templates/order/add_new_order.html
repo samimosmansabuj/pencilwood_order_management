@@ -6,22 +6,276 @@
 
 {% block dashboard_body %}
 <main>
-    <div class="container-fluid">
-       <h1 class="mt-4">Add listing</h1>
-       <ol class="breadcrumb mb-4">
-          <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-          <li class="breadcrumb-item active">Add listing</li>
-       </ol>
-       
-
-       {{form}}
 
 
-       <div class="text-right mb-4">
-          <button type="button" class="btn btn-success">
-          <i class="feather-send"></i> SAVE
-          </button>
-       </div>
-    </div>
- </main>
+   <!-- {{order_customer_form}}
+   {{order_form}} -->
+
+   <form method="POST">
+      {% csrf_token %}
+      <div class="container-fluid">
+         <h1 class="mt-4">Add New Order</h1>
+
+         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+               <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+               <li class="breadcrumb-item"><a href="{% url 'order_list' %}">All Order</a></li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+               <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
+                  Add Order
+               </a>
+            </li>
+         </ol>
+
+         {% if messages %}
+         {% for messages in messages %}
+         <ol class="breadcrumb mb-4">
+            <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+               <strong>Dear {{request.user}}!</strong> {{messages}}
+               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+               </button>
+            </div>
+         </ol>
+         {% endfor %}
+         {% endif %}
+
+
+         <div class="row">
+
+            <!-- ---------------Person Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Personal Info
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.company.label}}</label>
+                              {{order_customer_form.company}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.name.label}}</label>
+                              {{order_customer_form.name}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.phone_number.label}}</label>
+                              {{order_customer_form.phone_number}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.source.label}}</label>
+                              {{order_customer_form.source}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_address.label}}</label>
+                              {{order_form.delivery_address}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Person Info End--------------- -->
+
+            <!-- ---------------Product Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Product info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <label>{{order_customer_form.product.label}}</label>
+                              {{order_customer_form.product}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.logo.label}} (Optional)</label>
+                              {{order_customer_form.logo}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.picture1.label}} (Optional)</label>
+                              {{order_customer_form.picture1}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Product Info Start--------------- -->
+
+
+            <!-- ---------------Amount Info Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Amount info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.deal_value.label}}</label>
+                              {{order_form.deal_value}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_charge.label}}</label>
+                              {{order_form.delivery_charge}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.quantity.label}} (Optional)</label>
+                              {{order_form.quantity}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.advance_amount.label}} (Optional)</label>
+                              {{order_form.advance_amount}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Amount Info End--------------- -->
+
+
+            <!-- ---------------Payment Info Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Payment info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_status.label}}</label>
+                              {{order_form.payment_status}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_number.label}}</label>
+                              {{order_form.payment_number}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_method.label}} (Optional)</label>
+                              {{order_form.payment_method}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.transaction_id.label}}</label>
+                              {{order_form.transaction_id}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Payment Info End--------------- -->
+
+            <!-- ---------------Status Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Status info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.status.label}}</label>
+                              {{order_form.status}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.work_assign.label}} (Optional)</label>
+                              {{order_form.work_assign}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_date.label}} (Optional)</label>
+                              {{order_form.delivery_date}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <label>{{order_form.remark.label}} (Optional)</label>
+                              {{order_form.remark}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Status Info Start--------------- -->
+
+
+         </div>
+         <div class="text-right mb-4">
+            <button type="submit" class="btn btn-success">
+               <i class="feather-send"></i> SAVE
+            </button>
+         </div>
+      </div>
+   </form>
+</main>
 {% endblock dashboard_body %}

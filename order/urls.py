@@ -3,7 +3,8 @@ from .views import *
 
 urlpatterns = [
     path('order/', order_list, name='order_list'),
-    path('add-new-order/', add_new_order, name='add_new_order'),
+    path('order/add-new/', add_new_order, name='add_new_order'),
+    path('order/add-success/', order_success, name='order_success'),
     path('order/<int:id>/', order_view, name='order_view'),
     
     

@@ -1,0 +1,18 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Order placed successfully - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid" style="text-align: center;padding: 50px;">
+        <h1 class="mt-4">Order placed successfully!</h1>
+        <p>Do you want to order a new one?</p>
+        <div>
+            <a href="{% url 'add_new_order' %}" class="btn btn-primary">Place another order</a>
+            <a href="{% url 'order_list' %}">Go to Order list</a>
+        </div>
+    </div>
+</main>
+{% endblock dashboard_body %}

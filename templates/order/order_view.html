@@ -1,17 +1,24 @@
 {% extends '../base.html' %}
 
 {% block dashboard_title %}
-<title>Order#{{order.tracking_ID}} - Pencilwood</title>
+<title>ORDER_ID#{{order.tracking_ID}} - Pencilwood</title>
 {% endblock dashboard_title %}
 
 {% block dashboard_body %}
 <main>
     <div class="container-fluid">
-        <h1 class="mt-4">Order</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" style="text-decoration: none;">Dashboard</a>
+        <h3 class="mt-4">ORDER_ID#{{order.tracking_ID}}</h3>
+
+        <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'order_list' %}">All Order</a></li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+                <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
+                    Add Order
+                </a>
             </li>
-            <li class="breadcrumb-item active">Edit Order</li>
         </ol>
 
         {% if messages %}
@@ -42,11 +49,18 @@
                                     <div class="media-body">
                                         <div class="row">
                                             <div class="col-md-2 col-lg-2">
-                                                {% if order.request_order.logo %}
+
+
                                                 <div style="height: 100%;" class="pb-3">
-                                                    <img src="{{order.request_order.logo}}" alt="" style="height: 100%;">
+                                                    {% if order.request_order %}
+                                                    <img src="{{order.request_order.logo}}" alt=""
+                                                        style="height: 100%;">
+                                                    {% else %}
+                                                    <img src="{{order.order_customer.logo}}" alt=""
+                                                        style="height: 100%;">
+                                                    {% endif %}
                                                 </div>
-                                                {% endif %}
+
                                             </div>
                                             <div class="col-md-10 col-lg-10">
                                                 <a>
@@ -54,12 +68,27 @@
                                                         {{order.last_update}}
                                                         <i class="fa fa-check-circle text-success"></i></span>
                                                 </a>
-                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
-                                                    Company: {{order.request_order.company}} | Name: {{order.request_order.name}}
+
+
+                                                <p class="text-black-50 mb-1"><i class="fa fa-user"></i>
+                                                    Company:
+                                                    {% if order.request_order %}
+                                                    {{order.request_order.company}} | Name: {{order.request_order.name}}
+                                                    {% else %}
+                                                    {{order.order_customer.company}} | Name:
+                                                    {{order.order_customer.name}}
+                                                    {% endif %}
                                                 </p>
-                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
-                                                    Phone Number: {{order.request_order.phone_number}}
+                                                <p class="text-black-50 mb-1"><i class="fa fa-phone"></i>
+                                                    Phone Number:
+                                                    {% if order.request_order %}
+                                                    {{order.request_order.phone_number}}
+                                                    {% else %}
+                                                    {{order.order_customer.phone_number}}
+                                                    {% endif %}
                                                 </p>
+
+
                                                 <p class="mb-0 text-dark text-dark pt-2"><span
                                                         class="text-dark font-weight-bold">
                                                         Work Assign:
@@ -83,9 +112,9 @@
                                                         data-target="#edit_order">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
-                                                    <a href="#0" class="btn btn-sm btn-danger">
+                                                    <!-- <a href="#0" class="btn btn-sm btn-danger">
                                                         <i class="fa fa-trash"></i> Cancel
-                                                    </a>
+                                                    </a> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -94,42 +123,87 @@
                             </div>
                         </div>
 
-
+                        <!-- -----------------Order Details Start----------------- -->
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <!-- <th>Quantity</th> -->
-                                        <th>Price</th>
+                                        <th style="width: 150px; white-space: nowrap;">Title</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="white-space: nowrap;">Delivery Address</td>
+                                        <td style="white-space: nowrap;">
+                                            {{ order.delivery_address }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space: nowrap;">Remark</td>
+                                        <td style="white-space: nowrap;">
+                                            {{ order.remark }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space: nowrap;">Source</td>
+                                        <td style="white-space: nowrap;">
+                                            {% if order.request_order %}
+                                            {{order.request_order.source}}
+                                            {% else %}
+                                            {{order.order_customer.source}}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- -----------------Order Details End----------------- -->
+
+
+
+                        <!-- -----------------Payment Details Start----------------- -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="white-space: nowrap;">Title</th>
+                                        <th style="white-space: nowrap;">Quantity</th>
+                                        <th style="width: 120px; white-space: nowrap;">Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     <tr>
                                         <td>
-                                            {% for product in order.request_order.product.all %}
-                                            {{product.name}},
-                                            {% endfor %}
+                                            {% if order.request_order %}
+                                                {% for product in order.request_order.product.all %}
+                                                {{product.name}},
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for product in order.order_customer.product.all %}
+                                                {{product.name}},
+                                                {% endfor %}
+                                            {% endif %}
                                         </td>
+                                        <td>{{order.quantity}}</td>
                                         <td>{{order.deal_value}} BDT</td>
                                     </tr>
 
                                     <tr>
-                                        <td>Shipping Charge</td>
+                                        <td colspan="2">Shipping Charge</td>
                                         <td>
                                             {{order.delivery_charge}} BDT
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Advanced Payment</td>
+                                        <td colspan="2">Advanced Payment</td>
                                         <td>
                                             {{order.advance_amount}} BDT
                                         </td>
                                     </tr>
                                     <tr>
-                                        <!-- <td colspan="2">Total</td> -->
-                                        <td>Total Due</td>
+                                        <td colspan="2">Total Due</td>
                                         <td>
                                             {{order.due_amount}} BDT
                                         </td>
@@ -137,12 +211,16 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- -----------------Payment Details End----------------- -->
 
+
+
+                        <!-- -----------------Image Details Start----------------- -->
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
+                                        <th style="width: 150px; white-space: nowrap;">Title</th>
                                         <th>Link</th>
                                     </tr>
                                 </thead>
@@ -150,54 +228,55 @@
                                     <tr>
                                         <td>Logo</td>
                                         <td><a href="{{order.request_order.logo}}" target="_blank">
-                                            {% if order.request_order.logo %}
-                                            {{order.request_order.logo}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.logo %}
+                                                {{order.request_order.logo}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 01</td>
                                         <td><a href="{{order.request_order.picture1}}" target="_blank">
-                                            {% if order.request_order.picture1 %}
-                                            {{order.request_order.picture1}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.picture1 %}
+                                                {{order.request_order.picture1}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 02</td>
                                         <td><a href="{{order.request_order.picture2}}" target="_blank">
-                                            {% if order.request_order.picture2 %}
-                                            {{order.request_order.picture2}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.picture2 %}
+                                                {{order.request_order.picture2}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 03</td>
                                         <td><a href="{{order.request_order.picture3}}" target="_blank">
-                                            {% if order.request_order.picture3 %}
-                                            {{order.request_order.picture3}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.picture3 %}
+                                                {{order.request_order.picture3}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 04</td>
                                         <td><a href="{{order.request_order.picture4}}" target="_blank">
-                                            {% if order.request_order.picture4 %}
-                                            {{order.request_order.picture4}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.picture4 %}
+                                                {{order.request_order.picture4}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 05</td>
                                         <td><a href="{{order.request_order.picture5}}" target="_blank">
-                                            {% if order.request_order.picture5 %}
-                                            {{order.request_order.picture5}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order.request_order.picture5 %}
+                                                {{order.request_order.picture5}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <!-- -----------------Image Details End----------------- -->
                     </div>
                 </div>
             </div>
@@ -211,4 +290,3 @@
 
 
 {% endblock dashboard_body %}
-

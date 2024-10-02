@@ -1,13 +1,50 @@
 from django import forms
-from .models import Order, OrderRequest, Product
+from .models import Order, OrderRequest, Product, OrderCustomer
 from account.models import Custom_User
+
+# ----------------Order Section Start----------------
+class OrderCustomerForm(forms.ModelForm):
+    class Meta:
+        model = OrderCustomer
+        fields = ['company', 'name', 'phone_number', 'source', 'product', 'logo', 'picture1']
+        widgets = {
+            'company': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
+            }),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Your Name'
+            }),
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'inputPhone', 'placeholder': 'Enter Phone Number'
+            }),
+            'source': forms.Select(attrs={
+                'class': 'form-control', 'id': 'inputSource'
+            }),
+            'product': forms.CheckboxSelectMultiple(attrs={
+                'class': 'form-check-inline', 'id': 'inputProduct'
+            }),
+            'logo': forms.URLInput(attrs={
+                'class': 'form-control', 'id': 'inputLogo', 'placeholder': 'Enter Logo URL'
+            }),
+            'picture1': forms.URLInput(attrs={
+                'class': 'form-control', 'id': 'inputPicture1', 'placeholder': 'Enter Picture URL'
+            }),
+        }
+        labels = {
+            'picture1': 'Picture 01',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(OrderCustomerForm, self).__init__(*args, **kwargs)
+        self.fields['logo'].required = False
+        self.fields['picture1'].required = False
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'due_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date',
+            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date',
         ]
 
     delivery_address = forms.CharField(widget=forms.TextInput(attrs={
@@ -18,7 +55,7 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputSpecialInstructions', 'placeholder': 'Enter Special Instructions (optional)', 'rows': 3
     }))
 
-    quantity = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={
+    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
     }))
 
@@ -81,7 +118,7 @@ class OrderStatusUpdateForm(forms.ModelForm):
         fields = [
             'status', 'work_assign', 'remark', 'delivery_date'
         ]
-    
+
     status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     }))
@@ -94,8 +131,10 @@ class OrderStatusUpdateForm(forms.ModelForm):
     delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryDate', 'placeholder': 'Select Delivery Date', 'type': 'date'
     }))
+# ----------------Order Section End----------------
 
 
+# ----------------Order Request Section Start----------------
 class OrderRequestForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
@@ -125,8 +164,8 @@ class OrderRequestForm(forms.ModelForm):
     })
     )
 
-    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), widget=forms.SelectMultiple(attrs={
-        'class': 'form-control', 'id': 'inputProduct'
+    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
+        'class': 'form-check-inline', 'id': 'inputProduct'
     })
     )
 
@@ -190,3 +229,4 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     })
     )
+# ----------------Order Request Section End----------------

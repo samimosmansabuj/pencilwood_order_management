@@ -8,16 +8,27 @@
 <main>
     <div class="container-fluid">
         <h1 class="mt-4">Order Listings</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Order Listings</li>
+
+
+        <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">All Order</li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+                <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
+                    Add Order
+                </a>
+            </li>
         </ol>
+
+
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Listings
+                        All Order
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -83,13 +94,29 @@
                                                         {{order.tracking_ID}}
                                                     </td>
                                                     <td>
+                                                        {% if order.request_order %}
                                                         {{order.request_order.company}}
+                                                        {% else %}
+                                                        {{order.order_customer.company}}
+                                                        {% endif %}
                                                     </td>
                                                     <td>
+                                                        {% if order.request_order %}
                                                         {{order.request_order.name}}
+                                                        {% else %}
+                                                        {{order.order_customer.name}}
+                                                        {% endif %}
                                                     </td>
                                                     <td>
-                                                        {{order.request_order.product}}
+                                                        {% if order.request_order %}
+                                                            {% for product in order.request_order.product.all %}
+                                                            {{product.name}},
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            {% for product in order.order_customer.product.all %}
+                                                            {{product.name}},
+                                                            {% endfor %}
+                                                        {% endif %}
                                                     </td>
                                                     <td>
                                                         {{order.status}}
@@ -148,4 +175,3 @@
     </div>
 </main>
 {% endblock dashboard_body %}
-

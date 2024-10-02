@@ -8,10 +8,17 @@
 <main>
     <div class="container-fluid">
         <h1 class="mt-4">Order Request Listings</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Order Request Listings</li>
+
+        <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">All Order Request</li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+                <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add Request</a>
+            </li>
         </ol>
+
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-4">
@@ -86,7 +93,9 @@
                                                         {{order_request.source}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.product}}
+                                                        {% for product in order_request.product.all %}
+                                                        {{product.name}}, 
+                                                        {% endfor %}
                                                     </td>
                                                     <td>
                                                         {{order_request.status}}

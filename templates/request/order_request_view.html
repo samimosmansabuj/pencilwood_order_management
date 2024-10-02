@@ -1,17 +1,23 @@
 {% extends '../base.html' %}
 
 {% block dashboard_title %}
-<title>Order Request - Pencilwood</title>
+<title>TRACKING_ID #{{order_request.tracking_ID}} Order Request - Pencilwood</title>
 {% endblock dashboard_title %}
 
 {% block dashboard_body %}
 <main>
     <div class="container-fluid">
-        <h1 class="mt-4">Order Request</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" style="text-decoration: none;">Dashboard</a>
+        <h3 class="mt-4">TRACKING_ID #{{order_request.tracking_ID}} Request</h3>
+
+        <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'order_request_list' %}">All Order Request</a></li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+                <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add
+                    Request</a>
             </li>
-            <li class="breadcrumb-item active">Edit Order Request</li>
         </ol>
 
         {% if messages %}
@@ -33,7 +39,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        ORDER_ID #{{order_request.tracking_ID}} <sub>{{order_request.created_at}}</sub>
+                        TRACKING_ID #{{order_request.tracking_ID}} <sub>{{order_request.created_at}}</sub>
                     </div>
                     <div class="card-body">
                         <div class="card mb-4 order-list">
@@ -54,10 +60,10 @@
                                                         {{order_request.last_update}}
                                                         <i class="fa fa-check-circle text-success"></i></span>
                                                 </a>
-                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-user"></i>
                                                     Company: {{order_request.company}} | Name: {{order_request.name}}
                                                 </p>
-                                                <p class="text-black-50 mb-1"><i class="fa fa-map-marker"></i>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-phone"></i>
                                                     Phone Number: {{order_request.phone_number}}
                                                 </p>
                                                 <p class="mb-0 text-dark text-dark pt-2"><span
@@ -78,14 +84,10 @@
                                                         data-target="#edit_order_request">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
-                                                    <a href="#0" class="btn btn-sm btn-danger">
-                                                        <i class="fa fa-trash"></i> Cancel
+                                                    <a href="{% url 'order_request_delete' order_request.id %}" class="btn btn-sm btn-danger">
+                                                        <i class="fa fa-trash"></i> Delete
                                                     </a>
                                                 </div>
-                                                <!-- <p class="mb-0 text-dark text-dark pt-2"><span
-                                                        class="text-dark font-weight-bold">
-                                                        Total Paid:</span> {{order.shipping_charge}} BDT
-                                                </p> -->
 
                                             </div>
                                         </div>
@@ -99,26 +101,23 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Product Name</th>
-                                        <!-- <th>Quantity</th> -->
-                                        <th>Price</th>
+                                        <th style="width: 150px; white-space: nowrap;">Title</th>
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
-                                    {% for product in order_request.product.all %}
                                     <tr>
-                                        <td>{{product.name}}</td>
-                                        <!-- <td>2 </td> -->
-                                        <td>20 BDT</td>
+                                        <td style="white-space: nowrap;">Product</td>
+                                        <td style="white-space: nowrap;">
+                                            {% for product in order_request.product.all %}
+                                            {{ product.name }},
+                                            {% endfor %}
+                                        </td>
                                     </tr>
-                                    {% endfor %}
-
                                     <tr>
-                                        <!-- <td colspan="2">Total</td> -->
-                                        <td>Total</td>
-                                        <td>
-                                            0 BDT
+                                        <td style="white-space: nowrap;">Remark</td>
+                                        <td style="white-space: nowrap;">
+                                            {{ order_request.remark }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -129,56 +128,58 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
+                                        <th style="width: 150px; white-space: nowrap;">Title</th>
                                         <th>Link</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>Logo</td>
-                                        <td><a {% if order_request.logo %}href="{{order_request.logo}}"{% endif %} target="_blank">
-                                            {{order_request.logo}}
-                                        </a></td>
+                                        <td><a href="{{order_request.logo}}" target="_blank">
+                                                {% if order_request.logo %}
+                                                {{order_request.logo}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 01</td>
                                         <td><a href="{{order_request.picture1}}" target="_blank">
-                                            {% if order_request.picture1 %}
-                                            {{order_request.picture1}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order_request.picture1 %}
+                                                {{order_request.picture1}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 02</td>
                                         <td><a href="{{order_request.picture2}}" target="_blank">
-                                            {% if order_request.picture2 %}
-                                            {{order_request.picture2}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order_request.picture2 %}
+                                                {{order_request.picture2}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 03</td>
                                         <td><a href="{{order_request.picture3}}" target="_blank">
-                                            {% if order_request.picture3 %}
-                                            {{order_request.picture3}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order_request.picture3 %}
+                                                {{order_request.picture3}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 04</td>
                                         <td><a href="{{order_request.picture4}}" target="_blank">
-                                            {% if order_request.picture4 %}
-                                            {{order_request.picture4}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order_request.picture4 %}
+                                                {{order_request.picture4}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                     <tr>
                                         <td>Picture 05</td>
                                         <td><a href="{{order_request.picture5}}" target="_blank">
-                                            {% if order_request.picture5 %}
-                                            {{order_request.picture5}}
-                                            {% endif %}
-                                        </a></td>
+                                                {% if order_request.picture5 %}
+                                                {{order_request.picture5}}
+                                                {% endif %}
+                                            </a></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -189,22 +190,27 @@
 
 
             <!-- -------Place Order Section Start------- -->
+            {% if order_request.status == 'Done' %}
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row justify-content-end total_order">
                             <div class="col-xl-3 col-lg-4 col-md-5">
+
                                 {% if order_request.order_created %}
-                                <a href="{% url 'order_view' order_request.order.id %}" class="btn btn-success btn-block">Order Created</a>
+                                <a href="{% url 'order_view' order_request.order.id %}"
+                                    class="btn btn-primary btn-block">Order Created</a>
                                 {% else %}
                                 <a href="#0" data-toggle="modal" data-target="#PlaceOrderModel"
                                     class="btn btn-success btn-block">Place Order</a>
                                 {% endif %}
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endif %}
             <!-- -------Place Order Section End------- -->
 
         </div>
