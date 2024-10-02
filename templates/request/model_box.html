@@ -1,0 +1,229 @@
+<!-- Order Request Edit Modal -->
+<div class="modal fade" id="edit_order_request" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Update Order Request</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- {{form.as_p}} -->
+
+                    <div class="form-group">
+                        <label>Tracking ID</label>
+                        <input readonly type="text" class="form-control" value="{{order_request.tracking_ID}}"
+                            name="tracking_id">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        {{form.status}}
+
+                        <!-- <select name="status" id="" class="form-control" {% if order.status == 'Delivered' %}readonly{% endif %}>
+                     <option value="{{order.status}}">{{order.status}}</option>
+                     {% if order.status != 'Delivered' %}
+                     <option value="Pending">Pending</option>
+                     <option value="Received">Received</option>
+                     <option value="Shipped">Shipped</option>
+                     <option value="On The Way">On The Way</option>
+                     <option value="Receive at delivery point">Receive at delivery point</option>
+                     <option value="Out For Delivery">Out For Delivery</option>
+                     <option value="Delivered">Delivered</option>
+                     <option value="Return">Return</option>
+                     <option value="Cancel">Cancel</option>
+                     {% endif %}
+                 </select> -->
+                    </div>
+                    <div class="form-group">
+                        <label>Source</label>
+                        {{form.source}}
+                    </div>
+                    <div class="form-group">
+                        <label>Remark</label>
+                        {{form.remark}}
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="text" class="form-control" value="{{order_request.last_update}}" name="last_update"
+                            readonly>
+                    </div>
+                </div>
+
+                {% if order.status != 'Delivered' %}
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Order Request Edit Modal -->
+
+
+
+
+<!-- Place Order Modal -->
+<div class="modal fade" id="PlaceOrderModel" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST" action="{% url 'request_to_order' order_request.id %}">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Create Order For Request</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tracking ID</label>
+                                <input type="text" class="form-control" value="{{order_request.tracking_ID}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Company</label>
+                                <input type="text" class="form-control" value="{{order_request.company}}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" value="{{order_request.name}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" value="{{order_request.phone_number}}" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- {{form2.as_p}} -->
+
+
+                    <div class="form-group">
+                        <label>{{form2.delivery_address.label}}</label>
+                        {{form2.delivery_address}}
+                    </div>
+                    <div class="form-group">
+                        <label>{{form2.special_instructions.label}}</label>
+                        {{form2.special_instructions}}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.quantity.label}}</label>
+                                {{form2.quantity}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.deal_value.label}}</label>
+                                {{form2.deal_value}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.delivery_charge.label}}</label>
+                                {{form2.delivery_charge}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.advance_amount.label}}</label>
+                                {{form2.advance_amount}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.payment_number.label}}</label>
+                                {{form2.payment_number}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.transaction_id.label}}</label>
+                                {{form2.transaction_id}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.payment_method.label}}</label>
+                                {{form2.payment_method}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.payment_status.label}}</label>
+                                {{form2.payment_status}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.status.label}}</label>
+                                {{form2.status}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.work_assign.label}}</label>
+                                {{form2.work_assign}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{form2.remark.label}}</label>
+                        {{form2.remark}}
+                    </div>
+                    <div class="form-group">
+                        <label>{{form2.delivery_date.label}}</label>
+                        {{form2.delivery_date}}
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create to Order</button>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Place Order Modal -->

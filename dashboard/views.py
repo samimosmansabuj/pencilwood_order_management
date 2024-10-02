@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from account.models import Custom_User
-from order.models import Order
+from order.models import Order, OrderRequest
 from .models import Site_Settings
 from .forms import WebsiteSettingsForm, ProductForm
 from django.utils import timezone
@@ -15,13 +15,14 @@ import os
 @login_required
 def dashboard(request):
     order = Order.objects.all().order_by('-id')
+    order_request = OrderRequest.objects.all().order_by('-id')
     user = Custom_User.objects.all()
     
     today = timezone.now().date()
     today_orders = order.filter(order_date__date=today)
     
     context = {
-        'user': user, 'order': order, 'today_orders': today_orders
+        'user': user, 'order': order, 'today_orders': today_orders, 'order_request': order_request
     }
     return render(request, 'dashboard/dashboard.html', context)
 

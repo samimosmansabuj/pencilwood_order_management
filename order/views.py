@@ -91,7 +91,35 @@ def order_request_view(request, pk):
             messages.error(request, 'Somethings is wrong, please try again!')
         return redirect('order_request_view', pk=order_request.pk)
     else:
+        form2 = OrderForm()
         form = OrderRequestStatusUpdateForm(instance=order_request)
         
-    return render(request, 'request/order_request_view.html', {'order_request': order_request, 'form': form})
+    return render(request, 'request/order_request_view.html', {'order_request': order_request, 'form': form, 'form2': form2})
+
+
+def request_to_order(request, pk):
+    if request.method == 'POST':
+        order_request = get_object_or_404(OrderRequest, id=pk)
+        if Order.objects.get(tracking_ID=order_request.tracking_ID):
+            messages.success(request, "Order already created!")
+            return redirect('order_request_view', pk=order_request.pk)
+        else:
+            form2 = OrderForm(request.POST)
+            if form2.is_valid():
+                order = form2.save()
+                order.request_order = order_request
+                order.tracking_ID = order_request.tracking_ID
+                order.remark = order_request.remark
+                order.save()
+                
+                order_request.order_created = True
+                order_request.save()
+                
+                messages.success(request, 'Order created successfully.')
+                return redirect('order_list')
+            else:
+                messages.success(request, form2.errors)
+                return redirect('order_request_view', pk=order_request.pk)
+
+  
 

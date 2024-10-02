@@ -49,7 +49,7 @@
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="No: activate to sort column ascending"
-                                                        style="width: fixed;">No</th>
+                                                        style="width: fixed;">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Name: activate to sort column ascending" ">Company</th>
@@ -77,7 +77,7 @@
                                                 {% for order_request in order_requests %}
                                                 <tr role="row" class="odd">
                                                     <td>
-                                                        {{order_request.id}}
+                                                        {{order_request.tracking_ID}}
                                                     </td>
                                                     <td>
                                                         {{order_request.company}}

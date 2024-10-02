@@ -13,7 +13,7 @@ class Custom_User(AbstractUser):
     REQUIRED_FIELDS = ["username"]
     
     def __str__(self) -> str:
-        return f'{self.username} | {self.email}'
+        return f'{self.first_name} {self.last_name}' if self.first_name else f'{self.username} | {self.email}'
 
 class Login_Code(models.Model):
     user = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
