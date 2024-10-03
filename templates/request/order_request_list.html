@@ -15,9 +15,23 @@
                 <li class="breadcrumb-item active">All Order Request</li>
             </div>
             <li class="breadcrumb-item ml-auto">
-                <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add Request</a>
+                <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add
+                    Request</a>
             </li>
         </ol>
+
+        {% if messages %}
+        {% for messages in messages %}
+        <ol class="breadcrumb mb-4">
+            <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+                <strong>Dear {{request.user}}!</strong> {{messages}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        </ol>
+        {% endfor %}
+        {% endif %}
 
         <div class="row">
             <div class="col-xl-12">
@@ -94,7 +108,7 @@
                                                     </td>
                                                     <td>
                                                         {% for product in order_request.product.all %}
-                                                        {{product.name}}, 
+                                                        {{product.name}},
                                                         {% endfor %}
                                                     </td>
                                                     <td>

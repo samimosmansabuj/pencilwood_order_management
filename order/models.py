@@ -113,6 +113,7 @@ class Order(models.Model):
     )
     PAYMENT_STATUS = (
         ('Unpaid', 'Unpaid'),
+        ('Partial', 'Partial'),
         ('Paid', 'Paid'),
     )
     PAYMENT_METHOD = (
@@ -124,7 +125,7 @@ class Order(models.Model):
     )
     request_order = models.OneToOneField(OrderRequest, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
-    tracking_ID = models.CharField(max_length=10, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=12, blank=True, null=True)
     delivery_address = models.CharField(max_length=500)
     special_instructions = models.TextField(blank=True, null=True)
     
@@ -150,11 +151,15 @@ class Order(models.Model):
     return_date = models.DateField(blank=True,null=True)
     
     def save(self, *args, **kwargs):
-        deal_value = self.deal_value or 0
+        unit_price = self.unit_price or 0
+        quantity = self.quantity or 0
+        
         advance_amount = self.advance_amount or 0
         delivery_charge = self.delivery_charge or 0
         
-        self.due_amount = (deal_value + delivery_charge) - advance_amount
+        self.deal_value = unit_price * quantity
+        self.due_amount = (unit_price * quantity + delivery_charge) - advance_amount
+        
         if self.request_order:
             self.tracking_ID = self.request_order.tracking_ID
             self.request_order.order_created = True

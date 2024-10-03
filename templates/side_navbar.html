@@ -82,9 +82,10 @@
             </div>
             <!-- --------------------Product End---------------------- -->
 
-            
+
 
             <!-- --------------------Member Start---------------------- -->
+            {% if request.user.user_type == 'Admin' %}
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMembers"
                 aria-expanded="false" aria-controls="collapseMembers">
                 <div class="sb-nav-link-icon"><i class="fa fa-users"></i></div>
@@ -101,6 +102,7 @@
                     </a>
                 </nav>
             </div>
+            {% endif %}
             <!-- --------------------Member End---------------------- -->
 
 
@@ -108,10 +110,13 @@
                 <div class="sb-nav-link-icon"><i class="fa fa-user"></i></div>
                 My Profile
             </a>
+
+            {% if request.user.user_type == 'Admin' %}
             <a class="nav-link Active" href="{% url 'settings' %}">
                 <div class="sb-nav-link-icon"><i class="fa fa-gears"></i></div>
                 Settings
             </a>
+            {% endif %}
 
             <a class="nav-link" href="{% url 'logout' %}">
                 <div class="sb-nav-link-icon"><i class="fa fa-sign-out"></i></div>

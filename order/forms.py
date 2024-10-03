@@ -44,7 +44,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date',
+            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date',
         ]
 
     delivery_address = forms.CharField(widget=forms.TextInput(attrs={
@@ -55,17 +55,17 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputSpecialInstructions', 'placeholder': 'Enter Special Instructions (optional)', 'rows': 3
     }))
 
-    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
+    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
     }))
 
-    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
+    unit_price = forms.DecimalField(widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
     }))
 
-    deal_value = forms.DecimalField(widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputDealValue', 'placeholder': 'Enter Deal Value'
-    }))
+    # deal_value = forms.DecimalField(widget=forms.NumberInput(attrs={
+    #     'class': 'form-control', 'id': 'inputDealValue', 'placeholder': 'Enter Deal Value'
+    # }))
 
     advance_amount = forms.DecimalField(widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'

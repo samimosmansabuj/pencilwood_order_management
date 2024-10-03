@@ -125,7 +125,7 @@ def order_request_view(request, pk):
 def request_to_order(request, pk):
     if request.method == 'POST':
         order_request = get_object_or_404(OrderRequest, id=pk)
-        if Order.objects.get(tracking_ID=order_request.tracking_ID):
+        if Order.objects.filter(tracking_ID=order_request.tracking_ID).exists():
             messages.success(request, "Order already created!")
             return redirect('order_request_view', pk=order_request.pk)
         else:

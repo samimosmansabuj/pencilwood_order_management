@@ -88,8 +88,6 @@
                 <div class="modal-body">
 
 
-
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -119,7 +117,6 @@
                         </div>
                     </div>
 
-                    <!-- {{form2.as_p}} -->
 
 
                     <div class="form-group">
@@ -131,6 +128,8 @@
                         {{form2.special_instructions}}
                     </div>
 
+                    <hr style="height: 2px; background-color: black;">
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -140,8 +139,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>{{form2.deal_value.label}}</label>
-                                {{form2.deal_value}}
+                                <label>{{form2.unit_price.label}}</label>
+                                {{form2.unit_price}}
                             </div>
                         </div>
                     </div>
@@ -151,6 +150,23 @@
                             <div class="form-group">
                                 <label>{{form2.delivery_charge.label}}</label>
                                 {{form2.delivery_charge}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.payment_status.label}}</label>
+                                {{form2.payment_status}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="height: 2px; background-color: black;">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{form2.payment_method.label}}</label>
+                                {{form2.payment_method}}
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -176,20 +192,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>{{form2.payment_method.label}}</label>
-                                {{form2.payment_method}}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>{{form2.payment_status.label}}</label>
-                                {{form2.payment_status}}
-                            </div>
-                        </div>
-                    </div>
+                    <hr style="height: 2px; background-color: black;">
 
                     <div class="row">
                         <div class="col-md-6">

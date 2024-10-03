@@ -168,6 +168,7 @@
                                 <thead>
                                     <tr>
                                         <th style="white-space: nowrap;">Title</th>
+                                        <th style="white-space: nowrap;">Unit Price</th>
                                         <th style="white-space: nowrap;">Quantity</th>
                                         <th style="width: 120px; white-space: nowrap;">Price</th>
                                     </tr>
@@ -177,33 +178,34 @@
                                     <tr>
                                         <td>
                                             {% if order.request_order %}
-                                                {% for product in order.request_order.product.all %}
-                                                {{product.name}},
-                                                {% endfor %}
+                                            {% for product in order.request_order.product.all %}
+                                            {{product.name}},
+                                            {% endfor %}
                                             {% else %}
-                                                {% for product in order.order_customer.product.all %}
-                                                {{product.name}},
-                                                {% endfor %}
+                                            {% for product in order.order_customer.product.all %}
+                                            {{product.name}},
+                                            {% endfor %}
                                             {% endif %}
                                         </td>
+                                        <td>{{order.unit_price}}</td>
                                         <td>{{order.quantity}}</td>
                                         <td>{{order.deal_value}} BDT</td>
                                     </tr>
 
                                     <tr>
-                                        <td colspan="2">Shipping Charge</td>
+                                        <td colspan="3">Shipping Charge</td>
                                         <td>
                                             {{order.delivery_charge}} BDT
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">Advanced Payment</td>
+                                        <td colspan="3">Advanced Payment</td>
                                         <td>
                                             {{order.advance_amount}} BDT
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">Total Due</td>
+                                        <td colspan="3">Total Due</td>
                                         <td>
                                             {{order.due_amount}} BDT
                                         </td>
@@ -227,7 +229,17 @@
                                 <tbody>
                                     <tr>
                                         <td>Logo</td>
-                                        <td><a href="{{order.request_order.logo}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.logo %}
+                                                {{order.order_customer.logo}}
+                                                {% else %}
+                                                {{order.request_order.logo}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.logo %}
+                                                {{order.order_customer.logo}}
+                                                {% endif %}
+
                                                 {% if order.request_order.logo %}
                                                 {{order.request_order.logo}}
                                                 {% endif %}
@@ -235,7 +247,17 @@
                                     </tr>
                                     <tr>
                                         <td>Picture 01</td>
-                                        <td><a href="{{order.request_order.picture1}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.picture1 %}
+                                                {{order.order_customer.picture1}}
+                                                {% else %}
+                                                {{order.request_order.picture1}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.picture1 %}
+                                                {{order.order_customer.picture1}}
+                                                {% endif %}
+
                                                 {% if order.request_order.picture1 %}
                                                 {{order.request_order.picture1}}
                                                 {% endif %}
@@ -243,7 +265,17 @@
                                     </tr>
                                     <tr>
                                         <td>Picture 02</td>
-                                        <td><a href="{{order.request_order.picture2}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.picture2 %}
+                                                {{order.order_customer.picture2}},
+                                                {% else %}
+                                                {{order.request_order.picture2}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.picture2 %}
+                                                {{order.order_customer.picture2}},
+                                                {% endif %}
+
                                                 {% if order.request_order.picture2 %}
                                                 {{order.request_order.picture2}}
                                                 {% endif %}
@@ -251,7 +283,17 @@
                                     </tr>
                                     <tr>
                                         <td>Picture 03</td>
-                                        <td><a href="{{order.request_order.picture3}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.picture3 %}
+                                                {{order.order_customer.picture3}},
+                                                {% else %}
+                                                {{order.request_order.picture3}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.picture3 %}
+                                                {{order.order_customer.picture3}},
+                                                {% endif %}
+
                                                 {% if order.request_order.picture3 %}
                                                 {{order.request_order.picture3}}
                                                 {% endif %}
@@ -259,7 +301,17 @@
                                     </tr>
                                     <tr>
                                         <td>Picture 04</td>
-                                        <td><a href="{{order.request_order.picture4}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.picture4 %}
+                                                {{order.order_customer.picture4}},
+                                                {% else %}
+                                                {{order.request_order.picture4}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.picture4 %}
+                                                {{order.order_customer.picture4}},
+                                                {% endif %}
+
                                                 {% if order.request_order.picture4 %}
                                                 {{order.request_order.picture4}}
                                                 {% endif %}
@@ -267,7 +319,17 @@
                                     </tr>
                                     <tr>
                                         <td>Picture 05</td>
-                                        <td><a href="{{order.request_order.picture5}}" target="_blank">
+                                        <td><a href="
+                                                {% if order.order_customer.picture5 %}
+                                                {{order.order_customer.picture5}},
+                                                {% else %}
+                                                {{order.request_order.picture5}}
+                                                {% endif %}
+                                            " target="_blank">
+                                                {% if order.order_customer.picture5 %}
+                                                {{order.order_customer.picture5}},
+                                                {% endif %}
+
                                                 {% if order.request_order.picture5 %}
                                                 {{order.request_order.picture5}}
                                                 {% endif %}
