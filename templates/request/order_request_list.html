@@ -38,7 +38,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Listings
+                        All Order Request ({{order_requests.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -46,7 +46,7 @@
 
 
 
-                                
+
 
                                 <!-- -------------Order Filtering Section------------- -->
                                 <div class="container-fluid">
@@ -72,6 +72,22 @@
                                                 </div>
                                             </div>
 
+
+                                            <!-- Filter by Products -->
+                                            <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="status">Products</label>
+                                                    <select name="products" id="products"
+                                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                                        <option value="">-- Select Product --</option>
+                                                        <!-- Blank option -->
+                                                        {% for product in products %}
+                                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <!-- Filter by Date From -->
                                             <div class="col-12 col-sm-6 col-md-2">
                                                 <div class="form-group">
@@ -91,7 +107,7 @@
                                             </div>
 
                                             <!-- Search by Tracking ID or Customer Name -->
-                                            <div class="col-12 col-sm-6 col-md-3">
+                                            <div class="col-12 col-sm-6 col-md-2">
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
                                                     <input type="text" name="search" id="search"
@@ -99,6 +115,7 @@
                                                         class="form-control form-control-sm">
                                                 </div>
                                             </div>
+
 
                                             <!-- Submit Button -->
                                             <div class="col-12 col-sm-6 col-md-1">
@@ -112,7 +129,8 @@
                                             <div class="col-12 col-sm-6 col-md-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <a href="{% url 'order_request_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                    <a href="{% url 'order_request_list' %}"
+                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
 
@@ -123,7 +141,7 @@
 
 
 
-
+                                <!-- -------------Order Request Section------------- -->
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <table class="table table-bordered dataTable no-footer" id="dataTable"
@@ -198,6 +216,10 @@
                                         </table>
                                     </div>
                                 </div>
+                                <!-- -------------Order Request Section------------- -->
+
+
+                                <!-- -------------Pagination Section------------- -->
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
                                         <div class="dataTables_info" id="dataTable_info" role="status"
@@ -220,6 +242,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- -------------Pagination Section------------- -->
                             </div>
                         </div>
                     </div>

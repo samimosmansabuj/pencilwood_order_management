@@ -50,16 +50,21 @@
         <li class="nav-item dropdown no-arrow ml-1 osahan-profile-dropdown">
             <a class="nav-link dropdown-toggle pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
+                {% if request.user.profile_picture %}
+                <img class="img-profile rounded-circle" src="{{request.user.profile_picture.url}}">
+                {% else %}
                 <i class="fa fa-user-circle" style="font-size: 35px;"></i>
-                <!-- <img class="img-profile rounded-circle" src="{% static 'dashboard/img/user/1.png' %}"> -->
+                {% endif %}
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow-sm">
                 <div class="p-3 d-flex align-items-center">
                     <div class="dropdown-list-image mr-3">
+                        {% if request.user.profile_picture %}
+                        <img class="rounded-circle" src="{{request.user.profile_picture.url}}" alt="">
+                        {% else %}
                         <i class="fa fa-user-circle" style="font-size: 35px;"></i>
-                        <!-- <img class="rounded-circle" src="{% static 'dashboard/img/user/1.png' %}" alt="">
-                         -->
+                        {% endif %}
                         <div class="status-indicator bg-success"></div>
                     </div>
                     <div class="font-weight-bold">

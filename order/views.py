@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Order, OrderRequest
 from django.contrib import messages
-from django.utils import timezone
 from django.utils.dateparse import parse_date
 from .forms import *
 from django.urls import reverse_lazy
@@ -15,22 +14,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order/order.html'
+    # paginate_by = 2
     context_object_name = 'orders'
     ordering = ['-id']
+    
 
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        # Get query parameters from the request
         status = self.request.GET.get('status')
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
+        product_id = self.request.GET.get('product')
 
         # Filter by status
         if status and status != 'All':
             queryset = queryset.filter(status=status)
-        
+
         # Filter by date range
         if start_date:
             start_date = parse_date(start_date)
@@ -38,7 +39,8 @@ class OrderListView(LoginRequiredMixin, ListView):
         if end_date:
             end_date = parse_date(end_date)
             queryset = queryset.filter(order_date__lte=end_date)
-        
+
+        # Filter by Search
         if search_query:
             queryset = queryset.filter(
                 Q(tracking_ID__icontains=search_query) |
@@ -50,8 +52,32 @@ class OrderListView(LoginRequiredMixin, ListView):
                 Q(order_customer__phone_number__icontains=search_query)
             )
         
+        # Filter by Product
+        if product_id and product_id.isdigit():
+            queryset = queryset.filter(
+                Q(request_order__product__id__icontains=product_id) |
+                Q(order_customer__product__id__icontains=product_id)
+            ).distinct()
+
         return queryset
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = Product.objects.all()
+        return context
+
+
+# class OrderListView(LoginRequiredMixin, ListView):
+#     model = Order
+#     template_name = 'order/order.html'
+#     context_object_name = 'orders'
+#     paginate_by = 2  # Pagination enabled
+#     ordering = ['-id']
+
+#     def get_queryset(self):
+#         queryset = super().get_queryset()
+#         return queryset
+
 
 
 @login_required
@@ -108,8 +134,9 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'  # Define your template here
     context_object_name = 'order_requests'
+    # paginate_by = 1
     ordering = ['-id']
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -118,11 +145,12 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
+        product_ids = self.request.GET.get('products')
 
         # Filter by status
         if status and status != 'All':
             queryset = queryset.filter(status=status)
-        
+
         # Filter by date range
         if start_date:
             start_date = parse_date(start_date)
@@ -130,7 +158,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         if end_date:
             end_date = parse_date(end_date)
             queryset = queryset.filter(created_at__lte=end_date)
-        
+
         if search_query:
             queryset = queryset.filter(
                 Q(tracking_ID__icontains=search_query) |
@@ -138,8 +166,16 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 Q(company__icontains=search_query) |
                 Q(phone_number__icontains=search_query)
             )
-        
+
+        if product_ids and product_ids.isdigit():
+            queryset = queryset.filter(product__id=product_ids).distinct()
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs) # Add products to the context for dropdown/filter options
+        context['products'] = Product.objects.all()
+        return context
 
 
 class OrderRequestCreateView(LoginRequiredMixin, CreateView):

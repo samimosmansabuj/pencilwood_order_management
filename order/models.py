@@ -40,7 +40,7 @@ class OrderRequest(models.Model):
         ('Others', 'Others'),
     )
     request_created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True)
-    tracking_ID = models.CharField(max_length=10, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=5, blank=True, null=True)
     
     company = models.CharField(max_length=250)
     name = models.CharField(max_length=250)
@@ -51,12 +51,12 @@ class OrderRequest(models.Model):
     remark = models.TextField(blank=True, null=True)
     order_created = models.BooleanField(default=False)
     
-    logo = models.URLField(max_length=300, blank=True, null=True)
-    picture1 = models.URLField(max_length=300, blank=True, null=True)
-    picture2 = models.URLField(max_length=300, blank=True, null=True)
-    picture3 = models.URLField(max_length=300, blank=True, null=True)
-    picture4 = models.URLField(max_length=300, blank=True, null=True)
-    picture5 = models.URLField(max_length=300, blank=True, null=True)
+    logo = models.URLField(max_length=1000, blank=True, null=True)
+    picture1 = models.URLField(max_length=1000, blank=True, null=True)
+    picture2 = models.URLField(max_length=1000, blank=True, null=True)
+    picture3 = models.URLField(max_length=1000, blank=True, null=True)
+    picture4 = models.URLField(max_length=1000, blank=True, null=True)
+    picture5 = models.URLField(max_length=1000, blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
@@ -66,9 +66,8 @@ class OrderRequest(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
-            self.tracking_ID = ''.join(random.choices(string.digits, k=10))
+            self.tracking_ID = ''.join(random.choices(string.digits, k=5))
         super().save(*args, **kwargs)
-
 
 
 
@@ -79,7 +78,7 @@ class OrderCustomer(models.Model):
         ('Website', 'Website'),
         ('Others', 'Others'),
     )
-    tracking_ID = models.CharField(max_length=12, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=6, blank=True, null=True)
     company = models.CharField(max_length=250)
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
@@ -87,12 +86,12 @@ class OrderCustomer(models.Model):
     product = models.ManyToManyField(Product)
     
     logo = models.URLField(max_length=1000, blank=True, null=True)
-    picture1 = models.URLField(max_length=300, blank=True, null=True)
+    picture1 = models.URLField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
-            self.tracking_ID = ''.join(random.choices(string.digits, k=12))
+            self.tracking_ID = ''.join(random.choices(string.digits, k=6))
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -125,7 +124,8 @@ class Order(models.Model):
     )
     request_order = models.OneToOneField(OrderRequest, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
-    tracking_ID = models.CharField(max_length=12, blank=True, null=True)
+    
+    tracking_ID = models.CharField(max_length=6, blank=True, null=True)
     delivery_address = models.CharField(max_length=500)
     special_instructions = models.TextField(blank=True, null=True)
     

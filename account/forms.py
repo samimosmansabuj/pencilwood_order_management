@@ -30,10 +30,13 @@ class AddNewUser(forms.ModelForm):
     password = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={
         'class': 'form-control', 'id': 'inputPassword', 'placeholder': 'Enter password',
     }))
+    profile_picture = forms.ImageField(required=False, widget=forms.FileInput(attrs={
+        'class': 'form-control', 'id': 'inputProfilePicture'
+    }))
 
     class Meta:
         model = Custom_User
-        fields = ['first_name', 'last_name', 'username', 'email', 'phone_number', 'user_type', 'password']
+        fields = ['first_name', 'last_name', 'username', 'email', 'phone_number', 'user_type', 'password', 'profile_picture']
 
 
 class Login_Form(forms.Form):
@@ -101,13 +104,18 @@ class UserProfileForm(forms.ModelForm):
     user_type = forms.CharField(max_length=50, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputUserType'
     }, choices=USER_TYPE))
+    
     password = forms.CharField(max_length=50, required=False, label="New Password", widget=forms.PasswordInput(attrs={
         'class': 'form-control', 'id': 'inputPassword', 'placeholder': 'Enter password',
     }))
     
+    profile_picture = forms.ImageField(required=False, widget=forms.FileInput(attrs={
+        'class': 'form-control', 'id': 'inputProfilePicture'
+    }))
+    
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'user_type', 'phone_number']
+        fields = ['first_name', 'last_name', 'username', 'email', 'user_type', 'phone_number', 'profile_picture']
     
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)

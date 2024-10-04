@@ -1,0 +1,295 @@
+<div class="row">
+    <div class="col-12 col-md-4 col-lg-4">
+        <!-- Card to display company information -->
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <div class="media">
+                    <img src="
+                    {% if order.request_order %}
+                    {{order.request_order.logo}}
+                    {% else %}
+                    {{order.order_customer.logo}}
+                    {% endif %}
+                    " class="mr-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Company Logo">
+                    <div class="media-body">
+                        <h5 class="mt-0">
+                            {% if order.request_order %}
+                            {{order.request_order.company}}
+                            {% else %}
+                            {{order.order_customer.company}}
+                            {% endif %}
+                        </h5>
+                        <p class="mb-0 text-muted">
+                            {% if order.request_order %}
+                            Name: {{order.request_order.name}}
+                            {% else %}
+                            Name: {{order.order_customer.name}}
+                            {% endif %}
+                        </p>
+                        <p class="mb-0 text-muted">Phone:
+                            {% if order.request_order %}
+                            {{order.request_order.phone_number}}
+                            {% else %}
+                            {{order.order_customer.phone_number}}
+                            {% endif %}
+                        </p>
+                        <p class="mb-0 font-weight-bold text-success">
+                            {{order.status}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-8 col-lg-8">
+        <a>
+            <span class="float-right text-success">{{order.status}} on
+                {{order.last_update}}
+                <i class="fa fa-check-circle text-success"></i>
+            </span>
+        </a>
+        <p class="text-black-50 mb-1"><i class="fa fa-user"></i> Company:
+            {% if order.request_order %}
+            {{order.request_order.company}} | Name: {{order.request_order.name}}
+            {% else %}
+            {{order.order_customer.company}} | Name:
+            {{order.order_customer.name}}
+            {% endif %}
+        </p>
+        <p class="text-black-50 mb-1"><i class="fa fa-phone"></i> Phone Number:
+            {% if order.request_order %}
+            {{order.request_order.phone_number}}
+            {% else %}
+            {{order.order_customer.phone_number}}
+            {% endif %}
+        </p>
+
+        <p class="mb-0 text-dark text-dark pt-2"><span class="text-dark font-weight-bold">Work Assign:
+                {{order.work_assign}}</span></p>
+        <hr style="border-top: 5px solid rgb(0 0 0);">
+        <div class="float-right">
+            <a class="btn btn-sm btn-warning">
+                {% if order.payment_status == 'Paid' %}
+                <i class="fa fa-check-circle"></i> Paid
+                {% else %}
+                <i class="fa fa-xmark"></i> Unpaid
+                {% endif %}
+            </a>
+            <a class="btn btn-sm btn-success">
+                <i class="fa fa-check-circle"></i> {{order.status}}
+            </a>
+            <a href="#0" class="btn btn-sm btn-info" data-toggle="modal" data-target="#edit_order">
+                <i class="fa fa-edit"></i> Edit
+            </a>
+            <!-- <a href="#0" class="btn btn-sm btn-danger">
+                <i class="fa fa-trash"></i> Cancel
+            </a> -->
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- -----------------Image Details Start----------------- -->
+<div class="table-responsive">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th style="width: 150px; white-space: nowrap;">Title</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Logo</td>
+                <td><a href="
+                                                {% if order.order_customer.logo %}
+                                                {{order.order_customer.logo}}
+                                                {% else %}
+                                                {{order.request_order.logo}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.logo %}
+                        {{order.order_customer.logo}}
+                        {% endif %}
+
+                        {% if order.request_order.logo %}
+                        {{order.request_order.logo}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+            <tr>
+                <td>Picture 01</td>
+                <td><a href="
+                                                {% if order.order_customer.picture1 %}
+                                                {{order.order_customer.picture1}}
+                                                {% else %}
+                                                {{order.request_order.picture1}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.picture1 %}
+                        {{order.order_customer.picture1}}
+                        {% endif %}
+
+                        {% if order.request_order.picture1 %}
+                        {{order.request_order.picture1}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+            <tr>
+                <td>Picture 02</td>
+                <td><a href="
+                                                {% if order.order_customer.picture2 %}
+                                                {{order.order_customer.picture2}},
+                                                {% else %}
+                                                {{order.request_order.picture2}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.picture2 %}
+                        {{order.order_customer.picture2}},
+                        {% endif %}
+
+                        {% if order.request_order.picture2 %}
+                        {{order.request_order.picture2}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+            <tr>
+                <td>Picture 03</td>
+                <td><a href="
+                                                {% if order.order_customer.picture3 %}
+                                                {{order.order_customer.picture3}},
+                                                {% else %}
+                                                {{order.request_order.picture3}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.picture3 %}
+                        {{order.order_customer.picture3}},
+                        {% endif %}
+
+                        {% if order.request_order.picture3 %}
+                        {{order.request_order.picture3}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+            <tr>
+                <td>Picture 04</td>
+                <td><a href="
+                                                {% if order.order_customer.picture4 %}
+                                                {{order.order_customer.picture4}},
+                                                {% else %}
+                                                {{order.request_order.picture4}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.picture4 %}
+                        {{order.order_customer.picture4}},
+                        {% endif %}
+
+                        {% if order.request_order.picture4 %}
+                        {{order.request_order.picture4}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+            <tr>
+                <td>Picture 05</td>
+                <td><a href="
+                                                {% if order.order_customer.picture5 %}
+                                                {{order.order_customer.picture5}},
+                                                {% else %}
+                                                {{order.request_order.picture5}}
+                                                {% endif %}
+                                            " target="_blank">
+                        {% if order.order_customer.picture5 %}
+                        {{order.order_customer.picture5}},
+                        {% endif %}
+
+                        {% if order.request_order.picture5 %}
+                        {{order.request_order.picture5}}
+                        {% endif %}
+                    </a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- -----------------Image Details End----------------- -->
+
+
+
+
+<div class="row">
+    <div class="col-sm-12 col-md-5">
+        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+            Showing {{ orders.start_index }} to {{ orders.end_index }} of {{ orders.paginator.count }} entries
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-7">
+        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+            <ul class="pagination">
+                <!-- Previous button -->
+                {% if orders.has_previous %}
+                <li class="paginate_button page-item">
+                    <a href="?page={{ orders.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                        class="page-link">Previous</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item disabled">
+                    <a href="#" class="page-link">Previous</a>
+                </li>
+                {% endif %}
+
+                <!-- Page numbers -->
+                {% for num in orders.paginator.page_range %}
+                {% if orders.number == num %}
+                <li class="paginate_button page-item active">
+                    <a href="#" class="page-link">{{ num }}</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item">
+                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                        class="page-link">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                <!-- Next button -->
+                {% if orders.has_next %}
+                <li class="paginate_button page-item">
+                    <a href="?page={{ orders.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                        class="page-link">Next</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item disabled">
+                    <a href="#" class="page-link">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-5">
+        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">Showing 1 to 10 of 10 entries
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-7">
+        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+            <ul class="pagination">
+                <li class="paginate_button page-item previous disabled" id="dataTable_previous"><a href="#"
+                        aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+                <li class="paginate_button page-item active"><a href="#" aria-controls="dataTable" data-dt-idx="1"
+                        tabindex="0" class="page-link">1</a></li>
+                <li class="paginate_button page-item next disabled" id="dataTable_next">
+                    <a href="#" aria-controls="dataTable" data-dt-idx="2" tabindex="0" class="page-link">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- asdf -->
