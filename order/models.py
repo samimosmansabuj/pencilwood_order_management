@@ -79,14 +79,14 @@ class OrderCustomer(models.Model):
         ('Website', 'Website'),
         ('Others', 'Others'),
     )
-    tracking_ID = models.CharField(max_length=10, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=12, blank=True, null=True)
     company = models.CharField(max_length=250)
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
     product = models.ManyToManyField(Product)
     
-    logo = models.URLField(max_length=300, blank=True, null=True)
+    logo = models.URLField(max_length=1000, blank=True, null=True)
     picture1 = models.URLField(max_length=300, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     

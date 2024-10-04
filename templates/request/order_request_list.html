@@ -43,23 +43,87 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="dataTables_length" id="dataTable_length"><label>Show <select
-                                                    name="dataTable_length" aria-controls="dataTable"
-                                                    class="custom-select custom-select-sm form-control form-control-sm">
-                                                    <option value="10">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select> entries</label></div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div id="dataTable_filter" class="dataTables_filter"><label>Search:<input
-                                                    type="search" class="form-control form-control-sm" placeholder=""
-                                                    aria-controls="dataTable"></label></div>
-                                    </div>
+
+
+
+                                
+
+                                <!-- -------------Order Filtering Section------------- -->
+                                <div class="container-fluid">
+                                    <form method="GET">
+                                        <div class="row">
+
+                                            <!-- Filter by Status -->
+                                            <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="status">Status</label>
+                                                    <select name="status" id="status"
+                                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                                        <option value="All">All</option>
+                                                        <option value="Got Design">Got Design</option>
+                                                        <option value="Cutting">Cutting</option>
+                                                        <option value="Cutout Ready">Cutout Ready</option>
+                                                        <option value="Engrave">Engrave</option>
+                                                        <option value="Finishing">Finishing</option>
+                                                        <option value="Packaging">Packaging</option>
+                                                        <option value="Delivered">Delivered</option>
+                                                        <option value="Return">Return</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filter by Date From -->
+                                            <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="start_date">From:</label>
+                                                    <input type="date" name="start_date" id="start_date"
+                                                        class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+
+                                            <!-- Filter by Date To -->
+                                            <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="end_date">To:</label>
+                                                    <input type="date" name="end_date" id="end_date"
+                                                        class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+
+                                            <!-- Search by Tracking ID or Customer Name -->
+                                            <div class="col-12 col-sm-6 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="search">Search:</label>
+                                                    <input type="text" name="search" id="search"
+                                                        placeholder="Search by tracking ID or customer name"
+                                                        class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <div class="col-12 col-sm-6 col-md-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="submit"
+                                                        class="form-control form-control-sm btn btn-primary"
+                                                        aria-controls="dataTable" value="Search">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-md-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <a href="{% url 'order_request_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
                                 </div>
+                                <!-- -------------Order Filtering Section------------- -->
+
+
+
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <table class="table table-bordered dataTable no-footer" id="dataTable"
