@@ -158,6 +158,7 @@
                         </div>
                      </div>
                      <!-- /row-->
+                      
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
@@ -165,6 +166,16 @@
                               {{order_form.delivery_charge}}
                            </div>
                         </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_charge_cost.label}}</label>
+                              {{order_form.delivery_charge_cost}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
                               <label>{{order_form.payment_status.label}}</label>

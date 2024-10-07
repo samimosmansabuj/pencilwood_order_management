@@ -6,57 +6,60 @@
 
 {% block dashboard_body %}
 <main></main>
-    <div class="container-fluid">
-        <h1 class="mt-4">Dashboard</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
+<div class="container-fluid">
+    <h1 class="mt-4">Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
 
 
 
-        <div class="row">
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-primary text-white mb-4">
-                    <div class="card-body">{{order.count}} Total Order!</div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="{% url 'order_list' %}">View Details</a>
-                        <div class="small text-white"><i class="fa fa-angle-right"></i></div>
-                    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">{{ today_orders.count }} Today Order!  <b style="color: black;">(BDT{{ today_total_deal_value }})</b></div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'order_list' %}?today_orders=True">View Details</a>
+                    <div class="small text-white"><i class="fa fa-angle-right"></i></div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-dark text-white mb-4">
-                    <div class="card-body">{{order_request.count}} Total Order Request!</div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="{% url 'order_request_list' %}">View Details</a>
-                        <div class="small text-white"><i class="fa fa-angle-right"></i></div>
-                    </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">{{order.count}} Total Order!  <b style="color: black;">(BDT{{ all_order_total_deal_value  }})</b></div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'order_list' %}">View Details</a>
+                    <div class="small text-white"><i class="fa fa-angle-right"></i></div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-warning text-white mb-4">
-                    <div class="card-body">{{today_orders.count}} Today Order!</div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="{% url 'order_list' %}?filter=today">View Details</a>
-                        <div class="small text-white"><i class="fa fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-success text-white mb-4">
-                    <div class="card-body">{{user.count}} Total User!</div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="{% url 'member_list' %}">View Details</a>
-                        <div class="small text-white"><i class="fa fa-angle-right"></i></div>
-                    </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">{{order_request.count}} Total Order Request!</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'order_request_list' %}">View Details</a>
+                    <div class="small text-white"><i class="fa fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
 
-
-        
+        {% if request.user.user_type == 'Admin' %}
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">{{user.count}} Total User!</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'member_list' %}">View Details</a>
+                    <div class="small text-white"><i class="fa fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
     </div>
+
+
+
+
+</div>
 </main>
 {% endblock dashboard_body %}
-

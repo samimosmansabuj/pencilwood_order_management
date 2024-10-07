@@ -106,7 +106,6 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'account/user_confirm_delete.html'
     success_url = reverse_lazy('member_list')
 
-
 @login_required
 def member_view(request, id):
     member = get_object_or_404(Custom_User, id=id)

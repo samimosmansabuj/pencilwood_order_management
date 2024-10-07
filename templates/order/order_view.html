@@ -48,7 +48,7 @@
                                 <div class="media">
                                     <div class="media-body">
 
-
+                                        <!-- -------------Order Header Section Start----------- -->
                                         <div class="row">
                                             <div class="col-md-2 col-lg-2">
 
@@ -114,13 +114,20 @@
                                                         data-target="#edit_order">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
-                                                    <!-- <a href="#0" class="btn btn-sm btn-danger">
-                                                                                                <i class="fa fa-trash"></i> Cancel
-                                                                                            </a> -->
+                                                    {% if form3 %}
+                                                    <a href="#0" class="btn btn-sm btn-info" data-toggle="modal"
+                                                        data-target="#EditCustomerInfo">
+                                                        <i class="fa fa-edit"></i> Edit Customer Info
+                                                    </a>
+                                                    {% else %}
+                                                    <a href="{% url 'order_request_view' order.request_order.id %}" class="btn btn-sm btn-info">
+                                                        <i class="fa fa-go"></i> Edit Order Request
+                                                    </a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <!-- -------------Order Header Section End----------- -->
 
 
                                     </div>
@@ -167,6 +174,7 @@
 
 
 
+
                         <!-- -----------------Payment Details Start----------------- -->
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -198,9 +206,27 @@
                                     </tr>
 
                                     <tr>
-                                        <td colspan="3">Shipping Charge</td>
+                                        <td colspan="3">Shipping Charge (Collect)</td>
                                         <td>
                                             {{order.delivery_charge}} BDT
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #8cef8c">Shipping Charge (Cost)</td>
+                                        <td style="background-color: #8cef8c">
+                                            {% if order.delivery_charge_cost %}
+                                            {{order.delivery_charge_cost}} BDT
+                                            {% else %}
+                                            0
+                                            {% endif %}
+                                        </td>
+                                        <td style="background-color: #8cef8c">Total Amount</td>
+                                        <td style="background-color: #8cef8c">
+                                            {% if order.total_amount %}
+                                            {{order.total_amount}} BDT
+                                            {% else %}
+                                            0
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     <tr>
@@ -215,12 +241,18 @@
                                             {{order.due_amount}} BDT
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="4" style="text-align: center;">
+                                            <a href="#0" class="btn btn-sm btn-info" data-toggle="modal"
+                                                data-target="#EditAmount">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                         <!-- -----------------Payment Details End----------------- -->
-
-
 
 
 
@@ -270,7 +302,7 @@
                         </style>
                         <div class="image-container">
                             <div class="image-box">
-                                    <img src="
+                                <img src="
                                     {% if order.request_order.picture1 %}
                                     {{order.request_order.picture1}}
                                     {% endif %}
@@ -281,46 +313,30 @@
                                     " alt="Picture 1">
                             </div>
                             <div class="image-box">
-                                    <img src="
+                                <img src="
                                     {% if order.request_order.picture2 %}
                                     {{order.request_order.picture2}}
-                                    {% endif %}
-
-                                    {% if order.order_customer.picture2 %}
-                                    {{order.order_customer.picture2}}
                                     {% endif %}
                                     " alt="Picture 2">
                             </div>
                             <div class="image-box">
-                                    <img src="
-                                    {% if order.request_order %}
+                                <img src="
+                                    {% if order.request_order.picture3 %}
                                     {{order.request_order.picture3}}
-                                    {% endif %}
-
-                                    {% if order.order_customer %}
-                                    {{order.order_customer.picture3}}
                                     {% endif %}
                                     " alt="Picture 3">
                             </div>
                             <div class="image-box">
-                                    <img src="
-                                    {% if order.request_order %}
+                                <img src="
+                                    {% if order.request_order.picture4 %}
                                     {{order.request_order.picture4}}
-                                    {% endif %}
-
-                                    {% if order.order_customer %}
-                                    {{order.order_customer.picture4}}
                                     {% endif %}
                                     " alt="Picture 4">
                             </div>
                             <div class="image-box">
-                                    <img src="
-                                    {% if order.request_order %}
+                                <img src="
+                                    {% if order.request_order.picture5 %}
                                     {{order.request_order.picture5}}
-                                    {% endif %}
-
-                                    {% if order.order_customer %}
-                                    {{order.order_customer.picture5}}
                                     {% endif %}
                                     " alt="Picture 5">
                             </div>

@@ -12,40 +12,55 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
-                    <!-- {{form.as_p}} -->
-
-                    <div class="form-group">
-                        <label>Tracking ID</label>
-                        <input readonly type="text" class="form-control" value="{{order_request.tracking_ID}}"
-                            name="tracking_id">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tracking ID</label>
+                                <input readonly type="text" class="form-control" value="{{order_request.tracking_ID}}" name="tracking_id">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.status.label}}
+                                {{form.status}}
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        {{form.status}}
-
-                        <!-- <select name="status" id="" class="form-control" {% if order.status == 'Delivered' %}readonly{% endif %}>
-                     <option value="{{order.status}}">{{order.status}}</option>
-                     {% if order.status != 'Delivered' %}
-                     <option value="Pending">Pending</option>
-                     <option value="Received">Received</option>
-                     <option value="Shipped">Shipped</option>
-                     <option value="On The Way">On The Way</option>
-                     <option value="Receive at delivery point">Receive at delivery point</option>
-                     <option value="Out For Delivery">Out For Delivery</option>
-                     <option value="Delivered">Delivered</option>
-                     <option value="Return">Return</option>
-                     <option value="Cancel">Cancel</option>
-                     {% endif %}
-                 </select> -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.company.label}}
+                                {{form.company}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.name.label}}
+                                {{form.name}}
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Source</label>
-                        {{form.source}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.phone_number.label}}
+                                {{form.phone_number}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.source.label}}
+                                {{form.source}}
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Remark</label>
                         {{form.remark}}
+                    </div>
+                    <div class="form-group">
+                        {{form.product.label}}
+                        {{form.product}}
                     </div>
                     <div class="form-group">
                         <label>Date</label>
@@ -154,11 +169,21 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label>{{form2.delivery_charge_cost.label}}</label>
+                                {{form2.delivery_charge_cost}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label>{{form2.payment_status.label}}</label>
                                 {{form2.payment_status}}
                             </div>
                         </div>
                     </div>
+
+
 
                     <hr style="height: 2px; background-color: black;">
 
@@ -230,3 +255,93 @@
     </form>
 </div>
 <!-- Place Order Modal -->
+
+
+
+<!-- Picture Edit Modal -->
+<div class="modal fade" id="EditPictureLink" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST" action="{% url 'PictureUpdate' order_request.id %}">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Update Picture Link</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tracking ID</label>
+                                <input readonly type="text" class="form-control" value="{{order_request.tracking_ID}}"
+                                    name="tracking_id">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Last Update Date</label>
+                                <input type="text" class="form-control" value="{{order_request.last_update}}"
+                                    name="last_update" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.logo.label}}
+                                {{form3.logo}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.picture1.label}}
+                                {{form3.picture1}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.picture2.label}}
+                                {{form3.picture2}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.picture3.label}}
+                                {{form3.picture3}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.picture4.label}}
+                                {{form3.picture4}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form3.picture5.label}}
+                                {{form3.picture5}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Picture Update</button>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Picture Edit Modal -->

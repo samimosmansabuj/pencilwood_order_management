@@ -9,16 +9,17 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic import ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
+from django.db.models import Sum
 
-
+# ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order/order.html'
-    # paginate_by = 2
+    paginate_by = 2
     context_object_name = 'orders'
     ordering = ['-id']
     
-
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -27,6 +28,13 @@ class OrderListView(LoginRequiredMixin, ListView):
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
         product_id = self.request.GET.get('product')
+        today_orders = self.request.GET.get('today_orders')
+
+        # Filter by today order
+        if today_orders:
+            today = timezone.now().date()
+            queryset = queryset.filter(order_date__date=today)
+            return queryset
 
         # Filter by status
         if status and status != 'All':
@@ -64,25 +72,29 @@ class OrderListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
+        
+        # Count today's orders
+        today = timezone.now().date()
+        context['today_orders'] = Order.objects.filter(order_date__date=today)
+        
+        # Get the queryset
+        queryset = self.get_queryset()
+
+        # Calculate total deal value and due amount
+        total_deal_value = queryset.aggregate(Sum('deal_value'))['deal_value__sum'] or 0
+        total_due_amount = queryset.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
+
+        # Add totals to the context
+        context['total_deal_value'] = total_deal_value
+        context['total_due_amount'] = total_due_amount
+        
         return context
-
-
-# class OrderListView(LoginRequiredMixin, ListView):
-#     model = Order
-#     template_name = 'order/order.html'
-#     context_object_name = 'orders'
-#     paginate_by = 2  # Pagination enabled
-#     ordering = ['-id']
-
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         return queryset
-
 
 
 @login_required
 def order_view(request, id):
     order = get_object_or_404(Order, id=id)
+    context = {'order': order}
 
     if request.method == 'POST':
         form = OrderStatusUpdateForm(request.POST, instance=order)
@@ -94,9 +106,43 @@ def order_view(request, id):
         return redirect(request.META['HTTP_REFERER'])
     else:
         form = OrderStatusUpdateForm(instance=order)
+        form2 = OrderPaymentUpdateForm(instance=order)
+        context['form'] = form
+        context['form2'] = form2
+        if order.order_customer and order.request_order is None:
+            form3 = OrderCustomerForm(instance=order.order_customer)
+            form3.fields['product'].required = False
+            context['form3'] = form3
+    print(context)
+    return render(request, 'order/order_view.html', context)
 
-    return render(request, 'order/order_view.html', {'order': order, 'form': form})
 
+@login_required
+def CustomerOrderInfoUpdate(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form3 = OrderCustomerForm(request.POST, instance=order.order_customer)
+        if form3.is_valid():
+            form3.save()
+            messages.success(request, 'Order Customer Info updated successfully!')
+        else:
+            messages.error(request, f'Something went wrong: {form3.errors}')
+    return redirect('order_view', id=order.pk)
+
+@login_required
+def orderPaymentUpdate(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form2 = OrderPaymentUpdateForm(request.POST, instance=order)
+        if form2.is_valid():
+            form2.save()
+            messages.success(request, 'Payment details updated successfully!')
+            return redirect('order_view', id=order.pk)
+        else:
+            messages.error(request, f'Something went wrong: {form2.errors}')
+            return redirect('order_view', id=order.pk)
+    else:
+        return redirect('order_view', id=order.pk)
 
 @login_required
 def add_new_order(request):
@@ -125,16 +171,21 @@ def add_new_order(request):
         'order_form': order_form
     })
 
-
+@login_required
 def order_success(request):
     return render(request, 'order/order_success.html')
+
+# ------------Order Section End------------
+
+
+
 
 
 class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'  # Define your template here
     context_object_name = 'order_requests'
-    # paginate_by = 1
+    paginate_by = 2
     ordering = ['-id']
 
     def get_queryset(self):
@@ -145,7 +196,14 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
-        product_ids = self.request.GET.get('products')
+        product_id = self.request.GET.get('product')
+        today_orders = self.request.GET.get('today_orders')
+        
+        # Filter by today order
+        if today_orders:
+            today = timezone.now().date()
+            queryset = queryset.filter(order_date__date=today)
+            return queryset
 
         # Filter by status
         if status and status != 'All':
@@ -167,14 +225,19 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 Q(phone_number__icontains=search_query)
             )
 
-        if product_ids and product_ids.isdigit():
-            queryset = queryset.filter(product__id=product_ids).distinct()
+        if product_id and product_id.isdigit():
+            queryset = queryset.filter(product__id=product_id).distinct()
 
         return queryset
-
+    
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs) # Add products to the context for dropdown/filter options
+        context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
+        
+        # Count today's orders
+        today = timezone.now().date()
+        context['today_orders'] = Order.objects.filter(order_date__date=today)
+        
         return context
 
 
@@ -205,13 +268,14 @@ def order_request_view(request, pk):
         if form.is_valid():
             form.save()
         else:
-            messages.error(request, 'Somethings is wrong, please try again!')
+            messages.error(request, f'Something went wrong: {form.errors}')
         return redirect('order_request_view', pk=order_request.pk)
     else:
-        form2 = OrderForm()
         form = OrderRequestStatusUpdateForm(instance=order_request)
+        form2 = OrderForm()
+        form3 = OrderRequestPictureUpdateForm(instance=order_request)
 
-    return render(request, 'request/order_request_view.html', {'order_request': order_request, 'form': form, 'form2': form2})
+    return render(request, 'request/order_request_view.html', {'order_request': order_request, 'form': form, 'form2': form2, 'form3': form3})
 
 
 @login_required
@@ -238,3 +302,17 @@ def request_to_order(request, pk):
             else:
                 messages.success(request, form2.errors)
                 return redirect('order_request_view', pk=order_request.pk)
+
+
+@login_required
+def PictureUpdate(request, pk):
+    order_request = get_object_or_404(OrderRequest, pk=pk)
+    if request.method == 'POST':
+        form3 = OrderRequestPictureUpdateForm(request.POST, instance=order_request)
+        if form3.is_valid():
+            form3.save()
+            messages.success(request, 'Picture details updated successfully!')
+        else:
+            messages.error(request, f'Something went wrong: {form3.errors}')
+    return redirect('order_request_view', pk=order_request.pk)
+

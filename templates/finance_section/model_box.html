@@ -1,0 +1,78 @@
+<!-- Cost Add Modal -->
+<div class="modal fade" id="AddCost" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST" action="{% url 'maintenance_cost_create' %}">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Add Costing</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        {{form.title.label}}
+                        {{form.title}}
+                    </div>
+                    <div class="form-group">
+                        {{form.cost.label}}
+                        {{form.cost}}
+                    </div>
+                </div>
+
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add Cost</button>
+                </div>
+                
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Cost Add Modal -->
+
+<!-- Cost Updated Modal -->
+<div class="modal fade" id="#EditCost" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST" action="{% url 'maintenance_cost_create' %}">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Add Costing</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        {{form.title.label}}
+                        {{form.title}}
+                    </div>
+                    <div class="form-group">
+                        {{form.cost.label}}
+                        {{form.cost}}
+                    </div>
+                </div>
+
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add Cost</button>
+                </div>
+                
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Cost Add Modal -->
+
+
+

@@ -84,9 +84,18 @@
                                                         data-target="#edit_order_request">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
-                                                    <a href="{% url 'order_request_delete' order_request.id %}" class="btn btn-sm btn-danger">
+                                                    <a href="{% url 'order_request_delete' order_request.id %}"
+                                                        class="btn btn-sm btn-danger">
                                                         <i class="fa fa-trash"></i> Delete
                                                     </a>
+
+                                                    {% if order_request.order_created %}
+                                                    <a href="{% url 'order_view' order_request.order.id %}"
+                                                        class="btn btn-sm btn-dark">
+                                                        <i class="fa fa-open"></i> Go to Order
+                                                    </a>
+                                                    {% endif %}
+
                                                 </div>
 
                                             </div>
@@ -95,8 +104,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        
+
+
                         <!-- -------Order Details Section Start------- -->
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -126,68 +135,92 @@
                         </div>
                         <!-- -------Order Details Section End------- -->
 
-                        <!-- -------Image Section Start------- -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 150px; white-space: nowrap;">Title</th>
-                                        <th>Link</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Logo</td>
-                                        <td><a href="{{order_request.logo}}" target="_blank">
-                                                {% if order_request.logo %}
-                                                {{order_request.logo}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Picture 01</td>
-                                        <td><a href="{{order_request.picture1}}" target="_blank">
-                                                {% if order_request.picture1 %}
-                                                {{order_request.picture1}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Picture 02</td>
-                                        <td><a href="{{order_request.picture2}}" target="_blank">
-                                                {% if order_request.picture2 %}
-                                                {{order_request.picture2}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Picture 03</td>
-                                        <td><a href="{{order_request.picture3}}" target="_blank">
-                                                {% if order_request.picture3 %}
-                                                {{order_request.picture3}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Picture 04</td>
-                                        <td><a href="{{order_request.picture4}}" target="_blank">
-                                                {% if order_request.picture4 %}
-                                                {{order_request.picture4}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Picture 05</td>
-                                        <td><a href="{{order_request.picture5}}" target="_blank">
-                                                {% if order_request.picture5 %}
-                                                {{order_request.picture5}}
-                                                {% endif %}
-                                            </a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- -----------------Image Details Start----------------- -->
+                        <style>
+                            .image-container {
+                                display: grid;
+                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                                gap: 10px;
+                                padding: 10px;
+                                background: #cbb9d075;
+                                border-radius: 5px;
+
+                            }
+
+                            .image-box {
+                                overflow: hidden;
+                                border-radius: 10px;
+                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                                transition: transform 0.3s ease;
+                            }
+
+                            .image-box img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                display: block;
+                            }
+
+                            .image-box:hover {
+                                transform: scale(1.05);
+                            }
+
+                            /* Media queries to make it more responsive */
+                            @media (max-width: 768px) {
+                                .image-container {
+                                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                                }
+                            }
+
+                            @media (max-width: 480px) {
+                                .image-container {
+                                    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                                }
+                            }
+                        </style>
+                        <div class="image-container">
+                            <div class="image-box">
+                                <img src="
+                                    {% if order_request.picture1 %}
+                                    {{order_request.picture1}}
+                                    {% endif %}
+                                    " alt="Picture 1">
+                            </div>
+                            <div class="image-box">
+                                <img src="
+                                    {% if order_request.picture2 %}
+                                    {{order_request.picture2}}
+                                    {% endif %}
+                                    " alt="Picture 2">
+                            </div>
+                            <div class="image-box">
+                                <img src="
+                                    {% if order_request.picture3 %}
+                                    {{order_request.picture3}}
+                                    {% endif %}
+                                    " alt="Picture 3">
+                            </div>
+                            <div class="image-box">
+                                <img src="
+                                    {% if order_request.picture4 %}
+                                    {{order_request.picture4}}
+                                    {% endif %}
+                                    " alt="Picture 4">
+                            </div>
+                            <div class="image-box">
+                                <img src="
+                                    {% if order_request.picture5 %}
+                                    {{order_request.picture5}}
+                                    {% endif %}
+                                    " alt="Picture 5">
+                            </div>
                         </div>
-                        <!-- -------Image Section End------- -->
+                        <div>
+                            <a href="#0" class="btn btn-sm btn-info" data-toggle="modal" data-target="#EditPictureLink">
+                                <i class="fa fa-edit"></i> Edit
+                            </a>
+                        </div>
+                        <!-- -----------------Image Details End----------------- -->
 
                     </div>
                 </div>
@@ -195,7 +228,7 @@
 
 
             <!-- -------Place Order Section Start------- -->
-            {% if order_request.status == 'Done' %}
+            {% if order_request.status == 'Done' or order_request.order_created %}
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-body">
@@ -204,7 +237,7 @@
 
                                 {% if order_request.order_created %}
                                 <a href="{% url 'order_view' order_request.order.id %}"
-                                    class="btn btn-primary btn-block">Order Created</a>
+                                    class="btn btn-primary btn-block">Go to Order</a>
                                 {% else %}
                                 <a href="#0" data-toggle="modal" data-target="#PlaceOrderModel"
                                     class="btn btn-success btn-block">Place Order</a>

@@ -33,7 +33,7 @@ class OrderCustomerForm(forms.ModelForm):
         labels = {
             'picture1': 'Picture 01',
         }
-    
+        
     def __init__(self, *args, **kwargs):
         super(OrderCustomerForm, self).__init__(*args, **kwargs)
         self.fields['logo'].required = False
@@ -44,7 +44,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date',
+            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost'
         ]
 
     delivery_address = forms.CharField(widget=forms.TextInput(attrs={
@@ -63,10 +63,6 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
     }))
 
-    # deal_value = forms.DecimalField(widget=forms.NumberInput(attrs={
-    #     'class': 'form-control', 'id': 'inputDealValue', 'placeholder': 'Enter Deal Value'
-    # }))
-
     advance_amount = forms.DecimalField(widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
     }))
@@ -77,6 +73,10 @@ class OrderForm(forms.ModelForm):
 
     delivery_charge = forms.DecimalField(widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryCharge', 'placeholder': 'Enter Delivery Charge'
+    }))
+    
+    delivery_charge_cost = forms.DecimalField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryChargeCost', 'placeholder': 'Enter Delivery Charge Cost'
     }))
 
     payment_number = forms.CharField(required=False, widget=forms.TextInput(attrs={
@@ -116,7 +116,7 @@ class OrderStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'status', 'work_assign', 'remark', 'delivery_date'
+            'status', 'work_assign', 'remark', 'delivery_date', 'delivery_address'
         ]
 
     status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
@@ -128,9 +128,40 @@ class OrderStatusUpdateForm(forms.ModelForm):
     remark = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     }))
+    delivery_address = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryAddress', 'placeholder': 'Enter Delivery Address'
+    }))
     delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryDate', 'placeholder': 'Select Delivery Date', 'type': 'date'
     }))
+
+
+class OrderPaymentUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'delivery_charge_cost']
+
+    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
+    }))
+
+    unit_price = forms.DecimalField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
+    }))
+
+    advance_amount = forms.DecimalField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
+    }))
+
+    delivery_charge = forms.DecimalField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryCharge', 'placeholder': 'Enter Delivery Charge'
+    }))
+    
+    delivery_charge_cost = forms.DecimalField(widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryChargeCost', 'placeholder': 'Enter Delivery Charge Cost'
+    }))
+
+
 # ----------------Order Section End----------------
 
 
@@ -179,32 +210,32 @@ class OrderRequestForm(forms.ModelForm):
     })
     )
 
-    logo = forms.URLField(required=False, max_length=50, widget=forms.TextInput(attrs={
+    logo = forms.URLField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputLogo', 'placeholder': 'Enter Logo URL'
     })
     )
 
-    picture1 = forms.URLField(label="Picture 01", required=False, max_length=50, widget=forms.TextInput(attrs={
+    picture1 = forms.URLField(label="Picture 01", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture1', 'placeholder': 'Enter Picture 1 URL'
     })
     )
 
-    picture2 = forms.URLField(label="Picture 02", required=False, max_length=50, widget=forms.TextInput(attrs={
+    picture2 = forms.URLField(label="Picture 02", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture2', 'placeholder': 'Enter Picture 2 URL'
     })
     )
 
-    picture3 = forms.URLField(label="Picture 03", required=False, max_length=50, widget=forms.TextInput(attrs={
+    picture3 = forms.URLField(label="Picture 03", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture3', 'placeholder': 'Enter Picture 3 URL'
     })
     )
 
-    picture4 = forms.URLField(label="Picture 04", required=False, max_length=50, widget=forms.TextInput(attrs={
+    picture4 = forms.URLField(label="Picture 04", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture4', 'placeholder': 'Enter Picture 4 URL'
     })
     )
 
-    picture5 = forms.URLField(label="Picture 05", required=False, max_length=50, widget=forms.TextInput(attrs={
+    picture5 = forms.URLField(label="Picture 05", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture5', 'placeholder': 'Enter Picture 5 URL'
     })
     )
@@ -214,9 +245,27 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'source', 'status', 'remark'
+            'company', 'name', 'phone_number', 'source', 'status', 'remark', 'product'
         ]
+    company = forms.CharField(label='Company Name', max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
+    })
+    )
 
+    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
+        'class': 'form-check-inline', 'id': 'inputProduct'
+    })
+    )
+    
+    name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
+    })
+    )
+
+    phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
+    })
+    )
     source = forms.ChoiceField(choices=OrderRequest.SOURCE, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputSource'
     })
@@ -229,4 +278,33 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     })
     )
+  
+    
+class OrderRequestPictureUpdateForm(forms.ModelForm):
+    class Meta:
+        model = OrderRequest
+        fields = [
+            'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'
+        ]
+    logo = forms.URLField(widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputLogo', 'placeholder': 'Enter Logo URL'
+    }))
+    picture1 = forms.URLField(label="Picture 01", required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPicture1', 'placeholder': 'Enter Picture 1 URL'
+    }))
+    picture2 = forms.URLField(label="Picture 02", required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPicture2', 'placeholder': 'Enter Picture 2 URL'
+    }))
+    picture3 = forms.URLField(label="Picture 03", required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPicture3', 'placeholder': 'Enter Picture 3 URL'
+    }))
+    picture4 = forms.URLField(label="Picture 04", required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPicture4', 'placeholder': 'Enter Picture 4 URL'
+    }))
+    picture5 = forms.URLField(label="Picture 05", required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputPicture5', 'placeholder': 'Enter Picture 5 URL'
+    })
+    )
+
+
 # ----------------Order Request Section End----------------

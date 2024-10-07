@@ -1,15 +1,6 @@
 from django import forms
-from .models import Site_Settings
+from .models import Site_Settings, Maintenance_Cost, Daily_Profit
 from order.models import Product
-
-
-class ProductForm(forms.ModelForm):
-    name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
-        'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Product Name',
-    }))
-    class Meta:
-        model = Product
-        fields = ['name']
 
 
 class WebsiteSettingsForm(forms.ModelForm):
@@ -51,7 +42,30 @@ class WebsiteSettingsForm(forms.ModelForm):
         if logo:
             return logo
         return None
-    
+
+class ProductForm(forms.ModelForm):
+    name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Product Name',
+    }))
+    class Meta:
+        model = Product
+        fields = ['name']
+
+
+class MaintenanceCostForm(forms.ModelForm):
+    title = forms.CharField(max_length=500, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputTitle', 'placeholder': 'Enter Cost Title',
+    }))
+    cost = forms.DecimalField(max_digits=5, decimal_places=2, widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputCost', 'placeholder': 'Enter Cost Amount',
+    }))
+    class Meta:
+        model = Maintenance_Cost
+        fields = ['title', 'cost']
     
 
+class DailyProfitForm(forms.ModelForm):
+    class Meta:
+        model = Daily_Profit
+        fields = ['note']
 

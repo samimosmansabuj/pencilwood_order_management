@@ -135,6 +135,10 @@ class Order(models.Model):
     advance_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
     due_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
     delivery_charge = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
+    delivery_charge_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
+    extra_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
+    
     
     payment_number = models.CharField(max_length=13, blank=True, null=True)
     transaction_id = models.CharField(max_length=30, blank=True, null=True)
@@ -151,14 +155,20 @@ class Order(models.Model):
     return_date = models.DateField(blank=True,null=True)
     
     def save(self, *args, **kwargs):
+        advance_amount = self.advance_amount or 0
+        delivery_charge = self.delivery_charge or 0
+        delivery_charge_cost = self.delivery_charge_cost or 0
         unit_price = self.unit_price or 0
         quantity = self.quantity or 0
         
-        advance_amount = self.advance_amount or 0
-        delivery_charge = self.delivery_charge or 0
+        deal_value = unit_price * quantity
+        due_amount = (unit_price * quantity + delivery_charge) - advance_amount
+        extra_cost = delivery_charge_cost - delivery_charge
         
-        self.deal_value = unit_price * quantity
-        self.due_amount = (unit_price * quantity + delivery_charge) - advance_amount
+        self.deal_value = deal_value
+        self.due_amount = due_amount
+        self.extra_cost = extra_cost
+        self.total_amount = deal_value - extra_cost
         
         if self.request_order:
             self.tracking_ID = self.request_order.tracking_ID

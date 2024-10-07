@@ -60,24 +60,28 @@
                                                     <select name="status" id="status"
                                                         class="custom-select custom-select-sm form-control form-control-sm">
                                                         <option value="All">All</option>
-                                                        <option value="Got Design">Got Design</option>
-                                                        <option value="Cutting">Cutting</option>
-                                                        <option value="Cutout Ready">Cutout Ready</option>
-                                                        <option value="Engrave">Engrave</option>
-                                                        <option value="Finishing">Finishing</option>
-                                                        <option value="Packaging">Packaging</option>
-                                                        <option value="Delivered">Delivered</option>
-                                                        <option value="Return">Return</option>
+                                                        <option value="None">None</option>
+                                                        <option value="Design">Design</option>
+                                                        <option value="Correction">Correction</option>
+                                                        <option value="Call">Call</option>
+                                                        <option value="Knock">Knock</option>
+                                                        <option value="Other">Other</option>
+                                                        <option value="Get Design">Get Design</option>
+                                                        <option value="Done">Done</option>
+                                                        <option value="Sample">Sample</option>
+                                                        <option value="Hold">Hold</option>
+                                                        <option value="Cancel">Cancel</option>
+                                                        <option value="Mockup">Mockup</option>
                                                     </select>
                                                 </div>
                                             </div>
 
 
                                             <!-- Filter by Products -->
-                                            <div class="col-12 col-sm-6 col-md-2">
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                 <div class="form-group">
-                                                    <label for="status">Products</label>
-                                                    <select name="products" id="products"
+                                                    <label for="status">Product</label>
+                                                    <select name="product" id="product"
                                                         class="custom-select custom-select-sm form-control form-control-sm">
                                                         <option value="">-- Select Product --</option>
                                                         <!-- Blank option -->
@@ -223,26 +227,58 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
                                         <div class="dataTables_info" id="dataTable_info" role="status"
-                                            aria-live="polite">Showing 1 to 10 of 10 entries</div>
+                                            aria-live="polite">
+                                            Showing {{page_obj.start_index}} to {{page_obj.end_index}} of
+                                            {{page_obj.paginator.count}} entries
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
                                             <ul class="pagination">
-                                                <li class="paginate_button page-item previous disabled"
-                                                    id="dataTable_previous"><a href="#" aria-controls="dataTable"
-                                                        data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
-                                                <li class="paginate_button page-item active"><a href="#"
-                                                        aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-                                                        class="page-link">1</a></li>
-                                                <li class="paginate_button page-item next disabled" id="dataTable_next">
-                                                    <a href="#" aria-controls="dataTable" data-dt-idx="2" tabindex="0"
+                                                <!-- Previous button -->
+                                                {% if page_obj.has_previous %}
+                                                <li class="paginate_button page-item">
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                        class="page-link">Previous</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item disabled">
+                                                    <a href="#" class="page-link">Previous</a>
+                                                </li>
+                                                {% endif %}
+
+                                                <!-- Page numbers -->
+                                                {% for num in page_obj.paginator.page_range %}
+                                                {% if page_obj.number == num %}
+                                                <li class="paginate_button page-item active">
+                                                    <a href="#" class="page-link">{{ num }}</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item">
+                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                        class="page-link">{{ num }}</a>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+
+                                                <!-- Next button -->
+                                                {% if page_obj.has_next %}
+                                                <li class="paginate_button page-item">
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item disabled">
+                                                    <a href="#" class="page-link">Next</a>
+                                                </li>
+                                                {% endif %}
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- -------------Pagination Section------------- -->
+
+
                             </div>
                         </div>
                     </div>
