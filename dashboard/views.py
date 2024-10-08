@@ -1,6 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from account.models import Custom_User
 from order.models import Order, OrderRequest
@@ -49,34 +48,39 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class SettingsView(LoginRequiredMixin, UpdateView):
+    model = Site_Settings
+    form_class = WebsiteSettingsForm
+    template_name = 'dashboard/settings.html'
+    success_url = '/'
 
-@login_required
-def settings(request):
-    site_settings = Site_Settings.objects.all().first()
-    if request.method == 'POST':
-        form = WebsiteSettingsForm(request.POST, request.FILES, instance=site_settings)
-        if form.is_valid():
-            setting = form.save(commit=False)
-            
-            # If there are new files (logo or favicon), they will be saved
-            if 'logo' in request.FILES:
-                if site_settings and site_settings.logo:
-                    os.remove(site_settings.logo.path)
-                setting.logo = request.FILES['logo']
-            if 'fav_icon' in request.FILES:
-                if site_settings and site_settings.fav_icon:
-                    os.remove(site_settings.fav_icon.path)
-                setting.fav_icon = request.FILES['fav_icon']
-            
-            setting.save()
-            messages.success(request, 'Your profile was updated successfully!')
-            return redirect(request.META['HTTP_REFERER'])
-        else:
-            messages.error(request, f'{form.errors}')
-            return redirect(request.META['HTTP_REFERER'])
-    else:
-        form = WebsiteSettingsForm(instance=site_settings)
-    return render(request, 'dashboard/settings.html', {'form': form})
+    def get_object(self, queryset=None):
+        return Site_Settings.objects.first()
+
+    def form_valid(self, form):
+        setting = form.save(commit=False)
+        if 'logo' in self.request.FILES:
+            if setting.logo:
+                os.remove(setting.logo.path)
+            setting.logo = self.request.FILES['logo']
+        
+        if 'fav_icon' in self.request.FILES:
+            if setting.fav_icon:
+                os.remove(setting.fav_icon.path)
+            setting.fav_icon = self.request.FILES['fav_icon']
+
+        setting.save()
+        messages.success(self.request, 'Your settings were updated successfully!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """Handle the logic for an invalid form submission."""
+        messages.error(self.request, f'Error updating settings: {form.errors}')
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return self.request.META['HTTP_REFERER']
+
 
 
 
@@ -86,7 +90,7 @@ class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'product/product_list.html'  # Your template for listing
     context_object_name = 'products'
-    paginate_by = 3
+    paginate_by = 5
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -137,7 +141,7 @@ class MaintenanceCostListView(LoginRequiredMixin, ListView):
     template_name = 'finance_section/maintenance_cost_list.html'
     context_object_name = 'costs'
     paginate_by = 4
-    
+    ordering = ['-id']
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -177,17 +181,8 @@ class MaintenanceCostListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = MaintenanceCostForm()
         
-        # Count today's orders
-        today = timezone.now().date()
-        context['today_costs'] = Maintenance_Cost.objects.filter(create_date__date=today)
-        
-        # Get the queryset
-        queryset = self.get_queryset()
-        
-        # Add totals to the context
-        total_cost = queryset.aggregate(Sum('cost'))['cost__sum'] or 0
+        total_cost = self.get_queryset().aggregate(Sum('cost'))['cost__sum'] or 0
         context['total_cost'] = total_cost
-        
         return context
 
 # Create view
@@ -231,41 +226,74 @@ class DailyProfitListView(ListView):
     model = Daily_Profit
     template_name = 'daily_profit/list.html'
     context_object_name = 'profits'
+    ordering = ['-date']
+    paginate_by = 1
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        search_query = self.request.GET.get('search')
+
+        # Filter by date range
+        if start_date:
+            start_date = parse_date(start_date)
+            queryset = queryset.filter(date__gte=start_date)
+        if end_date:
+            end_date = parse_date(end_date)
+            queryset = queryset.filter(date__lte=end_date)
+
+        # Filter by Search
+        if search_query:
+            queryset = queryset.filter(
+                Q(note__icontains=search_query) |
+                Q(date__icontains=search_query)
+            )
+
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
-        print(queryset)
         today = localdate()
-        print(today)
         context['today_profit_added'] = queryset.filter(date=today).exists()
-        print(context['today_profit_added'])
+        
+        context['total_sell_amount'] = queryset.aggregate(Sum('total_sell'))['total_sell__sum'] or 0
+        context['total_cost'] = queryset.aggregate(Sum('cost'))['cost__sum'] or 0
+        context['total_profit'] = queryset.aggregate(Sum('profit'))['profit__sum'] or 0
+        
         return context
-
+ 
 
 def TodayProfitCreate(request):
     if request.method == "POST":
         today = localdate()
-        existing_profit = Daily_Profit.objects.filter(date=today).exists()
-        if existing_profit:
-            messages.warning(request, 'Daily Profit for today already exists.')
-        else:
-            Daily_Profit.objects.create(note="Create Successfully!")
-    else:
-        messages.warning(request, 'Somethings wrong!')
-    return redirect('daily_profit_list')
-
-
-class DailyProfitUpdateView(UpdateView):
-    model = Daily_Profit
-    form_class = DailyProfitForm
-    template_name = 'daily_profit/form.html'
-    success_url = reverse_lazy('daily_profit_list')
-
-class DailyProfitDeleteView(DeleteView):
-    model = Daily_Profit
-    template_name = 'daily_profit/confirm_delete.html'
-    success_url = reverse_lazy('daily_profit_list')
+        orders_today = Order.objects.filter(order_date__date=today)
+        maintenance_costs_today = Maintenance_Cost.objects.filter(create_date__date=today)
+        
+        total_orders_amount = orders_today.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        total_maintenance_cost = maintenance_costs_today.aggregate(Sum('cost'))['cost__sum'] or 0
+        total_profit = total_orders_amount - total_maintenance_cost
+        
+        daily_profit, created = Daily_Profit.objects.get_or_create(
+            date=today,
+            defaults={
+                'total_sell': total_orders_amount,
+                'cost': total_maintenance_cost,
+                'profit': total_profit
+            }
+        )
+        
+        print('daily profit----------------', daily_profit)
+        
+        if not created:
+            daily_profit.total_sell = total_orders_amount
+            daily_profit.cost = total_maintenance_cost
+            daily_profit.profit = total_profit
+            daily_profit.save()
+        
+        return redirect('daily_profit_list')
 
 # -----------------Daily Profit Section Start---------------------
 

@@ -50,8 +50,8 @@
                                  <div class="box_general padding_bottom">
                                     <div class="header_box version_2 border-bottom p-3">
                                        <h6 class="m-0">
-                                          {% if member.profile_picture %}
-                                          <img src="{{member.profile_picture.url}}" alt="profile-picture" style="width: 16px; height: auto; border-radius: 100%;">
+                                          {% if object.profile_picture %}
+                                          <img src="{{object.profile_picture.url}}" alt="profile-picture" style="width: 16px; height: auto; border-radius: 100%;">
                                           {% else %}
                                           <i class="fa fa-user-circle text-muted mr-2"></i>
                                           {% endif %}
@@ -112,7 +112,7 @@
                                           <div class="col-md-6">
                                              <div class="form-group">
                                                 <label>Joined date</label>
-                                                <input type="text" class="form-control" value="{{member.date_joined}}" readonly disabled>
+                                                <input type="text" class="form-control" value="{{object.date_joined}}" readonly disabled>
                                                 
                                              </div>
                                           </div>
@@ -142,10 +142,6 @@
                                           {{form.password}}
                                           <p>{{form.password.help_text}}</p>
                                        </div>
-                                       <!-- <div class="form-group">
-                                          <label>Confirm new password</label>
-                                          <input class="form-control" type="password" name="confirm_new_password">
-                                       </div> -->
                                     </div>
                                  </div>
                               </div>
@@ -159,7 +155,7 @@
 
                <div class="save mb-2">
                   <button type="submit" class="btn btn-success">Save</button>
-                  <a href="{% url 'user_delete' member.id %}" class="btn btn-danger">Delete</a>
+                  <a href="{% url 'user_delete' object.id %}" class="btn btn-danger">Delete</a>
                </div>
             </div>
          </div>

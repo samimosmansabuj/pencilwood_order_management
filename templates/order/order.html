@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <!-- Display a message if today's orders are being shown -->
         {% if request.GET.today_orders %}
-        <h1>Today's Orders</h1>
+        <h3 class="mt-4">Today's Orders</h3>
         {% else %}
         <h1 class="mt-4">Order Listings</h1>
         {% endif %}
@@ -48,7 +48,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Order ({{orders.count}})
+                        All Order ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -64,8 +64,10 @@
                                             <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                 <div class="form-group">
                                                     <label for="status">Status</label>
-                                                    <select name="status" id="status"
-                                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                                    <select name="status" id="status" class="custom-select custom-select-sm form-control form-control-sm">
+                                                        {% if request.GET.status %}
+                                                        <option value="{{request.GET.status}}" selected>{{request.GET.status}}</option>
+                                                        {% endif %}
                                                         <option value="All">All</option>
                                                         <option value="Got Design">Got Design</option>
                                                         <option value="Cutting">Cutting</option>
@@ -88,7 +90,11 @@
                                                         <option value="">-- Select Product --</option>
                                                         <!-- Blank option -->
                                                         {% for product in products %}
-                                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                                        <option value="{{ product.id }}"
+                                                        {% if request.GET.product == product.id|stringformat:"d" %}
+                                                        selected
+                                                        {% endif %}
+                                                        >{{ product.name }}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
@@ -99,7 +105,7 @@
                                                 <div class="form-group">
                                                     <label for="start_date">From:</label>
                                                     <input type="date" name="start_date" id="start_date"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" value="{{request.GET.start_date}}">
                                                 </div>
                                             </div>
 
@@ -108,7 +114,7 @@
                                                 <div class="form-group">
                                                     <label for="end_date">To:</label>
                                                     <input type="date" name="end_date" id="end_date"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" value="{{request.GET.end_date}}">
                                                 </div>
                                             </div>
 
@@ -117,8 +123,7 @@
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
                                                     <input type="text" name="search" id="search"
-                                                        placeholder="Search by tracking ID or customer name"
-                                                        class="form-control form-control-sm">
+                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm" value="{{ request.GET.search }}">
                                                 </div>
                                             </div>
 
@@ -153,42 +158,44 @@
                                             style="width: 100%;">
                                             <thead>
                                                 <tr class="text-uppercase" role="row">
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="ID: activate to sort column ascending"
-                                                        style="width: fixed;">ID</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending" ">Company</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Name: activate to sort column ascending" ">Name</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending" ">Product</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending" ">Status</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Deal Value: activate to sort column ascending" ">Deal Value</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Due Value: activate to sort column ascending" ">Due Amount</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Created Date: activate to sort column ascending">
                                                         Created Date</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Action: activate to sort column ascending">Action
-                                                    </th>
+                                                        aria-label="ID: activate to sort column ascending"
+                                                        style="width: fixed;">ID</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Company: activate to sort column ascending">Company</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Name: activate to sort column ascending">Name</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Product: activate to sort column ascending">Product</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Status: activate to sort column ascending">Status</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Deal Value: activate to sort column ascending">Deal Value</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Due Amount: activate to sort column ascending">Due Amount</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Action: activate to sort column ascending">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <!---->
                                                 {% for order in orders %}
                                                 <tr role="row" class="odd">
+                                                    <td>
+                                                        {{order.order_date}}
+                                                    </td>
                                                     <td>
                                                         {{order.tracking_ID}}
                                                     </td>
@@ -225,9 +232,6 @@
                                                     </td>
                                                     <td>
                                                         {{order.due_amount}}
-                                                    </td>
-                                                    <td>
-                                                        {{order.order_date}}
                                                     </td>
                                                     <td>
                                                         <a href="{% url 'order_view' order.id %}"
@@ -279,7 +283,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -296,8 +300,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                                                        class="page-link">{{ num }}</a>
+                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}" class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
                                                 {% endfor %}
@@ -305,8 +308,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                                                        class="page-link">Next</a>
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}" class="page-link">Next</a>
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item disabled">

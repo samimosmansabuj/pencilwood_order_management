@@ -16,9 +16,9 @@ from django.db.models import Sum
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order/order.html'
-    paginate_by = 2
+    paginate_by = 5
     context_object_name = 'orders'
-    ordering = ['-id']
+    ordering = ['-order_date']
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -55,9 +55,11 @@ class OrderListView(LoginRequiredMixin, ListView):
                 Q(request_order__name__icontains=search_query) |
                 Q(request_order__company__icontains=search_query) |
                 Q(request_order__phone_number__icontains=search_query) |
+                Q(request_order__product__name__icontains=search_query) |
                 Q(order_customer__name__icontains=search_query) |
                 Q(order_customer__company__icontains=search_query) |
-                Q(order_customer__phone_number__icontains=search_query)
+                Q(order_customer__phone_number__icontains=search_query) |
+                Q(order_customer__product__name__icontains=search_query)
             )
         
         # Filter by Product
@@ -74,19 +76,12 @@ class OrderListView(LoginRequiredMixin, ListView):
         context['products'] = Product.objects.all()
         
         # Count today's orders
-        today = timezone.now().date()
-        context['today_orders'] = Order.objects.filter(order_date__date=today)
+        # today = timezone.now().date()
+        # context['today_orders'] = Order.objects.filter(order_date__date=today)
         
-        # Get the queryset
         queryset = self.get_queryset()
-
-        # Calculate total deal value and due amount
-        total_deal_value = queryset.aggregate(Sum('deal_value'))['deal_value__sum'] or 0
-        total_due_amount = queryset.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
-
-        # Add totals to the context
-        context['total_deal_value'] = total_deal_value
-        context['total_due_amount'] = total_due_amount
+        context['total_deal_value'] = queryset.aggregate(Sum('deal_value'))['deal_value__sum'] or 0
+        context['total_due_amount'] = queryset.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
         
         return context
 
@@ -197,12 +192,12 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
         product_id = self.request.GET.get('product')
-        today_orders = self.request.GET.get('today_orders')
+        today_order_requests = self.request.GET.get('today_order_requests')
         
         # Filter by today order
-        if today_orders:
+        if today_order_requests:
             today = timezone.now().date()
-            queryset = queryset.filter(order_date__date=today)
+            queryset = queryset.filter(created_at__date=today)
             return queryset
 
         # Filter by status
@@ -222,11 +217,15 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 Q(tracking_ID__icontains=search_query) |
                 Q(name__icontains=search_query) |
                 Q(company__icontains=search_query) |
-                Q(phone_number__icontains=search_query)
+                Q(phone_number__icontains=search_query) |
+                Q(source__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(remark__icontains=search_query) |
+                Q(product__name__icontains=search_query)
             )
 
         if product_id and product_id.isdigit():
-            queryset = queryset.filter(product__id=product_id).distinct()
+            queryset = queryset.filter(product__id__icontains=product_id).distinct()
 
         return queryset
     
@@ -234,9 +233,9 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         
-        # Count today's orders
-        today = timezone.now().date()
-        context['today_orders'] = Order.objects.filter(order_date__date=today)
+        # Count today's order request
+        # today = timezone.now().date()
+        # context['today_order_requests'] = OrderRequest.objects.filter(order_date__date=today)
         
         return context
 

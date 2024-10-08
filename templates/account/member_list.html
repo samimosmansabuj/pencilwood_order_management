@@ -1,55 +1,76 @@
 {% extends '../base.html' %}
 
 {% block dashboard_title %}
-<title>Member List - Pencilwood</title>
+<title>User List - Pencilwood</title>
 {% endblock dashboard_title %}
 
 {% block dashboard_body %}
 <main>
     <div class="container-fluid">
-        <h1 class="mt-4">Member Listings</h1>
+        <h1 class="mt-4">User Listings</h1>
 
         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item active">All Member List</li>
+                <li class="breadcrumb-item active">All User List</li>
             </div>
             <li class="breadcrumb-item ml-auto">
-                <a href="{% url 'addNewUser' %}" class="btn btn-primary" style="margin-left: 10px;">Add Member</a>
+                <a href="{% url 'addNewUser' %}" class="btn btn-primary" style="margin-left: 10px;">Add User</a>
             </li>
         </ol>
-        
-        
+
+
 
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Member
+                        All User ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="dataTables_length" id="dataTable_length"><label>Show <select
-                                                    name="dataTable_length" aria-controls="dataTable"
-                                                    class="custom-select custom-select-sm form-control form-control-sm">
-                                                    <option value="10">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select> entries</label></div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div id="dataTable_filter" class="dataTables_filter"><label>Search:<input
-                                                    type="search" class="form-control form-control-sm" placeholder=""
-                                                    aria-controls="dataTable"></label></div>
-                                    </div>
-                                </div>
 
-                                
+
+                                <!-- -------------Order Filtering Section------------- -->
+                                <div class="container-fluid">
+                                    <form method="GET">
+                                        <div class="row">
+
+                                            <!-- Search by Tracking ID or Customer Name -->
+                                            <div class="col-12 col-sm-12 col-md-6 mb-1">
+                                                <div class="form-group">
+                                                    <label for="search">Search:</label>
+                                                    <input type="text" name="search" id="search"
+                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm"
+                                                        value="{{ request.GET.search }}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <div class="col-12 col-sm-6 col-md-1 mb-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="submit"
+                                                        class="form-control form-control-sm btn btn-primary"
+                                                        aria-controls="dataTable" value="Search">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-md-1 mb-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <a href="{% url 'member_list' %}"
+                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- -------------Order Filtering Section------------- -->
+
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <table class="table table-bordered dataTable no-footer" id="dataTable"
@@ -63,32 +84,29 @@
                                                         style="width: fixed;">First Name</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Last Name: activate to sort column ascending"
-                                                        ">Last Name</th>
+                                                        aria-label="Last Name: activate to sort column ascending" ">Last Name</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Status: activate to sort column ascending" ">Status</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Email: activate to sort column ascending">Email</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending"
-                                                        ">Status</th>
+                                                        aria-label="Phone Number: activate to sort column ascending">
+                                                        Phone Number</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Email: activate to sort column ascending"
-                                                        >Email</th>
+                                                        aria-label="Username: activate to sort column ascending">
+                                                        Username</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Phone Number: activate to sort column ascending"
-                                                        >Phone Number</th>
+                                                        aria-label="User Type: activate to sort column ascending">User
+                                                        Type</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Username: activate to sort column ascending"
-                                                        >Username</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="User Type: activate to sort column ascending"
-                                                        >User Type</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Action: activate to sort column ascending"
-                                                        >Action</th>
+                                                        aria-label="Action: activate to sort column ascending">Action
+                                                    </th>
                                                 </tr>
                                             </thead>
 
@@ -99,7 +117,8 @@
                                                     <td> {{member.first_name}} </td>
                                                     <td>{{member.last_name}}</td>
                                                     <td>
-                                                        <button disabled="" type="button" class="btn btn-sm btn-success btn-round">
+                                                        <button disabled="" type="button"
+                                                            class="btn btn-sm btn-success btn-round">
                                                             {% if member.is_active %}
                                                             Active
                                                             {% else %}
@@ -117,12 +136,14 @@
                                                         {{member.username}}
                                                     </td>
                                                     <td>
-                                                        <button disabled="" type="button" class="btn btn-sm btn-success btn-round">
-                                                        {{member.user_type}}
+                                                        <button disabled="" type="button"
+                                                            class="btn btn-sm btn-success btn-round">
+                                                            {{member.user_type}}
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <a href="{% url 'member_view' member.id %}" class="btn btn-primary btn-sm">
+                                                        <a href="{% url 'member_view' member.id %}"
+                                                            class="btn btn-primary btn-sm">
                                                             View
                                                         </a>
                                                     </td>
@@ -132,28 +153,60 @@
                                         </table>
                                     </div>
                                 </div>
+
+
+                                <!-- -------------Pagination Content Section------------- -->
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
                                         <div class="dataTables_info" id="dataTable_info" role="status"
-                                            aria-live="polite">Showing 1 to 10 of 10 entries</div>
+                                            aria-live="polite">
+                                            Showing {{page_obj.start_index}} to {{page_obj.end_index}} of {{page_obj.paginator.count}} entries
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
                                             <ul class="pagination">
-                                                <li class="paginate_button page-item previous disabled"
-                                                    id="dataTable_previous"><a href="#" aria-controls="dataTable"
-                                                        data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
-                                                <li class="paginate_button page-item active"><a href="#"
-                                                        aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-                                                        class="page-link">1</a></li>
-                                                <li class="paginate_button page-item next disabled" id="dataTable_next">
-                                                    <a href="#" aria-controls="dataTable" data-dt-idx="2" tabindex="0"
+                                                {% if page_obj.has_previous %}
+                                                <li class="paginate_button page-item previous">
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                        class="page-link">Previous</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item previous disabled">
+                                                    <a href="#" class="page-link">Previous</a>
+                                                </li>
+                                                {% endif %}
+
+                                                {% for num in page_obj.paginator.page_range %}
+                                                {% if page_obj.number == num %}
+                                                <li class="paginate_button page-item active">
+                                                    <a href="#" class="page-link">{{ num }}</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item">
+                                                    <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                        class="page-link">{{ num }}</a>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+
+                                                {% if page_obj.has_next %}
+                                                <li class="paginate_button page-item next">
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
+                                                {% else %}
+                                                <li class="paginate_button page-item next disabled">
+                                                    <a href="#" class="page-link">Next</a>
+                                                </li>
+                                                {% endif %}
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- -------------Pagination Content Section------------- -->
+
+
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('', DashboardView.as_view(), name='dashboard'),
-    path('settings/', settings, name='settings'),
+    path('settings/', SettingsView.as_view(), name='settings'),
     
     
     path('product-list/', ProductListView.as_view(), name='product_list'),
@@ -21,6 +21,4 @@ urlpatterns = [
     
     path('daily-profit/', DailyProfitListView.as_view(), name='daily_profit_list'),
     path('daily-profit/create/', TodayProfitCreate, name='today_profit_create'),
-    path('daily-profit/update/<int:pk>/', DailyProfitUpdateView.as_view(), name='daily_profit_update'),
-    path('daily-profit/delete/<int:pk>/', DailyProfitDeleteView.as_view(), name='daily_profit_delete'),
 ]

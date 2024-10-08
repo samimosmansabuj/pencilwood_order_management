@@ -25,7 +25,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Listings
+                        All Product ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -42,8 +42,7 @@
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
                                                     <input type="text" name="search" id="search"
-                                                        placeholder="Search by tracking ID or customer name"
-                                                        class="form-control form-control-sm">
+                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm" value="{{ request.GET.search }}">
                                                 </div>
                                             </div>
 

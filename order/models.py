@@ -26,7 +26,6 @@ class OrderRequest(models.Model):
         ('Call', 'Call'),
         ('Knock', 'Knock'),
         ('Other', 'Other'),
-        ('Get Design', 'Get Design'),
         ('Done', 'Done'),
         ('Sample', 'Sample'),
         ('Hold', 'Hold'),
@@ -98,6 +97,8 @@ class OrderCustomer(models.Model):
         return f"Order#{self.tracking_ID} from {self.company} ({self.name})"
     
 
+
+
 class Order(models.Model):
     STATUS = (
         ('None', 'None'),
@@ -128,6 +129,7 @@ class Order(models.Model):
     tracking_ID = models.CharField(max_length=6, blank=True, null=True)
     delivery_address = models.CharField(max_length=500)
     special_instructions = models.TextField(blank=True, null=True)
+    design_file = models.FileField(upload_to='design-files/', blank=True, null=True)
     
     quantity = models.IntegerField(default=1)
     unit_price = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)

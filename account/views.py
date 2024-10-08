@@ -1,61 +1,73 @@
+from django.views.generic import ListView, DeleteView, UpdateView, View, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout
-from django.contrib import messages
 from .forms import Login_Form, AddNewUser, UserProfileForm
-from django.contrib.auth.decorators import login_required
-from .models import Custom_User
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth import update_session_auth_hash
-from django.views.generic import ListView, DeleteView
-from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import login, logout
+from django.views.generic import FormView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from .models import Custom_User
+from django.db.models import Q
+
+class LogInView(FormView):
+    template_name = 'account/login.html'
+    form_class = Login_Form
+    success_url = '/'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(self.success_url)
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user = form.get_user()
+        login(self.request, user)  # Log in the user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class LogOutView(LoginRequiredMixin, View):
+    """Handle user logout."""
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
 
 
-def LogIn(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    form = Login_Form()
-    if request.method == 'POST':
-        form = Login_Form(request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            print('asdflkj', user)
+class AddNewUserView(LoginRequiredMixin, CreateView):
+    model = Custom_User
+    form_class = AddNewUser
+    template_name = 'account/add_new_user.html'
+    success_url = reverse_lazy('member_list')
 
-            login(request, user)
-            return redirect('dashboard')
-    context = {'form': form}
-    return render(request, 'account/login.html', context)
+    def form_valid(self, form):
+        password = form.cleaned_data.get('password')
+        user = form.save(commit=False)
+        user.set_password(password)  # Set the password
+        
+        if user.user_type == 'Admin':
+            user.is_staff = True
+            user.is_superuser = True
+        
+        user.save()
+        messages.success(self.request, 'New user added successfully!')  # Add a success message
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)
 
-def Logout(request):
-    logout(request)
-    return redirect('login')
+class MyProfileView(LoginRequiredMixin, View):
+    template_name = 'account/my_profile.html'
 
+    def get(self, request, *args, **kwargs):
+        """Render the profile page."""
+        return render(request, self.template_name)
 
-@login_required
-def addNewUser(request):
-    if request.method == 'POST':
-        form = AddNewUser(request.POST)
-        if form.is_valid():
-            password = form.cleaned_data.get('password')
-            user = form.save()
-            user.set_password(password)
-            if user.user_type == 'Admin':
-                user.is_staff = True
-                user.is_superuser = True
-            user.save()
-            return redirect('member_list')
-        else:
-            return redirect(request.META['HTTP_REFERER'])
-    else:
-        form = AddNewUser()
-        context = {'form': form}
-    return render(request, 'account/add_new_user.html', context)
-
-
-@login_required
-def my_profile(request):
-    if request.method == 'POST':
+    def post(self, request, *args, **kwargs):
+        """Handle profile updates."""
         username = request.POST['username']
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -71,66 +83,75 @@ def my_profile(request):
         user.email = email
         user.phone_number = phone_number
         user.save()
-        current_password = request.user.password
-
+        
         if old_password and new_password and confirm_new_password:
-            old_password_check = check_password(old_password, current_password)
+            old_password_check = user.check_password(old_password)
             if old_password_check:
                 if new_password == confirm_new_password:
                     user.set_password(new_password)
                     user.save()
-                    messages.warning(request, "Password Change Successfully!")
-                    return redirect(request.META['HTTP_REFERER'])
+                    update_session_auth_hash(request, user)  # Avoid logging out the user
+                    messages.success(request, "Password changed successfully!")
                 else:
-                    messages.warning(
-                        request, "New password & confirm new password is doesn't match!")
-                    return redirect(request.META['HTTP_REFERER'])
+                    messages.warning(request, "New password and confirmation do not match!")
             else:
-                messages.warning(request, 'Old Password is not currect!')
-                return redirect(request.META['HTTP_REFERER'])
+                messages.warning(request, 'Old password is incorrect!')
         else:
-            messages.warning(request, "Profile Details Update Successfully!")
-            return redirect(request.META['HTTP_REFERER'])
+            messages.success(request, "Profile details updated successfully!")
 
-    return render(request, 'account/my_profile.html')
+        return redirect(request.META['HTTP_REFERER'])
 
+class MemberListView(LoginRequiredMixin, ListView):
+    model = Custom_User
+    template_name = 'account/member_list.html'
+    context_object_name = 'member'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('search')
 
-@login_required
-def member_list(request):
-    member = Custom_User.objects.all()
-    context = {'member': member}
-    return render(request, 'account/member_list.html', context)
+        if search_query:
+            queryset = queryset.filter(
+                Q(id__icontains=search_query) |
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(username__icontains=search_query) |
+                Q(user_type__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(phone_number__icontains=search_query)
+            )
+        
+        return queryset
 
 class MemberDeleteView(LoginRequiredMixin, DeleteView):
     model = Custom_User
     template_name = 'account/user_confirm_delete.html'
     success_url = reverse_lazy('member_list')
 
-@login_required
-def member_view(request, id):
-    member = get_object_or_404(Custom_User, id=id)
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=member)
-        print(form)
-        if form.is_valid():
-            member = form.save(commit=False)
-            
-            # Check if the password was changed
-            new_password = form.cleaned_data.get('password')
-            if new_password:
-                member.set_password(new_password)
-                update_session_auth_hash(request, member)  # To avoid logging out the user
-            
-            member.save()
-            messages.success(request, 'Your profile was updated successfully!')
-            return redirect(request.META['HTTP_REFERER'])
-        else:
-            messages.error(request, f'{form.errors}')
-            return redirect(request.META['HTTP_REFERER'])
-    else:
-        form = UserProfileForm(instance=member)
-    return render(request, 'account/member_view.html', {'form': form, 'member': member})
+class MemberUpdateView(LoginRequiredMixin, UpdateView):
+    model = Custom_User
+    form_class = UserProfileForm
+    template_name = 'account/member_view.html'
+    
+    def get_object(self, queryset=None):
+        return get_object_or_404(Custom_User, id=self.kwargs['id'])
+    
+    def form_valid(self, form):
+        member = form.save(commit=False)
+        new_password = form.cleaned_data.get('password')
+        if new_password:
+            member.set_password(new_password)
+            update_session_auth_hash(self.request, member)  # Avoid logging out the user
+        member.save()
+        messages.success(self.request, 'Your profile was updated successfully!')
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, f'{form.errors}')
+        return super().form_invalid(form)
 
+    def get_success_url(self):
+        return self.request.META['HTTP_REFERER']
 
 

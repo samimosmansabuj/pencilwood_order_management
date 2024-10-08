@@ -21,6 +21,19 @@
             </li>
          </ol>
 
+         {% if messages %}
+      {% for messages in messages %}
+      <ol class="breadcrumb mb-4">
+         <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+            <strong>Dear User!</strong> {{messages}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+      </ol>
+      {% endfor %}
+      {% endif %}
+
          <div class="row">
             <div class="col-xl-12">
                <div class="card mb-4">

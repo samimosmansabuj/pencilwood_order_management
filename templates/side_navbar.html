@@ -29,8 +29,8 @@
                     <a class="nav-link" href="{% url 'order_list' %}">
                         All Order <span class="badge badge-pill ml-2 badge-primary">6</span>
                     </a>
-                    <a class="nav-link" href="{% url 'order_list' %}?filter=active">
-                        Active </span>
+                    <a class="nav-link" href="{% url 'order_list' %}?today_orders=True">
+                        Today's Order </span>
                     </a>
                 </nav>
             </div>
@@ -53,29 +53,12 @@
                     <a class="nav-link" href="{% url 'order_request_create' %}">
                         Add Request </span>
                     </a>
+                    <a class="nav-link" href="{% url 'order_request_list' %}?today_order_requests=True">
+                        Today's Order </span>
+                    </a>
                 </nav>
             </div>
             <!-- --------------------Request End---------------------- -->
-
-
-            <!-- --------------------Maintenance Cost Start---------------------- -->
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFinancial"
-                aria-expanded="false" aria-controls="collapseRequest">
-                <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
-                Financial
-                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
-            </a>
-            <div class="collapse" id="collapseFinancial" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{% url 'maintenance_cost_list' %}">
-                        Costing <span class="badge badge-pill ml-2 badge-primary">6</span>
-                    </a>
-                    <a href="{% url 'daily_profit_list' %}" class="nav-link">
-                        Daily Profit </span>
-                    </a>
-                </nav>
-            </div>
-            <!-- --------------------Maintenance Cost End---------------------- -->
 
 
 
@@ -120,6 +103,29 @@
             </div>
             {% endif %}
             <!-- --------------------Member End---------------------- -->
+
+
+            <!-- --------------------Maintenance Cost Start---------------------- -->
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFinancial"
+                aria-expanded="false" aria-controls="collapseRequest">
+                <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
+                Financial
+                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseFinancial" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{% url 'maintenance_cost_list' %}">
+                        Costing <span class="badge badge-pill ml-2 badge-primary">6</span>
+                    </a>
+                    <a class="nav-link" href="{% url 'maintenance_cost_list' %}?today_costs=True">
+                        Today's Cost </span>
+                    </a>
+                    <a href="{% url 'daily_profit_list' %}" class="nav-link">
+                        Daily Profit </span>
+                    </a>
+                </nav>
+            </div>
+            <!-- --------------------Maintenance Cost End---------------------- -->
 
 
             <a class="nav-link Active" href="{% url 'my_profile' %}">

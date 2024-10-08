@@ -23,10 +23,15 @@
                         Today Profit calculation
                     </button>
                 </form>
+
                 {% else %}
-                <a class="btn btn-primary" style="margin-left: 10px; color: white;">
-                    View Today Profit
-                </a>
+
+                <form action="{% url 'today_profit_create' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+                        Update Today Profit
+                    </button>
+                </form>
                 {% endif %}
 
             </li>
@@ -51,7 +56,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Days Profit ({{profits.count}})
+                        All Days Profit ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -63,20 +68,12 @@
                                     <form method="GET">
                                         <div class="row">
 
-                                            <!-- Filter by Specific Day -->
-                                            <!-- <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                <div class="form-group">
-                                                    <label for=""></label>
-                                                    <a href="?today_costs=True" class="form-control form-control-sm btn btn-primary">Today</a>
-                                                </div>
-                                            </div> -->
-
                                             <!-- Filter by Date From -->
                                             <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                 <div class="form-group">
                                                     <label for="start_date">From:</label>
                                                     <input type="date" name="start_date" id="start_date"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" value="{{request.GET.start_date}}">
                                                 </div>
                                             </div>
 
@@ -85,7 +82,7 @@
                                                 <div class="form-group">
                                                     <label for="end_date">To:</label>
                                                     <input type="date" name="end_date" id="end_date"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" value="{{request.GET.end_date}}">
                                                 </div>
                                             </div>
 
@@ -94,8 +91,7 @@
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
                                                     <input type="text" name="search" id="search"
-                                                        placeholder="Search by tracking ID or customer name"
-                                                        class="form-control form-control-sm">
+                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm" value="{{ request.GET.search }}">
                                                 </div>
                                             </div>
 
@@ -111,7 +107,7 @@
                                             <div class="col-12 col-sm-6 col-md-1 mb-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <a href="{% url 'maintenance_cost_list' %}"
+                                                    <a href="{% url 'daily_profit_list' %}"
                                                         class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
@@ -179,9 +175,12 @@
                                                             Edit
                                                         </a> -->
 
-                                                        <a href="{% url 'daily_profit_delete' profit.id %}" class="btn btn-danger btn-sm">
-                                                            Delete
-                                                        </a>
+                                                        <form action="{% url 'today_profit_create' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+                                                                Update
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
@@ -202,8 +201,10 @@
                                                         Total
                                                     </td>
 
+                                                    <td><strong>{{ total_sell_amount }}</strong></td>
                                                     <td><strong>{{ total_cost }}</strong></td>
-                                                    <td colspan="4">
+                                                    <td><strong>{{ total_profit }}</strong></td>
+                                                    <td colspan="2">
 
                                                     </td>
                                                 </tr>
@@ -231,7 +232,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -248,7 +249,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ num }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
@@ -257,7 +258,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
                                                 {% else %}
