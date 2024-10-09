@@ -26,12 +26,25 @@ class Maintenance_Cost(models.Model):
 
 
 class Daily_Profit(models.Model):
+    orders = models.ManyToManyField(Order, blank=True, null=True)
+    costs = models.ManyToManyField(Maintenance_Cost, blank=True, null=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total_sell = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     profit = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    note = models.CharField(max_length=500, blank=True, null=True)
     date = models.DateField(auto_now_add=True)
     last_update = models.DateField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            total_sell_sum = sum(order.total_amount for order in self.orders.all())
+            self.total_sell = total_sell_sum
+            
+            cost_sum = sum(cost_item.cost for cost_item in self.costs.all())
+            self.cost = cost_sum
+            
+            self.profit = self.total_sell - self.cost if self.total_sell or self.cost else None
+
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"Date: {self.date} total Profit - {self.profit}"

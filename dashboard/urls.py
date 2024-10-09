@@ -20,5 +20,5 @@ urlpatterns = [
     
     
     path('daily-profit/', DailyProfitListView.as_view(), name='daily_profit_list'),
-    path('daily-profit/create/', TodayProfitCreate, name='today_profit_create'),
+    # path('daily-profit/create/', TodayProfitCreate, name='today_profit_create'),
 ]

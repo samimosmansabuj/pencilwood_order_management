@@ -16,8 +16,8 @@
             </div>
             <li class="breadcrumb-item ml-auto">
 
-                {% if today_profit_added == False %}
-                <form action="{% url 'today_profit_create' %}" method="POST">
+                <!-- {% if today_profit_added == False %}
+                <form action="" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
                         Today Profit calculation
@@ -26,13 +26,13 @@
 
                 {% else %}
 
-                <form action="{% url 'today_profit_create' %}" method="POST">
+                <form action="" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
                         Update Today Profit
                     </button>
                 </form>
-                {% endif %}
+                {% endif %} -->
 
             </li>
         </ol>
@@ -143,10 +143,10 @@
                                                         rowspan="1" colspan="1"
                                                         aria-label="Date: activate to sort column ascending">
                                                         Date</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                    <!-- <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Action: activate to sort column ascending">Action
-                                                    </th>
+                                                    </th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -169,19 +169,19 @@
                                                     <td>
                                                         {{profit.date}}
                                                     </td>
-                                                    <td>
-                                                        <!-- <a href="{% url 'maintenance_cost_update' profit.id %}"
+                                                    <!-- <td>
+                                                        <a href="{% url 'maintenance_cost_update' profit.id %}"
                                                             class="btn btn-primary btn-sm">
                                                             Edit
-                                                        </a> -->
+                                                        </a>
 
-                                                        <form action="{% url 'today_profit_create' %}" method="POST">
+                                                        <form action="" method="POST">
                                                             {% csrf_token %}
                                                             <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
                                                                 Update
                                                             </button>
                                                         </form>
-                                                    </td>
+                                                    </td> -->
                                                 </tr>
                                                 {% endfor %}
                                                 {% else %}

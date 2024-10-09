@@ -135,6 +135,13 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # -----------------Maintenance Cost Section Start---------------------
+from django.utils import timezone
+def daily_profit_cost_update(object):
+    date = timezone.localtime(object.create_date).date()
+    daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
+    daily_profit.costs.add(object)
+    daily_profit.save()
+
 # List view
 class MaintenanceCostListView(LoginRequiredMixin, ListView):
     model = Maintenance_Cost
@@ -190,7 +197,8 @@ def MaintenanceCostCreateView(request):
     if request.method == 'POST':
         form = MaintenanceCostForm(request.POST)
         if form.is_valid():
-            form.save()
+            object = form.save()
+            daily_profit_cost_update(object)
             messages.success(request, 'Cost Added!')
         else:
             messages.error(request, f'Something wrong: {form.errors}')
@@ -204,15 +212,33 @@ class MaintenanceCostUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('maintenance_cost_list')
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs) # Add products to the context for dropdown/filter options
+        context = super().get_context_data(**kwargs)
         context['AddForm'] = MaintenanceCostForm()
         return context
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        daily_profit_cost_update(self.object)
+        messages.success(self.request, 'Maintenance cost updated successfully!')
+        return response
 
 # Delete view
 class MaintenanceCostDeleteView(LoginRequiredMixin, DeleteView):
     model = Maintenance_Cost
     template_name = 'finance_section/maintenance_cost_confirm_delete.html'
     success_url = reverse_lazy('maintenance_cost_list')
+    
+    def delete(self, request, *args, **kwargs):
+        maintenance_cost = self.get_object()
+        daily_profit = Daily_Profit.objects.get(date=timezone.localtime(maintenance_cost.create_date).date())
+        print(daily_profit)
+
+        if daily_profit:
+            daily_profit.costs.remove(maintenance_cost)
+            daily_profit.save()
+        
+        # Call the parent delete method to actually delete the object
+        return super().delete(request, *args, **kwargs)
 
 # -----------------Maintenance Cost Section End---------------------
 
@@ -227,7 +253,7 @@ class DailyProfitListView(ListView):
     template_name = 'daily_profit/list.html'
     context_object_name = 'profits'
     ordering = ['-date']
-    paginate_by = 1
+    paginate_by = 4
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -265,35 +291,6 @@ class DailyProfitListView(ListView):
         
         return context
  
-
-def TodayProfitCreate(request):
-    if request.method == "POST":
-        today = localdate()
-        orders_today = Order.objects.filter(order_date__date=today)
-        maintenance_costs_today = Maintenance_Cost.objects.filter(create_date__date=today)
-        
-        total_orders_amount = orders_today.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-        total_maintenance_cost = maintenance_costs_today.aggregate(Sum('cost'))['cost__sum'] or 0
-        total_profit = total_orders_amount - total_maintenance_cost
-        
-        daily_profit, created = Daily_Profit.objects.get_or_create(
-            date=today,
-            defaults={
-                'total_sell': total_orders_amount,
-                'cost': total_maintenance_cost,
-                'profit': total_profit
-            }
-        )
-        
-        print('daily profit----------------', daily_profit)
-        
-        if not created:
-            daily_profit.total_sell = total_orders_amount
-            daily_profit.cost = total_maintenance_cost
-            daily_profit.profit = total_profit
-            daily_profit.save()
-        
-        return redirect('daily_profit_list')
 
 # -----------------Daily Profit Section Start---------------------
 

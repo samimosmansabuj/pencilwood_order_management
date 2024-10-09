@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Order, OrderRequest
+from dashboard.models import Maintenance_Cost, Daily_Profit
 from django.contrib import messages
 from django.utils.dateparse import parse_date
 from .forms import *
@@ -86,6 +87,48 @@ class OrderListView(LoginRequiredMixin, ListView):
         return context
 
 
+
+def daily_profit_update(object):
+    date = object.order_date.date()
+    daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
+    daily_profit.orders.add(object)
+    daily_profit.save()
+
+
+@login_required
+def add_new_order(request):
+    if request.method == 'POST':
+        order_customer_form = OrderCustomerForm(request.POST)
+        order_form = OrderForm(request.POST)
+
+        if order_customer_form.is_valid() and order_form.is_valid():
+            order_customer = order_customer_form.save()
+
+            order = order_form.save(commit=False)
+            order.order_customer = order_customer
+            order.save()
+            
+            daily_profit_update(order)
+
+            return redirect('order_success')
+        else:
+            messages.warning(
+                request, f"{order_customer_form.errors} and {order_form.errors}")
+            return redirect(request.META['HTTP_REFERER'])
+    else:
+        order_customer_form = OrderCustomerForm()
+        order_form = OrderForm()
+
+    return render(request, 'order/add_new_order.html', {
+        'order_customer_form': order_customer_form,
+        'order_form': order_form
+    })
+
+@login_required
+def order_success(request):
+    return render(request, 'order/order_success.html')
+
+
 @login_required
 def order_view(request, id):
     order = get_object_or_404(Order, id=id)
@@ -111,6 +154,23 @@ def order_view(request, id):
     print(context)
     return render(request, 'order/order_view.html', context)
 
+@login_required
+def orderPaymentUpdate(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form2 = OrderPaymentUpdateForm(request.POST, instance=order)
+        if form2.is_valid():
+            object = form2.save()
+            
+            daily_profit_update(object)
+            
+            messages.success(request, 'Payment details updated successfully!')
+            return redirect('order_view', id=order.pk)
+        else:
+            messages.error(request, f'Something went wrong: {form2.errors}')
+            return redirect('order_view', id=order.pk)
+    else:
+        return redirect('order_view', id=order.pk)
 
 @login_required
 def CustomerOrderInfoUpdate(request, pk):
@@ -124,52 +184,6 @@ def CustomerOrderInfoUpdate(request, pk):
             messages.error(request, f'Something went wrong: {form3.errors}')
     return redirect('order_view', id=order.pk)
 
-@login_required
-def orderPaymentUpdate(request, pk):
-    order = get_object_or_404(Order, pk=pk)
-    if request.method == 'POST':
-        form2 = OrderPaymentUpdateForm(request.POST, instance=order)
-        if form2.is_valid():
-            form2.save()
-            messages.success(request, 'Payment details updated successfully!')
-            return redirect('order_view', id=order.pk)
-        else:
-            messages.error(request, f'Something went wrong: {form2.errors}')
-            return redirect('order_view', id=order.pk)
-    else:
-        return redirect('order_view', id=order.pk)
-
-@login_required
-def add_new_order(request):
-    if request.method == 'POST':
-        order_customer_form = OrderCustomerForm(request.POST)
-        order_form = OrderForm(request.POST)
-
-        if order_customer_form.is_valid() and order_form.is_valid():
-            order_customer = order_customer_form.save()
-
-            order = order_form.save(commit=False)
-            order.order_customer = order_customer
-            order.save()
-
-            return redirect('order_success')
-        else:
-            messages.warning(
-                request, f"{order_customer_form.errors} and {order_form.errors}")
-            return redirect(request.META['HTTP_REFERER'])
-    else:
-        order_customer_form = OrderCustomerForm()
-        order_form = OrderForm()
-
-    return render(request, 'order/add_new_order.html', {
-        'order_customer_form': order_customer_form,
-        'order_form': order_form
-    })
-
-@login_required
-def order_success(request):
-    return render(request, 'order/order_success.html')
-
 # ------------Order Section End------------
 
 
@@ -180,7 +194,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'  # Define your template here
     context_object_name = 'order_requests'
-    paginate_by = 2
+    paginate_by = 5
     ordering = ['-id']
 
     def get_queryset(self):
@@ -295,6 +309,8 @@ def request_to_order(request, pk):
 
                 order_request.order_created = True
                 order_request.save()
+                
+                daily_profit_update(order)
 
                 messages.success(request, 'Order created successfully.')
                 return redirect('order_list')

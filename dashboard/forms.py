@@ -59,13 +59,16 @@ class MaintenanceCostForm(forms.ModelForm):
     cost = forms.DecimalField(max_digits=5, decimal_places=2, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputCost', 'placeholder': 'Enter Cost Amount',
     }))
+    note = forms.CharField(required=False, widget=forms.Textarea(attrs={
+        'class': 'form-control', 'id': 'inputNote', 'placeholder': 'Enter Note (if any)', 'rows': 3
+    }))
     class Meta:
         model = Maintenance_Cost
-        fields = ['title', 'cost']
+        fields = ['title', 'cost', 'note']
     
 
-class DailyProfitForm(forms.ModelForm):
-    class Meta:
-        model = Daily_Profit
-        fields = ['note']
+# class DailyProfitForm(forms.ModelForm):
+#     class Meta:
+#         model = Daily_Profit
+#         fields = ['note']
 
