@@ -12,6 +12,7 @@ from django.views.generic import ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.db.models import Sum
+import os
 
 # ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
@@ -33,7 +34,8 @@ class OrderListView(LoginRequiredMixin, ListView):
 
         # Filter by today order
         if today_orders:
-            today = timezone.now().date()
+            today = timezone.localtime().date()
+            
             queryset = queryset.filter(order_date__date=today)
             return queryset
 
@@ -89,7 +91,7 @@ class OrderListView(LoginRequiredMixin, ListView):
 
 
 def daily_profit_update(object):
-    date = object.order_date.date()
+    date = timezone.localtime(object.order_date).date()
     daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
     daily_profit.orders.add(object)
     daily_profit.save()
@@ -99,7 +101,7 @@ def daily_profit_update(object):
 def add_new_order(request):
     if request.method == 'POST':
         order_customer_form = OrderCustomerForm(request.POST)
-        order_form = OrderForm(request.POST)
+        order_form = OrderForm(request.POST, request.FILES)
 
         if order_customer_form.is_valid() and order_form.is_valid():
             order_customer = order_customer_form.save()
@@ -135,12 +137,12 @@ def order_view(request, id):
     context = {'order': order}
 
     if request.method == 'POST':
-        form = OrderStatusUpdateForm(request.POST, instance=order)
+        form = OrderStatusUpdateForm(request.POST, request.FILES, instance=order)
         if form.is_valid():
             form.save()
             messages.success(request, 'Order Update Successfully!')
         else:
-            messages.error(request, 'Somethings is wrong, please try again!')
+            messages.error(request, f'Somethings is wrong: {form.errors}')
         return redirect(request.META['HTTP_REFERER'])
     else:
         form = OrderStatusUpdateForm(instance=order)
@@ -151,7 +153,7 @@ def order_view(request, id):
             form3 = OrderCustomerForm(instance=order.order_customer)
             form3.fields['product'].required = False
             context['form3'] = form3
-    print(context)
+        
     return render(request, 'order/order_view.html', context)
 
 @login_required
@@ -299,12 +301,13 @@ def request_to_order(request, pk):
             messages.success(request, "Order already created!")
             return redirect('order_request_view', pk=order_request.pk)
         else:
-            form2 = OrderForm(request.POST)
+            form2 = OrderForm(request.POST, request.FILES)
             if form2.is_valid():
                 order = form2.save()
                 order.request_order = order_request
                 order.tracking_ID = order_request.tracking_ID
-                order.remark = order_request.remark
+                if order.remark is None:
+                    order.remark = order_request.remark
                 order.save()
 
                 order_request.order_created = True

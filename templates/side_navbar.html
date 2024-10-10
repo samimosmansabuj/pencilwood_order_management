@@ -128,6 +128,26 @@
             <!-- --------------------Maintenance Cost End---------------------- -->
 
 
+            <!-- --------------------Todo Start---------------------- -->
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTodo"
+                aria-expanded="false" aria-controls="collapseRequest">
+                <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
+                Todo
+                <div class="sb-sidenav-collapse-arrow"><i class="fa fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseTodo" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{% url 'todo_list' %}">
+                        Todo List <span class="badge badge-pill ml-2 badge-primary">6</span>
+                    </a>
+                    <a class="nav-link" href="{% url 'todo_create' %}">
+                        Add New </span>
+                    </a>
+                </nav>
+            </div>
+            <!-- --------------------Todo End---------------------- -->
+
+
             <a class="nav-link Active" href="{% url 'my_profile' %}">
                 <div class="sb-nav-link-icon"><i class="fa fa-user"></i></div>
                 My Profile

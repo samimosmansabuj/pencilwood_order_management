@@ -1,0 +1,49 @@
+<!-- Todo Add Modal -->
+<div class="modal fade" id="AddTodo" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Add Todo</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        {{form.title.label}}
+                        {{form.title}}
+                    </div>
+                    <div class="form-group">
+                        {{form.priority.label}}
+                        {{form.priority}}
+                    </div>
+                    <div class="form-group">
+                        {{form.details.label}}
+                        {{form.details}}
+                    </div>
+                    <div class="form-group">
+                        <!-- <label for="is_complete">Complete</label> -->
+                        {{form.is_complete.label}}
+                        {{form.is_complete}}
+                    </div>
+                </div>
+
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add Cost</button>
+                </div>
+                
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Todo Add Modal -->
+
+

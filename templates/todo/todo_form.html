@@ -1,0 +1,125 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>
+    {% if object %}
+    Update
+    {% else %}
+    Add New
+    {% endif %}
+    Todo - Pencilwood
+
+</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="container-fluid">
+            <h1 class="mt-4">
+                {% if object %}
+                Update
+                {% else %}
+                Add
+                {% endif %}
+                Todo
+
+            </h1>
+
+            <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'todo_list' %}">All Todo</a></li>
+                </div>
+                <li class="breadcrumb-item ml-auto">
+                    <a href="{% url 'todo_create' %}" class="btn btn-primary" style="margin-left: 10px;">
+                        Add Todo
+                    </a>
+                </li>
+            </ol>
+
+            {% if messages %}
+            {% for messages in messages %}
+            <ol class="breadcrumb mb-4">
+                <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+                    <strong>Dear {{request.user}}!</strong> {{messages}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            </ol>
+            {% endfor %}
+            {% endif %}
+
+
+            <div class="row">
+
+                <!-- ---------------Person Info Start--------------- -->
+                <div class="col-xl-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Todo Information
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.title.label}}</label>
+                                        {{form.title}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.priority.label}}</label>
+                                        {{form.priority}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>{{form.details.label}}</label>
+                                        {{form.details}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.is_complete.label}}</label>
+                                        {{form.is_complete}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                        </div>
+                    </div>
+                </div>
+                <!-- ---------------Person Info End--------------- -->
+
+
+            </div>
+            <div class="text-right mb-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="feather-send"></i> SAVE
+                </button>
+            </div>
+        </div>
+    </form>
+</main>
+
+
+
+
+{% include './model_box.html' %}
+
+
+
+
+{% endblock dashboard_body %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Site_Settings, Maintenance_Cost, Daily_Profit
+from .models import Site_Settings, Maintenance_Cost, Todo
 from order.models import Product
 
 
@@ -56,7 +56,7 @@ class MaintenanceCostForm(forms.ModelForm):
     title = forms.CharField(max_length=500, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputTitle', 'placeholder': 'Enter Cost Title',
     }))
-    cost = forms.DecimalField(max_digits=5, decimal_places=2, widget=forms.NumberInput(attrs={
+    cost = forms.DecimalField(max_digits=15, decimal_places=2, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputCost', 'placeholder': 'Enter Cost Amount',
     }))
     note = forms.CharField(required=False, widget=forms.Textarea(attrs={
@@ -67,8 +67,28 @@ class MaintenanceCostForm(forms.ModelForm):
         fields = ['title', 'cost', 'note']
     
 
-# class DailyProfitForm(forms.ModelForm):
-#     class Meta:
-#         model = Daily_Profit
-#         fields = ['note']
+class TodoForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ['title', 'priority', 'details', 'is_complete']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'inputTitle', 'placeholder': 'Enter Todo Title'
+            }),
+            'priority': forms.Select(attrs={
+                'class': 'form-control', 'id': 'inputPriority'
+            }),
+            'details': forms.Textarea(attrs={
+                'class': 'form-control', 'id': 'inputDetails', 'placeholder': 'Enter Todo Details', 'rows': 3
+            }),
+            'is_complete': forms.CheckboxInput(attrs={
+                'class': 'form-check-input', 'id': 'inputIsComplete'
+            }),
+        }
+        labels = {
+            'is_complete': 'Completed',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(TodoForm, self).__init__(*args, **kwargs)
 

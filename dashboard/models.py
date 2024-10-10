@@ -15,7 +15,7 @@ class Site_Settings(models.Model):
 
 class Maintenance_Cost(models.Model):
     title = models.CharField(max_length=500)
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost = models.DecimalField(max_digits=15, decimal_places=2)
     note = models.TextField(blank=True, null=True)
     
     create_date = models.DateTimeField(auto_now_add=True)
@@ -26,13 +26,16 @@ class Maintenance_Cost(models.Model):
 
 
 class Daily_Profit(models.Model):
-    orders = models.ManyToManyField(Order, blank=True, null=True)
-    costs = models.ManyToManyField(Maintenance_Cost, blank=True, null=True)
+    orders = models.ManyToManyField(Order)
+    costs = models.ManyToManyField(Maintenance_Cost)
     cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total_sell = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     profit = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     last_update = models.DateField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-date']
     
     def save(self, *args, **kwargs):
         if self.pk:
@@ -48,5 +51,29 @@ class Daily_Profit(models.Model):
 
     def __str__(self) -> str:
         return f"Date: {self.date} total Profit - {self.profit}"
+
+
+
+
+
+class Todo(models.Model):
+    PRIORITY_CHOICES = (
+        ('Low', 'Low'),
+        ('Medium', 'Medium'),
+        ('High', 'High'),
+    )
+
+    title = models.CharField(max_length=255)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Medium')
+    details = models.TextField(blank=True, null=True)
+    is_complete = models.BooleanField(default=False)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-update_date']
+
+    def __str__(self):
+        return self.title
 
 

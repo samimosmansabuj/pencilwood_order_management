@@ -44,12 +44,16 @@
                         <div class="col-md-6 col-sm-6 mb-4 pb-2">
                            <div class="list-card bg-white rounded overflow-hidden position-relative shadow-sm">
                               <div class="list-card-image p-2">
-                                 <img src="{{website_setting.logo.url}}" class="img-fluid item-img" style="width: auto; height: 120px;">
+                                 <img src="
+                                 {% if website_setting.logo %}
+                                 {{website_setting.logo.url}}
+                                 {% endif %}
+                                 " class="img-fluid item-img" style="width: auto; height: 120px;">
                               </div>
                               <div class="p-3 position-relative">
                                  <div class="list-card-body">
                                     <h6 class="mb-1">
-                                          Logo
+                                       Logo
                                     </h6>
                                  </div>
                               </div>
@@ -58,12 +62,17 @@
                         <div class="col-md-6 col-sm-6 mb-4 pb-2">
                            <div class="list-card bg-white rounded overflow-hidden position-relative shadow-sm">
                               <div class="list-card-image p-2">
-                                 <img src="{{website_setting.fav_icon.url}}" class="img-fluid item-img" style="width: auto; height: 120px;">
+                                 <img src="
+                                 {% if website_setting.fav_icon %}
+                                 {{website_setting.fav_icon.url}}
+                                 {% endif %}
+                                 " class="img-fluid item-img"
+                                    style="width: auto; height: 120px;">
                               </div>
                               <div class="p-3 position-relative">
                                  <div class="list-card-body">
                                     <h6 class="mb-1">
-                                          Icon
+                                       Icon
                                     </h6>
                                  </div>
                               </div>

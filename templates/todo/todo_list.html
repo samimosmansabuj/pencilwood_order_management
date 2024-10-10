@@ -1,28 +1,26 @@
 {% extends '../base.html' %}
 
 {% block dashboard_title %}
-<title>Order Request - Pencilwood</title>
+<title>Todo List - Pencilwood</title>
 {% endblock dashboard_title %}
 
 {% block dashboard_body %}
 <main>
     <div class="container-fluid">
         <!-- Display a message if today's orders are being shown -->
-        {% if request.GET.today_order_requests %}
-        <h3 class="mt-4">Today's Order Requests</h3>
-        {% else %}
-        <h1 class="mt-4">Order Request Listings</h1>
-        {% endif %}
+
+        <h1 class="mt-4">Todo Listings</h1>
 
 
         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item active">All Order Request</li>
+                <li class="breadcrumb-item active">All Todo</li>
             </div>
             <li class="breadcrumb-item ml-auto">
-                <a href="{% url 'order_request_create' %}" class="btn btn-primary" style="margin-left: 10px;">Add
-                    Request</a>
+                <a href="#AddTodo" data-toggle="modal" class="btn btn-primary" style="margin-left: 10px;">
+                    Add Todo
+                </a>
             </li>
         </ol>
 
@@ -39,20 +37,20 @@
         {% endfor %}
         {% endif %}
 
+
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa fa-table mr-1"></i>
-                        All Order Request ({{page_obj.paginator.count}})
+                        All Todo ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
 
 
-
-                                <!-- -------------Order Request Filtering Section------------- -->
+                                <!-- -------------Order Filtering Section------------- -->
                                 <div class="container-fluid">
                                     <form method="GET">
                                         <div class="row">
@@ -64,68 +62,54 @@
                                                         id="filterButton">Filter</button>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-12 d-md-none mb-1">
-                                                <div class="form-group">
-                                                    <a href="{% url 'order_list' %}"
-                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
-                                                </div>
-                                            </div> -->
-                                            <!-- Reset Button (Visible on all devices) -->
                                             <div class="col-12 col-md-2">
                                                 <div class="form-group">
-                                                    <a href="{% url 'order_request_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                    <a href="{% url 'todo_list' %}"
+                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
 
                                             <!-- Full Filtering Section (Hidden on Mobile) -->
                                             <div id="filterSection" class="col-12 d-none d-md-flex">
                                                 <!-- Filter by Status -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
-                                                        <label for="status">Status</label>
-                                                        <select name="status" id="status"
+                                                        <label for="priority">Priority</label>
+                                                        <select name="priority" id="priority"
                                                             class="custom-select custom-select-sm form-control form-control-sm">
-                                                            {% if request.GET.status %}
-                                                            <option value="{{request.GET.status}}" selected>
-                                                                {{request.GET.status}}
-                                                            </option>
+                                                            {% if request.GET.priority %}
+                                                            <option value="{{request.GET.priority}}" selected>
+                                                                {{request.GET.priority}}</option>
                                                             {% endif %}
                                                             <option value="All">All</option>
-                                                            <option value="None">None</option>
-                                                            <option value="Design">Design</option>
-                                                            <option value="Correction">Correction</option>
-                                                            <option value="Call">Call</option>
-                                                            <option value="Knock">Knock</option>
-                                                            <option value="Other">Other</option>
-                                                            <option value="Done">Done</option>
-                                                            <option value="Sample">Sample</option>
-                                                            <option value="Hold">Hold</option>
-                                                            <option value="Cancel">Cancel</option>
-                                                            <option value="Mockup">Mockup</option>
+                                                            <option value="Low">Low</option>
+                                                            <option value="Medium">Medium</option>
+                                                            <option value="High">High</option>
                                                         </select>
                                                     </div>
                                                 </div>
 
                                                 <!-- Filter by Products -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <!-- <div class="col-12 col-sm-6 col-md-1 mb-1">
                                                     <div class="form-group">
-                                                        <label for="product">Product</label>
-                                                        <select name="product" id="product"
+                                                        <label for="is_complete">Complete</label> -->
+                                                        <!-- <select name="is_complete" id="is_complete"
                                                             class="custom-select custom-select-sm form-control form-control-sm">
-                                                            <option value="">-- Select Product --</option>
-                                                            {% for product in products %}
-                                                            <option value="{{ product.id }}"
-                                                            {% if request.GET.product == product.id|stringformat:"d" %}
-                                                            selected
+                                                            {% if request.GET.is_complete %}
+                                                            <option value="{{request.GET.is_complete}}" selected>
+
+                                                                {{request.GET.priority}}
+                                                            </option>
                                                             {% endif %}
-                                                            >{{ product.name }}</option>
-                                                            {% endfor %}
-                                                        </select>
+                                                            <option value="True">Complete</option>
+                                                            <option value="False">Incomplete</option>
+                                                        </select> -->
+                                                        <!-- <input type="checkbox" name="is_complete" id="is_complete" class="form-control form-control-sm" value="{{request.GET.is_complete}}">
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Filter by Date From -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
                                                         <label for="start_date">From:</label>
                                                         <input type="date" name="start_date" id="start_date"
@@ -135,7 +119,7 @@
                                                 </div>
 
                                                 <!-- Filter by Date To -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
                                                         <label for="end_date">To:</label>
                                                         <input type="date" name="end_date" id="end_date"
@@ -145,7 +129,7 @@
                                                 </div>
 
                                                 <!-- Search by Tracking ID or Customer Name -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
                                                         <label for="search">Search:</label>
                                                         <input type="text" name="search" id="search"
@@ -183,11 +167,12 @@
                                     });
                                 </script>
 
-                                <!-- -------------Order Request Filtering Section------------- -->
+                                <!-- -------------Order Filtering Section------------- -->
 
 
 
-                                <!-- -------------Order Request Section------------- -->
+
+                                <!-- -------------Order Section------------- -->
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <table class="table table-bordered dataTable no-footer" id="dataTable"
@@ -197,22 +182,24 @@
                                                 <tr class="text-uppercase" role="row">
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="ID: activate to sort column ascending">ID</th>
+                                                        aria-label="ID: activate to sort column ascending"
+                                                        style="width: fixed;">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending">Company</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Name: activate to sort column ascending">Name</th>
+                                                        aria-label="Company: activate to sort column ascending">Title
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Source: activate to sort column ascending">Source</th>
+                                                        aria-label="Name: activate to sort column ascending">Complete
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending">Product</th>
+                                                        aria-label="Product: activate to sort column ascending">Priority
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending">Status</th>
+                                                        aria-label="Created Date: activate to sort column ascending">
+                                                        Created Date</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Created Date: activate to sort column ascending">
@@ -225,49 +212,51 @@
                                             </thead>
                                             <tbody>
                                                 <!---->
-                                                {% for order_request in order_requests %}
+                                                {% if todos %}
+                                                {% for todo in todos %}
                                                 <tr role="row" class="odd">
                                                     <td>
-                                                        {{order_request.tracking_ID}}
+                                                        {{todo.id}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.company}}
+                                                        {{todo.title}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.name}}
+                                                        {{todo.is_complete}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.source}}
+                                                        {{todo.priority}}
                                                     </td>
                                                     <td>
-                                                        {% for product in order_request.product.all %}
-                                                        {{product.name}},
-                                                        {% endfor %}
+                                                        {{todo.create_date}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.status}}
+                                                        {{todo.update_date}}
                                                     </td>
                                                     <td>
-                                                        {{order_request.created_at}}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{% url 'order_request_view' order_request.id %}"
+                                                        <a href="{% url 'todo_update' todo.id %}"
                                                             class="btn btn-primary btn-sm">
                                                             View
                                                         </a>
-                                                        <a href="{% url 'order_request_delete' order_request.id %}"
-                                                            class="btn btn-primary btn-sm">
+                                                        <a href="{% url 'todo_delete' todo.id %}" class="btn btn-primary btn-sm">
                                                             Delete
                                                         </a>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
+                                                {% else %}
+                                                <tr class="row" class="odd">
+                                                    <td colspan="6">
+                                                        Not Found
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
                                                 <!---->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                <!-- -------------Order Request Section------------- -->
+                                <!-- -------------Order Section------------- -->
 
 
                                 <!-- -------------Pagination Section------------- -->
@@ -285,7 +274,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -302,7 +291,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ num }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
@@ -311,7 +300,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
                                                 {% else %}
@@ -325,7 +314,6 @@
                                 </div>
                                 <!-- -------------Pagination Section------------- -->
 
-
                             </div>
                         </div>
                     </div>
@@ -334,4 +322,8 @@
         </div>
     </div>
 </main>
+
+{% include './model_box.html' %}
+
+
 {% endblock dashboard_body %}

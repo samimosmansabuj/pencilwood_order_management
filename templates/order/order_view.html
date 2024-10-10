@@ -152,6 +152,14 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td style="white-space: nowrap;">Design File</td>
+                                        <td style="white-space: nowrap;">
+                                            {% if order.design_file %}
+                                            <a href="{{ order.design_file.url }}" target="_blank">Open File</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td style="white-space: nowrap;">Remark</td>
                                         <td style="white-space: nowrap;">
                                             {{ order.remark }}

@@ -21,4 +21,10 @@ urlpatterns = [
     
     path('daily-profit/', DailyProfitListView.as_view(), name='daily_profit_list'),
     # path('daily-profit/create/', TodayProfitCreate, name='today_profit_create'),
+    
+    
+    path('todos/', TodoListView.as_view(), name='todo_list'),
+    path('todos/new/', TodoCreateView.as_view(), name='todo_create'),
+    path('todos/edit/<int:pk>/', TodoUpdateView.as_view(), name='todo_update'),
+    path('todos/delete/<int:pk>/', TodoDeleteView.as_view(), name='todo_delete'),  # Add this line
 ]

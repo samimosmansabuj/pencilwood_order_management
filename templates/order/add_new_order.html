@@ -11,7 +11,7 @@
    <!-- {{order_customer_form}}
    {{order_form}} -->
 
-   <form method="POST">
+   <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="container-fluid">
          <h1 class="mt-4">Add New Order</h1>
@@ -82,7 +82,13 @@
                      </div>
                      <!-- /row-->
                      <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.design_file.label}}</label>
+                              {{order_form.design_file}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
                            <div class="form-group">
                               <label>{{order_form.delivery_address.label}}</label>
                               {{order_form.delivery_address}}
@@ -94,6 +100,7 @@
                </div>
             </div>
             <!-- ---------------Person Info End--------------- -->
+
 
             <!-- ---------------Product Info Start--------------- -->
             <div class="col-xl-12">

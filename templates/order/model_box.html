@@ -1,7 +1,7 @@
 <!-- Order Edit Modal -->
 <div class="modal fade" id="edit_order" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
     aria-hidden="true">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -31,6 +31,10 @@
                     <div class="form-group">
                         <label>Delivery Address</label>
                         {{form.delivery_address}}
+                    </div>
+                    <div class="form-group">
+                        {{form.design_file.label}}
+                        {{form.design_file}}
                     </div>
                     <div class="form-group">
                         <label>Remark</label>

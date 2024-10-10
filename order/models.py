@@ -129,7 +129,7 @@ class Order(models.Model):
     tracking_ID = models.CharField(max_length=6, blank=True, null=True)
     delivery_address = models.CharField(max_length=500)
     special_instructions = models.TextField(blank=True, null=True)
-    design_file = models.FileField(upload_to='design-files/', blank=True, null=True)
+    design_file = models.FileField(upload_to='order-design-files/', blank=True, null=True)
     
     quantity = models.IntegerField(default=1)
     unit_price = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)

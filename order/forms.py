@@ -1,6 +1,8 @@
 from django import forms
 from .models import Order, OrderRequest, Product, OrderCustomer
 from account.models import Custom_User
+from django.core.files.storage import default_storage
+import os
 
 # ----------------Order Section Start----------------
 class OrderCustomerForm(forms.ModelForm):
@@ -44,7 +46,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost'
+            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
         ]
 
     delivery_address = forms.CharField(widget=forms.TextInput(attrs={
@@ -110,13 +112,16 @@ class OrderForm(forms.ModelForm):
     delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryDate', 'placeholder': 'Select Delivery Date', 'type': 'date'
     }))
+    design_file = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={
+        'class': 'form-control', 'id': 'inputDesignFile', 'placeholder': 'Upload Design File'
+    }))
 
 
 class OrderStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'status', 'work_assign', 'remark', 'delivery_date', 'delivery_address'
+            'status', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
         ]
 
     status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
@@ -134,6 +139,30 @@ class OrderStatusUpdateForm(forms.ModelForm):
     delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryDate', 'placeholder': 'Select Delivery Date', 'type': 'date'
     }))
+    design_file = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={
+        'class': 'form-control', 'id': 'inputDesignFile', 'placeholder': 'Upload Design File'
+    }))
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        new_design_file = self.cleaned_data.get('design_file')
+        clear_file = self.data.get('design_file-clear')
+
+        if clear_file:
+            if self.instance.design_file:
+                self.instance.design_file.delete(save=False)
+
+        elif new_design_file and new_design_file != self.instance.design_file:
+            if self.instance.design_file:
+                self.instance.design_file.delete(save=False)
+        
+        return cleaned_data
+
+    def save(self, commit=True):
+        order = super().save(commit=False)
+        if commit:
+            order.save()
+        return order
 
 
 class OrderPaymentUpdateForm(forms.ModelForm):

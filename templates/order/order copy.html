@@ -59,125 +59,95 @@
                                 <div class="container-fluid">
                                     <form method="GET">
                                         <div class="row">
-                                            <!-- Filter and Reset Buttons -->
-                                            <div class="col-12 d-md-none mb-1">
+
+                                            <!-- Filter by Status -->
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                 <div class="form-group">
-                                                    <button type="button"
+                                                    <label for="status">Status</label>
+                                                    <select name="status" id="status" class="custom-select custom-select-sm form-control form-control-sm">
+                                                        {% if request.GET.status %}
+                                                        <option value="{{request.GET.status}}" selected>{{request.GET.status}}</option>
+                                                        {% endif %}
+                                                        <option value="All">All</option>
+                                                        <option value="Got Design">Got Design</option>
+                                                        <option value="Cutting">Cutting</option>
+                                                        <option value="Cutout Ready">Cutout Ready</option>
+                                                        <option value="Engrave">Engrave</option>
+                                                        <option value="Finishing">Finishing</option>
+                                                        <option value="Packaging">Packaging</option>
+                                                        <option value="Delivered">Delivered</option>
+                                                        <option value="Return">Return</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filter by Products -->
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="form-group">
+                                                    <label for="status">Product</label>
+                                                    <select name="product" id="product"
+                                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                                        <option value="">-- Select Product --</option>
+                                                        <!-- Blank option -->
+                                                        {% for product in products %}
+                                                        <option value="{{ product.id }}"
+                                                        {% if request.GET.product == product.id|stringformat:"d" %}
+                                                        selected
+                                                        {% endif %}
+                                                        >{{ product.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filter by Date From -->
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="form-group">
+                                                    <label for="start_date">From:</label>
+                                                    <input type="date" name="start_date" id="start_date"
+                                                        class="form-control form-control-sm" value="{{request.GET.start_date}}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Filter by Date To -->
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="form-group">
+                                                    <label for="end_date">To:</label>
+                                                    <input type="date" name="end_date" id="end_date"
+                                                        class="form-control form-control-sm" value="{{request.GET.end_date}}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Search by Tracking ID or Customer Name -->
+                                            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="form-group">
+                                                    <label for="search">Search:</label>
+                                                    <input type="text" name="search" id="search"
+                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm" value="{{ request.GET.search }}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <div class="col-12 col-sm-6 col-md-1 mb-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="submit"
                                                         class="form-control form-control-sm btn btn-primary"
-                                                        id="filterButton">Filter</button>
+                                                        aria-controls="dataTable" value="Search">
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-md-2">
+                                            <div class="col-12 col-sm-6 col-md-1 mb-1">
                                                 <div class="form-group">
-                                                    <a href="{% url 'order_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                    <label>&nbsp;</label>
+                                                    <a href="{% url 'order_list' %}"
+                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
 
-                                            <!-- Full Filtering Section (Hidden on Mobile) -->
-                                            <div id="filterSection" class="col-12 d-none d-md-flex">
-                                                <!-- Filter by Status -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                    <div class="form-group">
-                                                        <label for="status">Status</label>
-                                                        <select name="status" id="status"
-                                                            class="custom-select custom-select-sm form-control form-control-sm">
-                                                            {% if request.GET.status %}
-                                                            <option value="{{request.GET.status}}" selected>
-                                                                {{request.GET.status}}</option>
-                                                            {% endif %}
-                                                            <option value="All">All</option>
-                                                            <option value="Got Design">Got Design</option>
-                                                            <option value="Cutting">Cutting</option>
-                                                            <option value="Cutout Ready">Cutout Ready</option>
-                                                            <option value="Engrave">Engrave</option>
-                                                            <option value="Finishing">Finishing</option>
-                                                            <option value="Packaging">Packaging</option>
-                                                            <option value="Delivered">Delivered</option>
-                                                            <option value="Return">Return</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Filter by Products -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                    <div class="form-group">
-                                                        <label for="product">Product</label>
-                                                        <select name="product" id="product"
-                                                            class="custom-select custom-select-sm form-control form-control-sm">
-                                                            <option value="">-- Select Product --</option>
-                                                            {% for product in products %}
-                                                            <option value="{{ product.id }}"
-                                                            {% if request.GET.product == product.id|stringformat:"d" %}
-                                                            selected
-                                                            {% endif %}
-                                                            >{{ product.name }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Filter by Date From -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                    <div class="form-group">
-                                                        <label for="start_date">From:</label>
-                                                        <input type="date" name="start_date" id="start_date"
-                                                            class="form-control form-control-sm"
-                                                            value="{{request.GET.start_date}}">
-                                                    </div>
-                                                </div>
-
-                                                <!-- Filter by Date To -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                    <div class="form-group">
-                                                        <label for="end_date">To:</label>
-                                                        <input type="date" name="end_date" id="end_date"
-                                                            class="form-control form-control-sm"
-                                                            value="{{request.GET.end_date}}">
-                                                    </div>
-                                                </div>
-
-                                                <!-- Search by Tracking ID or Customer Name -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
-                                                    <div class="form-group">
-                                                        <label for="search">Search:</label>
-                                                        <input type="text" name="search" id="search"
-                                                            placeholder="Search by tracking ID or customer name"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ request.GET.search }}">
-                                                    </div>
-                                                </div>
-
-
-                                                <!-- Submit Button -->
-                                                <div class="col-12 col-sm-6 col-md-1 mb-1">
-                                                    <div class="form-group">
-                                                        <label>&nbsp;</label>
-                                                        <input type="submit"
-                                                            class="form-control form-control-sm btn btn-primary"
-                                                            aria-controls="dataTable" value="Search">
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </form>
                                 </div>
-
-                                <script>
-                                    document.getElementById('filterButton').addEventListener('click', function () {
-                                        var filterSection = document.getElementById('filterSection');
-                                        if (filterSection.classList.contains('d-none')) {
-                                            filterSection.classList.remove('d-none');
-                                            filterSection.classList.add('d-md-flex');
-                                        } else {
-                                            filterSection.classList.add('d-none');
-                                            filterSection.classList.remove('d-md-flex');
-                                        }
-                                    });
-                                </script>
-
                                 <!-- -------------Order Filtering Section------------- -->
-
-                            
 
 
                                 <!-- -------------Order Section------------- -->
@@ -198,31 +168,25 @@
                                                         style="width: fixed;">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending">Company
-                                                    </th>
+                                                        aria-label="Company: activate to sort column ascending">Company</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Name: activate to sort column ascending">Name</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending">Product
-                                                    </th>
+                                                        aria-label="Product: activate to sort column ascending">Product</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending">Status
-                                                    </th>
+                                                        aria-label="Status: activate to sort column ascending">Status</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Deal Value: activate to sort column ascending">Deal
-                                                        Value</th>
+                                                        aria-label="Deal Value: activate to sort column ascending">Deal Value</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Due Amount: activate to sort column ascending">Due
-                                                        Amount</th>
+                                                        aria-label="Due Amount: activate to sort column ascending">Due Amount</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Action: activate to sort column ascending">Action
-                                                    </th>
+                                                        aria-label="Action: activate to sort column ascending">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -310,8 +274,7 @@
                                     <div class="col-sm-12 col-md-5">
                                         <div class="dataTables_info" id="dataTable_info" role="status"
                                             aria-live="polite">
-                                            Showing {{page_obj.start_index}} to {{page_obj.end_index}} of
-                                            {{page_obj.paginator.count}} entries
+                                            Showing {{page_obj.start_index}} to {{page_obj.end_index}} of {{page_obj.paginator.count}} entries
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-7">
@@ -337,8 +300,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                        class="page-link">{{ num }}</a>
+                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}" class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
                                                 {% endfor %}
@@ -346,8 +308,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                        class="page-link">Next</a>
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}" class="page-link">Next</a>
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item disabled">

@@ -3,7 +3,11 @@
 
     <a class="navbar-brand" href="{% url 'dashboard' %}">
         <!-- <img alt="logo" src="{% static 'assets/img/logo.png' %}"> -->
-        <img alt="logo" src="{{website_setting.logo.url}}" width="60%">
+        <img alt="logo" src="
+        {% if website_setting.logo %}
+        {{website_setting.logo.url}}
+        {% endif %}
+        " width="60%">
     </a>
 
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"

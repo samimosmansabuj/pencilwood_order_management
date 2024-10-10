@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Custom_User
 from django.db.models import Q
+import os
 
 class LogInView(FormView):
     template_name = 'account/login.html'
@@ -73,11 +74,18 @@ class MyProfileView(LoginRequiredMixin, View):
         last_name = request.POST['last_name']
         email = request.POST['email']
         phone_number = request.POST['phone_number']
+        profile_picture = request.FILES.get('profile_picture')
         old_password = request.POST['old_password']
         new_password = request.POST['new_password']
         confirm_new_password = request.POST['confirm_new_password']
 
         user = get_object_or_404(Custom_User, username=username)
+        
+        if profile_picture:
+            if user.profile_picture:
+                os.remove(user.profile_picture.path)
+            user.profile_picture = profile_picture
+        
         user.first_name = first_name
         user.last_name = last_name
         user.email = email

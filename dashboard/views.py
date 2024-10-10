@@ -13,6 +13,7 @@ from django.db.models import Sum
 from django.db.models import Q
 from django.utils.dateparse import parse_date
 from django.utils.timezone import localdate
+from django.urls import reverse
 import os
 
 
@@ -135,7 +136,7 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # -----------------Maintenance Cost Section Start---------------------
-from django.utils import timezone
+
 def daily_profit_cost_update(object):
     date = timezone.localtime(object.create_date).date()
     daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
@@ -245,8 +246,6 @@ class MaintenanceCostDeleteView(LoginRequiredMixin, DeleteView):
 
 
 
-
-
 # -----------------Daily Profit Section Start---------------------
 class DailyProfitListView(ListView):
     model = Daily_Profit
@@ -291,6 +290,90 @@ class DailyProfitListView(ListView):
         
         return context
  
+# -----------------Daily Profit Section End---------------------
 
-# -----------------Daily Profit Section Start---------------------
 
+
+
+# -----------------Todo Section Start---------------------
+class TodoListView(ListView):
+    model = Todo
+    template_name = 'todo/todo_list.html'
+    context_object_name = 'todos'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        priority = self.request.GET.get('priority')
+        is_complete = self.request.GET.get('is_complete')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        search_query = self.request.GET.get('search')
+        
+        # Filter by priority
+        if priority and priority != 'All':
+            queryset = queryset.filter(priority=priority)
+        
+        # Filter by is_complete
+        if is_complete:
+            queryset = queryset.filter(is_complete=is_complete)
+
+        # Filter by date range
+        if start_date:
+            start_date = parse_date(start_date)
+            queryset = queryset.filter(create_date__gte=start_date)
+        if end_date:
+            end_date = parse_date(end_date)
+            queryset = queryset.filter(create_date__lte=end_date)
+
+        # Filter by Search
+        if search_query:
+            queryset = queryset.filter(
+                Q(id__icontains=search_query) |
+                Q(title__icontains=search_query) |
+                Q(priority__icontains=search_query) |
+                Q(details__icontains=search_query) |
+                Q(create_date__icontains=search_query) |
+                Q(update_date__icontains=search_query)
+            )
+
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TodoForm()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Todo added successfully!')
+            return redirect(reverse('todo_list'))
+        else:
+            messages.error(request, 'There was an error adding the Todo. Please check the form and try again.')
+            context = self.get_context_data()
+            context['form'] = form
+            return self.render_to_response(context)
+
+
+
+class TodoCreateView(CreateView):
+    model = Todo
+    form_class = TodoForm
+    template_name = 'todo/todo_form.html'
+    success_url = reverse_lazy('todo_list')
+
+class TodoUpdateView(UpdateView):
+    model = Todo
+    form_class = TodoForm
+    template_name = 'todo/todo_form.html'
+    success_url = reverse_lazy('todo_list')
+
+class TodoDeleteView(DeleteView):
+    model = Todo
+    template_name = 'todo/todo_confirm_delete.html'
+    success_url = reverse_lazy('todo_list')
+
+# -----------------Todo Section End-----------------------
