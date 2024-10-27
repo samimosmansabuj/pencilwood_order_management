@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.utils.dateparse import parse_date
 from django.utils.timezone import localdate
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import os
 
 
@@ -37,6 +38,56 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # Calculate total deal value for today’s orders and all orders
         today_total_deal_value = today_orders.aggregate(total=Sum('deal_value'))['total'] or 0
         all_order_total_deal_value = order.aggregate(total=Sum('deal_value'))['total'] or 0
+        
+        
+        
+        # Fetch todos assigned to the current user
+        todos = Todo.objects.filter(work_assign=self.request.user).order_by('-create_date')
+        priority = self.request.GET.get('priority')
+        is_complete = self.request.GET.get('is_complete')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        search_query = self.request.GET.get('search')
+
+        # Filter todos by priority
+        if priority and priority != 'All':
+            todos = todos.filter(priority=priority)
+
+        # Filter todos by is_complete
+        if is_complete:
+            todos = todos.filter(is_complete=is_complete)
+
+        # Filter todos by date range
+        if start_date:
+            start_date = parse_date(start_date)
+            todos = todos.filter(create_date__gte=start_date)
+        if end_date:
+            end_date = parse_date(end_date)
+            todos = todos.filter(create_date__lte=end_date)
+
+        # Filter todos by search query
+        if search_query:
+            todos = todos.filter(
+                Q(id__icontains=search_query) |
+                Q(title__icontains=search_query) |
+                Q(priority__icontains=search_query) |
+                Q(details__icontains=search_query) |
+                Q(create_date__icontains=search_query) |
+                Q(update_date__icontains=search_query)
+            )
+
+        
+        # Add pagination
+        page = self.request.GET.get('page', 10)
+        paginator = Paginator(todos, 1)  # Show 10 todos per page
+        try:
+            todos_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            todos_paginated = paginator.page(1)
+        except EmptyPage:
+            todos_paginated = paginator.page(paginator.num_pages)
+        
+        
 
         # Pass values to the context
         context['user'] = user
@@ -45,6 +96,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['order_request'] = order_request
         context['today_total_deal_value'] = today_total_deal_value
         context['all_order_total_deal_value'] = all_order_total_deal_value
+        context['todos'] = todos_paginated
+        context['work_assign_choices'] = Custom_User.objects.all()
 
         return context
 
@@ -300,7 +353,7 @@ class TodoListView(ListView):
     model = Todo
     template_name = 'todo/todo_list.html'
     context_object_name = 'todos'
-    paginate_by = 5
+    paginate_by = 10
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -310,6 +363,7 @@ class TodoListView(ListView):
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         search_query = self.request.GET.get('search')
+        work_assign = self.request.GET.get('work_assign')
         
         # Filter by priority
         if priority and priority != 'All':
@@ -326,6 +380,12 @@ class TodoListView(ListView):
         if end_date:
             end_date = parse_date(end_date)
             queryset = queryset.filter(create_date__lte=end_date)
+        
+        # Filter by work_assign
+        # if work_assign and work_assign.isdigit():
+        #     queryset = queryset.filter(work_assign__id__icontains=work_assign)
+        if work_assign:
+            queryset = queryset.filter(work_assign_id=work_assign)
 
         # Filter by Search
         if search_query:
@@ -343,12 +403,15 @@ class TodoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = TodoForm()
+        context['work_assign_choices'] = Custom_User.objects.all()
         return context
     
     def post(self, request, *args, **kwargs):
         form = TodoForm(request.POST)
         if form.is_valid():
-            form.save()
+            todo = form.save(commit=False)
+            todo.last_update_user = request.user  # Set the last_update_user
+            todo.save()
             messages.success(request, 'Todo added successfully!')
             return redirect(reverse('todo_list'))
         else:
@@ -364,12 +427,22 @@ class TodoCreateView(CreateView):
     form_class = TodoForm
     template_name = 'todo/todo_form.html'
     success_url = reverse_lazy('todo_list')
+    
+    def form_valid(self, form):
+        form.instance.last_update_user = self.request.user  # Set last_update_user to the current user
+        return super().form_valid(form)
+
 
 class TodoUpdateView(UpdateView):
     model = Todo
     form_class = TodoForm
     template_name = 'todo/todo_form.html'
     success_url = reverse_lazy('todo_list')
+    
+    def form_valid(self, form):
+        form.instance.last_update_user = self.request.user  # Update last_update_user on edit
+        return super().form_valid(form)
+
 
 class TodoDeleteView(DeleteView):
     model = Todo

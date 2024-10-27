@@ -41,13 +41,14 @@ class OrderRequest(models.Model):
     request_created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True)
     tracking_ID = models.CharField(max_length=5, blank=True, null=True)
     
-    company = models.CharField(max_length=250)
+    company = models.CharField(max_length=250, blank=True, null=True)
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
     product = models.ManyToManyField(Product)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='None')
     remark = models.TextField(blank=True, null=True)
+    work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_request_assign')
     order_created = models.BooleanField(default=False)
     
     logo = models.URLField(max_length=1000, blank=True, null=True)
@@ -78,7 +79,7 @@ class OrderCustomer(models.Model):
         ('Others', 'Others'),
     )
     tracking_ID = models.CharField(max_length=6, blank=True, null=True)
-    company = models.CharField(max_length=250)
+    company = models.CharField(max_length=250, blank=True, null=True)
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
@@ -127,11 +128,11 @@ class Order(models.Model):
     order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     
     tracking_ID = models.CharField(max_length=6, blank=True, null=True)
-    delivery_address = models.CharField(max_length=500)
+    delivery_address = models.CharField(max_length=500, blank=True, null=True)
     special_instructions = models.TextField(blank=True, null=True)
     design_file = models.FileField(upload_to='order-design-files/', blank=True, null=True)
     
-    quantity = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=1, blank=True, null=True)
     unit_price = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
     deal_value = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
     advance_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
@@ -147,8 +148,8 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD, blank=True, null=True)
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=50, default='Unpaid')
     
-    status = models.CharField(choices=STATUS, max_length=50, default='Pending')
-    work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True)
+    status = models.CharField(choices=STATUS, max_length=50, default='Pending', blank=True, null=True)
+    work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_assign')
     remark = models.TextField(blank=True, null=True)
     
     order_date = models.DateTimeField(auto_now_add=True)

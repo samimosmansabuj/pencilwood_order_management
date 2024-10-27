@@ -89,24 +89,23 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Filter by Products -->
-                                                <!-- <div class="col-12 col-sm-6 col-md-1 mb-1">
+                                                <!-- Filter by Work Assign -->
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
-                                                        <label for="is_complete">Complete</label> -->
-                                                        <!-- <select name="is_complete" id="is_complete"
+                                                        <label for="work_assign">Assigned User</label>
+                                                        <select name="work_assign" id="work_assign"
                                                             class="custom-select custom-select-sm form-control form-control-sm">
-                                                            {% if request.GET.is_complete %}
-                                                            <option value="{{request.GET.is_complete}}" selected>
-
-                                                                {{request.GET.priority}}
-                                                            </option>
+                                                            <option value="">-- Select User --</option>
+                                                            {% for users in work_assign_choices %}
+                                                            <option value="{{ users.id }}"
+                                                            {% if request.GET.work_assign == users.id|stringformat:"d" %}
+                                                            selected
                                                             {% endif %}
-                                                            <option value="True">Complete</option>
-                                                            <option value="False">Incomplete</option>
-                                                        </select> -->
-                                                        <!-- <input type="checkbox" name="is_complete" id="is_complete" class="form-control form-control-sm" value="{{request.GET.is_complete}}">
+                                                            >{{ users.first_name }} {{ users.last_name }}</option>
+                                                            {% endfor %}
+                                                        </select>
                                                     </div>
-                                                </div> -->
+                                                </div>
 
                                                 <!-- Filter by Date From -->
                                                 <div class="col-12 col-sm-6 col-md-2 mb-1">
@@ -186,15 +185,19 @@
                                                         style="width: fixed;">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending">Title
+                                                        aria-label="Title: activate to sort column ascending">Title
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Name: activate to sort column ascending">Complete
+                                                        aria-label="Complete: activate to sort column ascending">Complete
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending">Priority
+                                                        aria-label="Work Assign: activate to sort column ascending">Work Assign
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Priority: activate to sort column ascending">Priority
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
@@ -202,8 +205,12 @@
                                                         Created Date</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Created Date: activate to sort column ascending">
-                                                        Created Date</th>
+                                                        aria-label="Updated Date: activate to sort column ascending">
+                                                        Updated Date</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Last Update By: activate to sort column ascending">
+                                                        Last Update By</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Action: activate to sort column ascending">Action
@@ -222,7 +229,14 @@
                                                         {{todo.title}}
                                                     </td>
                                                     <td>
-                                                        {{todo.is_complete}}
+                                                        {%if todo.is_complete == True %}
+                                                        Yes
+                                                        {% else %}
+                                                        No
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {{todo.work_assign}}
                                                     </td>
                                                     <td>
                                                         {{todo.priority}}
@@ -232,6 +246,9 @@
                                                     </td>
                                                     <td>
                                                         {{todo.update_date}}
+                                                    </td>
+                                                    <td>
+                                                        {{todo.last_update_user}}
                                                     </td>
                                                     <td>
                                                         <a href="{% url 'todo_update' todo.id %}"
@@ -274,7 +291,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -291,7 +308,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ num }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
@@ -300,7 +317,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
                                                 {% else %}

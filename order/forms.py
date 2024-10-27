@@ -38,6 +38,9 @@ class OrderCustomerForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super(OrderCustomerForm, self).__init__(*args, **kwargs)
+        self.fields['company'].required = False
+        self.fields['source'].required = False
+        self.fields['product'].required = False
         self.fields['logo'].required = False
         self.fields['picture1'].required = False
 
@@ -49,7 +52,7 @@ class OrderForm(forms.ModelForm):
             'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
         ]
 
-    delivery_address = forms.CharField(widget=forms.TextInput(attrs={
+    delivery_address = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryAddress', 'placeholder': 'Enter Delivery Address'
     }))
 
@@ -57,15 +60,15 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputSpecialInstructions', 'placeholder': 'Enter Special Instructions (optional)', 'rows': 3
     }))
 
-    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={
+    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
     }))
 
-    unit_price = forms.DecimalField(widget=forms.NumberInput(attrs={
+    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
     }))
 
-    advance_amount = forms.DecimalField(widget=forms.NumberInput(attrs={
+    advance_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
     }))
 
@@ -73,11 +76,11 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputDueAmount', 'readonly': 'readonly', 'placeholder': 'Calculated Due Amount'
     }))
 
-    delivery_charge = forms.DecimalField(widget=forms.NumberInput(attrs={
+    delivery_charge = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryCharge', 'placeholder': 'Enter Delivery Charge'
     }))
     
-    delivery_charge_cost = forms.DecimalField(widget=forms.NumberInput(attrs={
+    delivery_charge_cost = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryChargeCost', 'placeholder': 'Enter Delivery Charge Cost'
     }))
 
@@ -97,11 +100,11 @@ class OrderForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputPaymentStatus'
     }))
 
-    status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
+    status = forms.ChoiceField(required=False, choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     }))
 
-    work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), required=False, widget=forms.Select(attrs={
+    work_assign = forms.ModelChoiceField(required=False, queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputWorkAssign'
     }))
 
@@ -124,16 +127,16 @@ class OrderStatusUpdateForm(forms.ModelForm):
             'status', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
         ]
 
-    status = forms.ChoiceField(choices=Order.STATUS, widget=forms.Select(attrs={
+    status = forms.ChoiceField(required=False, choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     }))
-    work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
+    work_assign = forms.ModelChoiceField(required=False, queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputWorkAssign'
     }))
     remark = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     }))
-    delivery_address = forms.CharField(widget=forms.TextInput(attrs={
+    delivery_address = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryAddress', 'placeholder': 'Enter Delivery Address'
     }))
     delivery_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
@@ -170,23 +173,23 @@ class OrderPaymentUpdateForm(forms.ModelForm):
         model = Order
         fields = ['quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'delivery_charge_cost']
 
-    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={
+    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
     }))
 
-    unit_price = forms.DecimalField(widget=forms.NumberInput(attrs={
+    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
     }))
 
-    advance_amount = forms.DecimalField(widget=forms.NumberInput(attrs={
+    advance_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
     }))
 
-    delivery_charge = forms.DecimalField(widget=forms.NumberInput(attrs={
+    delivery_charge = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryCharge', 'placeholder': 'Enter Delivery Charge'
     }))
     
-    delivery_charge_cost = forms.DecimalField(widget=forms.NumberInput(attrs={
+    delivery_charge_cost = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputDeliveryChargeCost', 'placeholder': 'Enter Delivery Charge Cost'
     }))
 
@@ -201,10 +204,10 @@ class OrderRequestForm(forms.ModelForm):
         fields = [
             'company', 'name', 'phone_number', 'source', 'product',
             'status', 'remark', 'logo', 'picture1',
-            'picture2', 'picture3', 'picture4', 'picture5'
+            'picture2', 'picture3', 'picture4', 'picture5', 'work_assign'
         ]
 
-    company = forms.CharField(label='Company Name', max_length=50, widget=forms.TextInput(attrs={
+    company = forms.CharField(label='Company Name', max_length=50, required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
     })
     )
@@ -219,17 +222,17 @@ class OrderRequestForm(forms.ModelForm):
     })
     )
 
-    source = forms.ChoiceField(choices=OrderRequest.SOURCE, widget=forms.Select(attrs={
+    source = forms.ChoiceField(choices=OrderRequest.SOURCE, required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputSource'
     })
     )
 
-    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
+    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), required=False, widget=forms.CheckboxSelectMultiple(attrs={
         'class': 'form-check-inline', 'id': 'inputProduct'
     })
     )
 
-    status = forms.ChoiceField(choices=OrderRequest.STATUS_CHOICES, widget=forms.Select(attrs={
+    status = forms.ChoiceField(choices=OrderRequest.STATUS_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     })
     )
@@ -238,6 +241,10 @@ class OrderRequestForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark'
     })
     )
+    
+    work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), required=False, widget=forms.Select(attrs={
+        'class': 'form-control', 'id': 'inputWorkAssign'
+    }))
 
     logo = forms.URLField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputLogo', 'placeholder': 'Enter Logo URL'
@@ -274,14 +281,14 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'source', 'status', 'remark', 'product'
+            'company', 'name', 'phone_number', 'source', 'status', 'remark', 'product', 'work_assign'
         ]
-    company = forms.CharField(label='Company Name', max_length=50, widget=forms.TextInput(attrs={
+    company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
     })
     )
 
-    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
+    product = forms.ModelMultipleChoiceField(required=False, queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
         'class': 'form-check-inline', 'id': 'inputProduct'
     })
     )
@@ -295,14 +302,17 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
     })
     )
-    source = forms.ChoiceField(choices=OrderRequest.SOURCE, widget=forms.Select(attrs={
+    source = forms.ChoiceField(required=False, choices=OrderRequest.SOURCE, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputSource'
     })
     )
-    status = forms.ChoiceField(choices=OrderRequest.STATUS_CHOICES, widget=forms.Select(attrs={
+    status = forms.ChoiceField(required=False, choices=OrderRequest.STATUS_CHOICES, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     })
     )
+    work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), required=False, widget=forms.Select(attrs={
+        'class': 'form-control', 'id': 'inputWorkAssign'
+    }))
     remark = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     })

@@ -60,6 +60,292 @@
 
 
 
+
+
+
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fa fa-table mr-1"></i>
+            My Todo Work ({{todos.paginator.count}})
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+
+
+                    <!-- -------------Order Filtering Section------------- -->
+                    <div class="container-fluid">
+                        <form method="GET">
+                            <div class="row">
+                                <!-- Filter and Reset Buttons -->
+                                <div class="col-12 d-md-none mb-1">
+                                    <div class="form-group">
+                                        <button type="button"
+                                            class="form-control form-control-sm btn btn-primary"
+                                            id="filterButton">Filter</button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <div class="form-group">
+                                        <a href="{% url 'todo_list' %}"
+                                            class="form-control form-control-sm btn btn-primary">Reset</a>
+                                    </div>
+                                </div>
+
+                                <!-- Full Filtering Section (Hidden on Mobile) -->
+                                <div id="filterSection" class="col-12 d-none d-md-flex">
+                                    <!-- Filter by Status -->
+                                    <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                        <div class="form-group">
+                                            <label for="priority">Priority</label>
+                                            <select name="priority" id="priority"
+                                                class="custom-select custom-select-sm form-control form-control-sm">
+                                                {% if request.GET.priority %}
+                                                <option value="{{request.GET.priority}}" selected>
+                                                    {{request.GET.priority}}</option>
+                                                {% endif %}
+                                                <option value="All">All</option>
+                                                <option value="Low">Low</option>
+                                                <option value="Medium">Medium</option>
+                                                <option value="High">High</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Filter by Date From -->
+                                    <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                        <div class="form-group">
+                                            <label for="start_date">From:</label>
+                                            <input type="date" name="start_date" id="start_date"
+                                                class="form-control form-control-sm"
+                                                value="{{request.GET.start_date}}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Filter by Date To -->
+                                    <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                        <div class="form-group">
+                                            <label for="end_date">To:</label>
+                                            <input type="date" name="end_date" id="end_date"
+                                                class="form-control form-control-sm"
+                                                value="{{request.GET.end_date}}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Search by Tracking ID or Customer Name -->
+                                    <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                        <div class="form-group">
+                                            <label for="search">Search:</label>
+                                            <input type="text" name="search" id="search"
+                                                placeholder="Search by tracking ID or customer name"
+                                                class="form-control form-control-sm"
+                                                value="{{ request.GET.search }}">
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Submit Button -->
+                                    <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                        <div class="form-group">
+                                            <label>&nbsp;</label>
+                                            <input type="submit"
+                                                class="form-control form-control-sm btn btn-primary"
+                                                aria-controls="dataTable" value="Search">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        document.getElementById('filterButton').addEventListener('click', function () {
+                            var filterSection = document.getElementById('filterSection');
+                            if (filterSection.classList.contains('d-none')) {
+                                filterSection.classList.remove('d-none');
+                                filterSection.classList.add('d-md-flex');
+                            } else {
+                                filterSection.classList.add('d-none');
+                                filterSection.classList.remove('d-md-flex');
+                            }
+                        });
+                    </script>
+
+                    <!-- -------------Order Filtering Section------------- -->
+
+
+
+
+                    <!-- -------------Order Section------------- -->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-bordered dataTable no-footer" id="dataTable"
+                                width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info"
+                                style="width: 100%;">
+                                <thead>
+                                    <tr class="text-uppercase" role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="ID: activate to sort column ascending"
+                                            style="width: fixed;">ID</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Title: activate to sort column ascending">Title
+                                        </th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Complete: activate to sort column ascending">Complete
+                                        </th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Work Assign: activate to sort column ascending">Work Assign
+                                        </th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Priority: activate to sort column ascending">Priority
+                                        </th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Created Date: activate to sort column ascending">
+                                            Created Date</th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Updated Date: activate to sort column ascending">
+                                            Updated Date</th>
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Last Update By: activate to sort column ascending">
+                                            Last Update By</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                            rowspan="1" colspan="1"
+                                            aria-label="Action: activate to sort column ascending">Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!---->
+                                    {% if todos %}
+                                    {% for todo in todos %}
+                                    <tr role="row" class="odd">
+                                        <td>
+                                            {{todo.id}}
+                                        </td>
+                                        <td>
+                                            {{todo.title}}
+                                        </td>
+                                        <td>
+                                            {%if todo.is_complete == True %}
+                                            Yes
+                                            {% else %}
+                                            No
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{todo.work_assign}}
+                                        </td>
+                                        <td>
+                                            {{todo.priority}}
+                                        </td>
+                                        <td>
+                                            {{todo.create_date}}
+                                        </td>
+                                        <td>
+                                            {{todo.update_date}}
+                                        </td>
+                                        <td>
+                                            {{todo.last_update_user}}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'todo_update' todo.id %}"
+                                                class="btn btn-primary btn-sm">
+                                                View
+                                            </a>
+                                            <a href="{% url 'todo_delete' todo.id %}" class="btn btn-primary btn-sm">
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr class="row" class="odd">
+                                        <td colspan="6">
+                                            Not Found
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <!---->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- -------------Order Section------------- -->
+
+
+                    <!-- -------------Pagination Section------------- -->
+                    <div class="row">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info" id="dataTable_info" role="status"
+                                aria-live="polite">
+                                Showing {{todos.start_index}} to {{todos.end_index}} of
+                                {{todos.paginator.count}} entries
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <ul class="pagination">
+                                    <!-- Previous button -->
+                                    {% if todos.has_previous %}
+                                    <li class="paginate_button page-item">
+                                        <a href="?page={{ todos.previous_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                            class="page-link">Previous</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="paginate_button page-item disabled">
+                                        <a href="#" class="page-link">Previous</a>
+                                    </li>
+                                    {% endif %}
+
+                                    <!-- Page numbers -->
+                                    {% for num in todos.paginator.page_range %}
+                                    {% if todos.number == num %}
+                                    <li class="paginate_button page-item active">
+                                        <a href="#" class="page-link">{{ num }}</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="paginate_button page-item">
+                                        <a href="?page={{ num }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                            class="page-link">{{ num }}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <!-- Next button -->
+                                    {% if todos.has_next %}
+                                    <li class="paginate_button page-item">
+                                        <a href="?page={{ todos.next_page_number }}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}{% if request.GET.is_complete %}&is_complete={{ request.GET.is_complete }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                            class="page-link">Next</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="paginate_button page-item disabled">
+                                        <a href="#" class="page-link">Next</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- -------------Pagination Section------------- -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 </div>
 </main>
 {% endblock dashboard_body %}

@@ -1,5 +1,6 @@
 from django.db import models
 from order.models import Order
+from account.models import Custom_User
 
 class Site_Settings(models.Model):
     fav_icon = models.ImageField(upload_to='logo/', blank=True, null=True)
@@ -66,9 +67,11 @@ class Todo(models.Model):
     title = models.CharField(max_length=255)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Medium')
     details = models.TextField(blank=True, null=True)
+    work_assign = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='todo_assign')
     is_complete = models.BooleanField(default=False)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
+    last_update_user = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='todo_last_update_user')
     
     class Meta:
         ordering = ['-update_date']

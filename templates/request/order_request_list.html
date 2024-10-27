@@ -51,10 +51,9 @@
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
 
 
-
-                                <!-- -------------Order Request Filtering Section------------- -->
-                                <div class="container-fluid">
-                                    <form method="GET">
+                                <form method="GET">
+                                    <!-- -------------Order Request Filtering Section------------- -->
+                                    <div class="container-fluid">
                                         <div class="row">
                                             <!-- Filter and Reset Buttons -->
                                             <div class="col-12 d-md-none mb-1">
@@ -73,14 +72,15 @@
                                             <!-- Reset Button (Visible on all devices) -->
                                             <div class="col-12 col-md-2">
                                                 <div class="form-group">
-                                                    <a href="{% url 'order_request_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                    <a href="{% url 'order_request_list' %}"
+                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
 
                                             <!-- Full Filtering Section (Hidden on Mobile) -->
                                             <div id="filterSection" class="col-12 d-none d-md-flex">
                                                 <!-- Filter by Status -->
-                                                <div class="col-12 col-sm-6 col-md-2">
+                                                <div class="col-12 col-sm-6 col-md-1">
                                                     <div class="form-group">
                                                         <label for="status">Status</label>
                                                         <select name="status" id="status"
@@ -114,7 +114,7 @@
                                                             class="custom-select custom-select-sm form-control form-control-sm">
                                                             <option value="">-- Select Product --</option>
                                                             {% for product in products %}
-                                                            <option value="{{ product.id }}"
+                                                            <option value="{{ product.id }}" 
                                                             {% if request.GET.product == product.id|stringformat:"d" %}
                                                             selected
                                                             {% endif %}
@@ -144,6 +144,24 @@
                                                     </div>
                                                 </div>
 
+                                                <!-- Filter by Work Assign -->
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                    <div class="form-group">
+                                                        <label for="work_assign">Assign User</label>
+                                                        <select name="work_assign" id="work_assign"
+                                                            class="custom-select custom-select-sm form-control form-control-sm">
+                                                            <option value="">-- Select User --</option>
+                                                            {% for users in work_assign_choices %}
+                                                            <option value="{{ users.id }}"
+                                                            {% if request.GET.work_assign == users.id|stringformat:"d" %}
+                                                            selected
+                                                            {% endif %}
+                                                            >{{ users.first_name }} {{ users.last_name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Search by Tracking ID or Customer Name -->
                                                 <div class="col-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
@@ -157,7 +175,7 @@
 
 
                                                 <!-- Submit Button -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="col-12 col-sm-6 col-md-1 mb-1">
                                                     <div class="form-group">
                                                         <label>&nbsp;</label>
                                                         <input type="submit"
@@ -167,24 +185,35 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
 
-                                <script>
-                                    document.getElementById('filterButton').addEventListener('click', function () {
-                                        var filterSection = document.getElementById('filterSection');
-                                        if (filterSection.classList.contains('d-none')) {
-                                            filterSection.classList.remove('d-none');
-                                            filterSection.classList.add('d-md-flex');
-                                        } else {
-                                            filterSection.classList.add('d-none');
-                                            filterSection.classList.remove('d-md-flex');
-                                        }
-                                    });
-                                </script>
+                                    <script>
+                                        document.getElementById('filterButton').addEventListener('click', function () {
+                                            var filterSection = document.getElementById('filterSection');
+                                            if (filterSection.classList.contains('d-none')) {
+                                                filterSection.classList.remove('d-none');
+                                                filterSection.classList.add('d-md-flex');
+                                            } else {
+                                                filterSection.classList.add('d-none');
+                                                filterSection.classList.remove('d-md-flex');
+                                            }
+                                        });
+                                    </script>
 
-                                <!-- -------------Order Request Filtering Section------------- -->
+                                    <!-- -------------Order Request Filtering Section------------- -->
 
+                                    <div class="row mb-3">
+                                        <div class="col-sm-12">
+                                            <!-- <a href="?export=xlsx" class="btn btn-success">Download as Excel</a>
+                                        <a href="?export=csv" class="btn btn-primary">Download as CSV</a> -->
+
+                                            <button name="export" value="xlsx" class="btn btn-success">Download as
+                                                Excel</button>
+                                            <button name="export" value="csv" class="btn btn-primary">Download as
+                                                CSV</button>
+                                        </div>
+                                    </div>
+                                </form>
 
 
                                 <!-- -------------Order Request Section------------- -->
@@ -200,19 +229,27 @@
                                                         aria-label="ID: activate to sort column ascending">ID</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending">Company</th>
+                                                        aria-label="Company: activate to sort column ascending">Company
+                                                    </th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Name: activate to sort column ascending">Name</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Source: activate to sort column ascending">Source</th>
+                                                        aria-label="Source: activate to sort column ascending">Source
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending">Product</th>
+                                                        aria-label="Product: activate to sort column ascending">Product
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending">Status</th>
+                                                        aria-label="Work Assign: activate to sort column ascending">Work
+                                                        Assign</th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Status: activate to sort column ascending">Status
+                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Created Date: activate to sort column ascending">
@@ -223,6 +260,8 @@
                                                     </th>
                                                 </tr>
                                             </thead>
+
+
                                             <tbody>
                                                 <!---->
                                                 {% for order_request in order_requests %}
@@ -243,6 +282,9 @@
                                                         {% for product in order_request.product.all %}
                                                         {{product.name}},
                                                         {% endfor %}
+                                                    </td>
+                                                    <td>
+                                                        {{order_request.work_assign}}
                                                     </td>
                                                     <td>
                                                         {{order_request.status}}
@@ -285,7 +327,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -302,7 +344,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
                                                         class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
@@ -311,7 +353,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
                                                 {% else %}

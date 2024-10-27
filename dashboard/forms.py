@@ -1,6 +1,7 @@
 from django import forms
 from .models import Site_Settings, Maintenance_Cost, Todo
 from order.models import Product
+from account.models import Custom_User
 
 
 class WebsiteSettingsForm(forms.ModelForm):
@@ -68,9 +69,18 @@ class MaintenanceCostForm(forms.ModelForm):
     
 
 class TodoForm(forms.ModelForm):
+    work_assign = forms.ModelChoiceField(required=False, queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
+        'class': 'form-control', 'id': 'inputWorkAssign'
+    }))
+    last_update_user = forms.ModelChoiceField(
+        required=False,
+        queryset=Custom_User.objects.all(),
+        widget=forms.HiddenInput()
+    )
+    
     class Meta:
         model = Todo
-        fields = ['title', 'priority', 'details', 'is_complete']
+        fields = ['title', 'priority', 'details', 'is_complete', 'work_assign', 'last_update_user']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputTitle', 'placeholder': 'Enter Todo Title'

@@ -55,9 +55,11 @@
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
 
 
+
+                                <form method="GET">
                                 <!-- -------------Order Filtering Section------------- -->
                                 <div class="container-fluid">
-                                    <form method="GET">
+                                    
                                         <div class="row">
                                             <!-- Filter and Reset Buttons -->
                                             <div class="col-12 d-md-none mb-1">
@@ -76,7 +78,7 @@
                                             <!-- Full Filtering Section (Hidden on Mobile) -->
                                             <div id="filterSection" class="col-12 d-none d-md-flex">
                                                 <!-- Filter by Status -->
-                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                <div class="col-12 col-sm-6 col-md-1 mb-1">
                                                     <div class="form-group">
                                                         <label for="status">Status</label>
                                                         <select name="status" id="status"
@@ -136,6 +138,24 @@
                                                     </div>
                                                 </div>
 
+                                                <!-- Filter by Work Assign -->
+                                                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                                                    <div class="form-group">
+                                                        <label for="work_assign">Assign User</label>
+                                                        <select name="work_assign" id="work_assign"
+                                                            class="custom-select custom-select-sm form-control form-control-sm">
+                                                            <option value="">-- Select User --</option>
+                                                            {% for users in work_assign_choices %}
+                                                            <option value="{{ users.id }}"
+                                                            {% if request.GET.work_assign == users.id|stringformat:"d" %}
+                                                            selected
+                                                            {% endif %}
+                                                            >{{ users.first_name }} {{ users.last_name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
                                                 <!-- Search by Tracking ID or Customer Name -->
                                                 <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
@@ -159,7 +179,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
+                                    
                                 </div>
 
                                 <script>
@@ -174,8 +194,24 @@
                                         }
                                     });
                                 </script>
-
                                 <!-- -------------Order Filtering Section------------- -->
+
+
+
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-12">
+                                        <!-- <a href="?export=xlsx" class="btn btn-success">Download as Excel</a>
+                                    <a href="?export=csv" class="btn btn-primary">Download as CSV</a> -->
+
+                                        <button name="export" value="xlsx" class="btn btn-success">Download as
+                                            Excel</button>
+                                        <button name="export" value="csv" class="btn btn-primary">Download as
+                                            CSV</button>
+                                    </div>
+                                </div>
+
+                            </form>
 
                             
 
@@ -209,6 +245,10 @@
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
+                                                        aria-label="Work Assign: activate to sort column ascending">Work Assign
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
                                                         aria-label="Status: activate to sort column ascending">Status
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
@@ -225,6 +265,7 @@
                                                     </th>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
                                                 <!---->
                                                 {% for order in orders %}
@@ -261,6 +302,9 @@
                                                         {% endif %}
                                                     </td>
                                                     <td>
+                                                        {{order.work_assign}}
+                                                    </td>
+                                                    <td>
                                                         {{order.status}}
                                                     </td>
                                                     <td>
@@ -287,7 +331,7 @@
                                             <!-- Total Order Amount Start-->
                                             <tfoot>
                                                 <tr role="row" class="odd">
-                                                    <td colspan="5" class="text-right">
+                                                    <td colspan="7" class="text-right">
                                                         Total
                                                     </td>
 
@@ -320,7 +364,7 @@
                                                 <!-- Previous button -->
                                                 {% if page_obj.has_previous %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
                                                         class="page-link">Previous</a>
                                                 </li>
                                                 {% else %}
@@ -337,7 +381,7 @@
                                                 </li>
                                                 {% else %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
                                                         class="page-link">{{ num }}</a>
                                                 </li>
                                                 {% endif %}
@@ -346,7 +390,7 @@
                                                 <!-- Next button -->
                                                 {% if page_obj.has_next %}
                                                 <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
                                                         class="page-link">Next</a>
                                                 </li>
                                                 {% else %}

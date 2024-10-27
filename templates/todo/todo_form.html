@@ -80,6 +80,24 @@
                             <!-- /row-->
 
                             <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.work_assign.label}}</label>
+                                        {{form.work_assign}}
+                                    </div>
+                                </div>
+                                {% if object %}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Last Update By</label><br>
+                                        <a class="btn btn-success">{{object.last_update_user}}</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- /row-->
+
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>{{form.details.label}}</label>
@@ -109,6 +127,9 @@
                 <button type="submit" class="btn btn-success">
                     <i class="feather-send"></i> SAVE
                 </button>
+                <a href="{% url 'todo_delete' object.id %}" class="btn btn-primary btn-sm">
+                    Delete
+                </a>
             </div>
         </div>
     </form>
