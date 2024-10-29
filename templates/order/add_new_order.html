@@ -54,7 +54,7 @@
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
-                              <label>{{order_customer_form.company.label}}</label>
+                              <label>{{order_customer_form.company.label}} (Optional)</label>
                               {{order_customer_form.company}}
                            </div>
                         </div>
@@ -75,8 +75,8 @@
                         </div>
                         <div class="col-md-6">
                            <div class="form-group">
-                              <label>{{order_customer_form.source.label}}</label>
-                              {{order_customer_form.source}}
+                              <label>{{order_customer_form.second_phone_number.label}} (Optional)</label>
+                              {{order_customer_form.second_phone_number}}
                            </div>
                         </div>
                      </div>
@@ -84,11 +84,20 @@
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
-                              <label>{{order_form.design_file.label}}</label>
+                              <label>{{order_form.design_file.label}} (Optional)</label>
                               {{order_form.design_file}}
                            </div>
                         </div>
                         <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.source.label}}</label>
+                              {{order_customer_form.source}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-12">
                            <div class="form-group">
                               <label>{{order_form.delivery_address.label}}</label>
                               {{order_form.delivery_address}}

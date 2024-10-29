@@ -8,7 +8,7 @@ import os
 class OrderCustomerForm(forms.ModelForm):
     class Meta:
         model = OrderCustomer
-        fields = ['company', 'name', 'phone_number', 'source', 'product', 'logo', 'picture1']
+        fields = ['company', 'name', 'phone_number', 'second_phone_number', 'source', 'product', 'logo', 'picture1']
         widgets = {
             'company': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -18,6 +18,9 @@ class OrderCustomerForm(forms.ModelForm):
             }),
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputPhone', 'placeholder': 'Enter Phone Number'
+            }),
+            'second_phone_number': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'inputSecondPhoneNumber', 'placeholder': 'Second Phone Number'
             }),
             'source': forms.Select(attrs={
                 'class': 'form-control', 'id': 'inputSource'
@@ -39,6 +42,7 @@ class OrderCustomerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderCustomerForm, self).__init__(*args, **kwargs)
         self.fields['company'].required = False
+        self.fields['second_phone_number'].required = False
         self.fields['source'].required = False
         self.fields['product'].required = False
         self.fields['logo'].required = False
@@ -202,7 +206,7 @@ class OrderRequestForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'source', 'product',
+            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'product',
             'status', 'remark', 'logo', 'picture1',
             'picture2', 'picture3', 'picture4', 'picture5', 'work_assign'
         ]
@@ -219,6 +223,11 @@ class OrderRequestForm(forms.ModelForm):
 
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
+    })
+    )
+    
+    second_phone_number = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputSecondPhoneNumber', 'placeholder': 'Second Phone Number'
     })
     )
 
@@ -281,7 +290,7 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'source', 'status', 'remark', 'product', 'work_assign'
+            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign'
         ]
     company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -300,6 +309,10 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
 
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
+    })
+    )
+    second_phone_number = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputSecondPhoneNumber', 'placeholder': 'Second Phone Number'
     })
     )
     source = forms.ChoiceField(required=False, choices=OrderRequest.SOURCE, widget=forms.Select(attrs={

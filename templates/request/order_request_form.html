@@ -34,7 +34,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{form.company.label}}</label>
+                                        <label>{{form.company.label}} (Optional)</label>
                                         {{form.company}}
                                     </div>
                                 </div>
@@ -53,6 +53,15 @@
                                         {{form.phone_number}}
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.second_phone_number.label}} (Optional)</label>
+                                        {{form.second_phone_number}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row-->
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{form.source.label}}</label>

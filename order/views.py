@@ -100,7 +100,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     def render_to_response(self, context, **response_kwargs):
         export_format = self.request.GET.get('export')
         queryset = self.get_queryset()  # Get the filtered queryset without pagination
-        headers = ['ID', 'Company', 'Name', 'Phone Number', 'delivery_address', 'special_instructions', 'Source', 'Product(s)', 'Work Assign', 'Status', 'remark', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'due_amount', 'delivery_charge', 'delivery_charge_cost', 'extra_cost', 'total_amount', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'delivery_date', 'Last Update', 'order_date']
+        headers = ['ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'delivery_address', 'special_instructions', 'Source', 'Product(s)', 'Work Assign', 'Status', 'remark', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'due_amount', 'delivery_charge', 'delivery_charge_cost', 'extra_cost', 'total_amount', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'delivery_date', 'Last Update', 'order_date']
         
         if export_format == 'xlsx':
             return self.export_to_xlsx(queryset, headers)
@@ -125,6 +125,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                     order.request_order.company,
                     order.request_order.name,
                     order.request_order.phone_number,
+                    order.request_order.second_phone_number,
                     order.delivery_address,
                     order.special_instructions,
                     order.request_order.source,
@@ -164,6 +165,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                     order.order_customer.company,
                     order.order_customer.name,
                     order.order_customer.phone_number,
+                    order.order_customer.second_phone_number,
                     order.delivery_address,
                     order.special_instructions,
                     order.order_customer.source,
@@ -217,6 +219,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                     order.request_order.company,
                     order.request_order.name,
                     order.request_order.phone_number,
+                    order.request_order.second_phone_number,
                     order.delivery_address,
                     order.special_instructions,
                     order.request_order.source,
@@ -257,6 +260,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                     order.order_customer.company,
                     order.order_customer.name,
                     order.order_customer.phone_number,
+                    order.order_customer.second_phone_number,
                     order.delivery_address,
                     order.special_instructions,
                     order.order_customer.source,
@@ -331,6 +335,7 @@ def add_new_order(request):
         'order_customer_form': order_customer_form,
         'order_form': order_form
     })
+
 
 @login_required
 def order_success(request):
@@ -482,7 +487,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         sheet = workbook.active
         sheet.title = f'Order Requests - {timezone.now().date()}'
 
-        headers = ['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5']
+        headers = ['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5']
         sheet.append(headers)
 
         for order_request in order_requests:
@@ -493,6 +498,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.company,
                 order_request.name,
                 order_request.phone_number,
+                order_request.second_phone_number,
                 order_request.source,
                 products,
                 order_request.status,
@@ -519,7 +525,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         response['Content-Disposition'] = f'attachment; filename=order_requests - {timezone.now().date()}.csv'
 
         writer = csv.writer(response)
-        writer.writerow(['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'])
+        writer.writerow(['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'])
 
         for order_request in order_requests:
             products = ', '.join([product.name for product in order_request.product.all()])
@@ -529,6 +535,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.company,
                 order_request.name,
                 order_request.phone_number,
+                order_request.second_phone_number,
                 order_request.source,
                 products,
                 order_request.status,

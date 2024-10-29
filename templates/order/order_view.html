@@ -84,9 +84,9 @@
                                                 <p class="text-black-50 mb-1"><i class="fa fa-phone"></i>
                                                     Phone Number:
                                                     {% if order.request_order %}
-                                                    {{order.request_order.phone_number}}
+                                                    {{order.request_order.phone_number}}{% if order.request_order.second_phone_number %}, {{order.request_order.second_phone_number}}{% endif %}
                                                     {% else %}
-                                                    {{order.order_customer.phone_number}}
+                                                    {{order.order_customer.phone_number}}{% if order.order_customer.second_phone_number %}, {{order.order_customer.second_phone_number}}{% endif %}
                                                     {% endif %}
                                                 </p>
 
