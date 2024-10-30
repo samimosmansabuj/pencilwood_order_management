@@ -109,7 +109,7 @@ class UserProfileForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputPassword', 'placeholder': 'Enter password',
     }))
     
-    profile_picture = forms.ImageField(required=False, widget=forms.FileInput(attrs={
+    profile_picture = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={
         'class': 'form-control', 'id': 'inputProfilePicture'
     }))
     
@@ -120,10 +120,27 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['password'].help_text = "Leave blank if you don't want to change the password"
+        self.fields['profile_picture'].help_text = "Leave blank if you don't want to change the profile picture"
     
     def clean_password(self):
         password = self.cleaned_data.get('password')
         if password:
             return password
         return None
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        new_profile_picture = self.cleaned_data.get('profile_picture')
+        clear_file = self.data.get('profile_picture-clear')
+
+        if clear_file:
+            if self.instance.profile_picture:
+                self.instance.profile_picture.delete(save=False)
+
+        elif new_profile_picture and new_profile_picture != self.instance.profile_picture:
+            if self.instance.profile_picture:
+                self.instance.profile_picture.delete(save=False)
+        
+        return cleaned_data
+
 

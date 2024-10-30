@@ -68,7 +68,6 @@ class MyProfileView(LoginRequiredMixin, View):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        """Handle profile updates."""
         username = request.POST['username']
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']

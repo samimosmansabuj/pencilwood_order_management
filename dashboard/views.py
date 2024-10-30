@@ -79,7 +79,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         
         # Add pagination
         page = self.request.GET.get('page', 10)
-        paginator = Paginator(todos, 1)  # Show 10 todos per page
+        paginator = Paginator(todos, 5)  # Show 10 todos per page
         try:
             todos_paginated = paginator.page(page)
         except PageNotAnInteger:

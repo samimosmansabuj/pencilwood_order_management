@@ -6,7 +6,7 @@
 
 {% block dashboard_body %}
 <main>
-   <form method="POST">
+   <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="container-fluid">
          <h1 class="mt-4">Add Member</h1>
@@ -47,13 +47,13 @@
                         <div class="col-md-6">
                            <div class="form-group">
                               <label>First Name</label>
-                              {{form.last_name}}
+                              {{form.first_name}}
                            </div>
                         </div>
                         <div class="col-md-6">
                            <div class="form-group">
                               <label>Last Name</label>
-                              {{form.first_name}}
+                              {{form.last_name}}
                            </div>
                         </div>
                      </div>

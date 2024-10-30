@@ -33,7 +33,7 @@
       {% endif %}
 
 
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
          {% csrf_token %}
          <div class="row">
             <div class="col-xl-12">
@@ -111,12 +111,16 @@
                                        <div class="row">
                                           <div class="col-md-6">
                                              <div class="form-group">
-                                                <label>Joined date</label>
-                                                <input type="text" class="form-control" value="{{object.date_joined}}" readonly disabled>
-                                                
+                                                <label>Profile Picture</label>
+                                                {{form.profile_picture}}
+                                                <p>{{form.profile_picture.help_text}}</p>
                                              </div>
                                           </div>
                                           <div class="col-md-6">
+                                             <div class="form-group">
+                                                <label>Joined date</label>
+                                                <input type="text" class="form-control" value="{{object.date_joined}}" readonly disabled>
+                                             </div>
                                           </div>
                                        </div>
                                        <!-- /row-->

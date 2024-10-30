@@ -127,9 +127,12 @@
                 <button type="submit" class="btn btn-success">
                     <i class="feather-send"></i> SAVE
                 </button>
+                {% if object %}
                 <a href="{% url 'todo_delete' object.id %}" class="btn btn-primary btn-sm">
                     Delete
                 </a>
+                {% endif %}
+                
             </div>
         </div>
     </form>
