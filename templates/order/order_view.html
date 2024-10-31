@@ -18,6 +18,9 @@
                 <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
                     Add Order
                 </a>
+                <a href="{% url 'generate_pdf' id=order.id %}" target="_blank"  class="btn btn-primary" style="margin-left: 10px;">
+                    Print Invoice
+                </a>
             </li>
         </ol>
 

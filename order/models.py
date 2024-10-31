@@ -27,7 +27,6 @@ class OrderRequest(models.Model):
         ('Knock', 'Knock'),
         ('Other', 'Other'),
         ('Done', 'Done'),
-        ('Sample', 'Sample'),
         ('Hold', 'Hold'),
         ('Cancel', 'Cancel'),
         ('Mockup', 'Mockup'),
@@ -39,11 +38,11 @@ class OrderRequest(models.Model):
         ('Others', 'Others'),
     )
     request_created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True)
-    tracking_ID = models.CharField(max_length=5, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=5, unique=True, blank=True, null=True)
     
     company = models.CharField(max_length=250, blank=True, null=True)
     name = models.CharField(max_length=250)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
     second_phone_number = models.CharField(max_length=20, blank=True, null=True)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
     product = models.ManyToManyField(Product)
@@ -68,6 +67,16 @@ class OrderRequest(models.Model):
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
             self.tracking_ID = ''.join(random.choices(string.digits, k=5))
+        super().save(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        if not self.tracking_ID:
+            unique = False
+            while not unique:
+                tracking_ID_candidate = ''.join(random.choices(string.digits, k=5))
+                if not OrderRequest.objects.filter(tracking_ID=tracking_ID_candidate).exists():
+                    self.tracking_ID = tracking_ID_candidate
+                    unique = True
         super().save(*args, **kwargs)
 
 
@@ -106,6 +115,7 @@ class Order(models.Model):
     STATUS = (
         ('None', 'None'),
         ('Got Design', 'Got Design'),
+        ('Sample', 'Sample'),
         ('Cutting', 'Cutting'),
         ('Cutout Ready', 'Cutout Ready'),
         ('Engrave', 'Engrave'),
@@ -129,7 +139,7 @@ class Order(models.Model):
     request_order = models.OneToOneField(OrderRequest, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     
-    tracking_ID = models.CharField(max_length=6, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=6, blank=True, null=True, unique=True)
     delivery_address = models.CharField(max_length=500, blank=True, null=True)
     special_instructions = models.TextField(blank=True, null=True)
     design_file = models.FileField(upload_to='order-design-files/', blank=True, null=True)
@@ -190,6 +200,8 @@ class Order(models.Model):
             return f"Order#{self.tracking_ID} with {self.order_customer}"
         else:
             return f"Order#{self.tracking_ID}"
+
+
 
 
 class OrderUpdateNote(models.Model):

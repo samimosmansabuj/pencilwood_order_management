@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice - {{ order.tracking_ID }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .invoice {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .details,
+        .items {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .details td,
+        .items th,
+        .items td {
+            padding: 10px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice">
+        <h1>Invoice</h1>
+        <table class="details">
+            <tr>
+                <td>Order ID:</td>
+                <td>{{ order.tracking_ID }}</td>
+            </tr>
+            <tr>
+                <td>Customer:</td>
+                <td>{{ order.order_customer.name }}</td>
+            </tr>
+            <tr>
+                <td>Order Date:</td>
+                <td>{{ order.order_date }}</td>
+            </tr>
+            <tr>
+                <td>Delivery Address:</td>
+                <td>{{ order.delivery_address }}</td>
+            </tr>
+        </table>
+
+        <table class="items" border="1">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ order.request_order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.unit_price }}</td>
+                    <td>{{ order.deal_value }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Total Amount: {{ order.total_amount }}</p>
+        <p>Status: {{ order.status }}</p>
+    </div>
+</body>
+
+</html>

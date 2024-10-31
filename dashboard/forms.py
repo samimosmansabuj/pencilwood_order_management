@@ -92,7 +92,7 @@ class TodoForm(forms.ModelForm):
                 'class': 'form-control', 'id': 'inputDetails', 'placeholder': 'Enter Todo Details', 'rows': 3
             }),
             'is_complete': forms.CheckboxInput(attrs={
-                'class': 'form-check-input', 'id': 'inputIsComplete'
+                'class': 'form-check-inline', 'id': 'inputIsComplete'
             }),
         }
         labels = {

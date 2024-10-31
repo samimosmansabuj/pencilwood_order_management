@@ -1,6 +1,7 @@
 asgiref==3.8.1
-Django==5.1.1
-packaging==24.1
-pillow==10.4.0
+Django==5.1.2
+et_xmlfile==2.0.0
+openpyxl==3.1.5
+pillow==11.0.0
 sqlparse==0.5.1
 tzdata==2024.2

@@ -18,4 +18,8 @@ urlpatterns = [
     path('order-request/view/<int:pk>/', order_request_view, name='order_request_view'),
     path('request-to-order-create/<int:pk>/', request_to_order, name='request_to_order'),
     path('order-request/picture-update/<int:pk>/', PictureUpdate, name='PictureUpdate'),
+    
+    
+    
+    # path('order/<int:id>/invoice/', generate_pdf, name='generate_pdf'),
 ]
