@@ -21,5 +21,5 @@ urlpatterns = [
     
     
     
-    # path('order/<int:id>/invoice/', generate_pdf, name='generate_pdf'),
+    path('order/<int:id>/invoice/', print_invoice, name='generate_pdf'),
 ]

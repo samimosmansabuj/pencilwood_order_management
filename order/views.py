@@ -15,6 +15,9 @@ from django.db.models import Sum
 import openpyxl
 import csv
 from django.http import HttpResponse
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 import os
 
 # from django.template.loader import render_to_string
@@ -373,71 +376,28 @@ def order_view(request, id):
     return render(request, 'order/order_view.html', context)
 
 
-# @login_required
-# def generate_pdf(request, id):
-#     order = get_object_or_404(Order, id=id)
-#     template_path = 'order/invoice.html'
-#     context = {'order': order}
+  # If using xhtml2pdf
 
-#     # Render HTML to string
-#     html = render_to_string(template_path, context)
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    response = HttpResponse(content_type='application/pdf')
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
 
-#     # Create a PDF
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = f'inline; filename="Invoice_{order.tracking_ID}.pdf"'
-    
-#     # Generate PDF using xhtml2pdf
-#     result = io.BytesIO()
-#     pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
-#     if not pdf.err:
-#         response.write(result.getvalue())
-#         return response
-#     else:
-#         return HttpResponse("Error generating PDF", status=500)
-
-
-# from django.template.loader import render_to_string
-# from django.http import HttpResponse
-# from weasyprint import HTML
-# from django.conf import settings
-# import os
+@login_required
+def print_invoice(request, id):
+    order = get_object_or_404(Order, id=id)
+    context = {'order': order}
+    return render_to_pdf('order/invoice3.html', context)
 
 # @login_required
-# def generate_pdf(request, id):
+# def print_invoice(request, id):
 #     order = get_object_or_404(Order, id=id)
 #     context = {'order': order}
-#     html_string = render_to_string('order/invoice.html', context)
-#     html = HTML(string=html_string, base_url=request.build_absolute_uri())
-
-#     # Generate PDF
-#     pdf = html.write_pdf()
-
-#     response = HttpResponse(pdf, content_type='application/pdf')
-#     response['Content-Disposition'] = f'inline; filename="Invoice_{order.tracking_ID}.pdf"'
-#     return response
-
-
-# from django.http import HttpResponse
-# from reportlab.lib.pagesizes import letter
-# from reportlab.pdfgen import canvas
-
-# def generate_pdf(request, id):
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = f'attachment; filename="order_{id}.pdf"'
-
-#     p = canvas.Canvas(response, pagesize=letter)
-#     order = get_object_or_404(Order, id=id)
-
-#     p.drawString(100, 750, f"Order ID: {order.id}")
-#     # p.drawString(100, 735, f"Customer: {order.order_customer.name}")
-#     p.drawString(100, 720, f"Total Amount: {order.total_amount}")
-
-#     p.showPage()
-#     p.save()
-#     return response
-
-
-
+#     return render(request, 'order/invoice3.html', context)
 
 
 
