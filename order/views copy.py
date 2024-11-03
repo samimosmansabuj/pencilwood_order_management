@@ -26,7 +26,7 @@ from django.http import JsonResponse
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order/order.html'
-    paginate_by = 20
+    paginate_by = 10
     context_object_name = 'orders'
     ordering = ['-order_date']
     
@@ -59,7 +59,6 @@ class OrderListView(LoginRequiredMixin, ListView):
         if end_date:
             end_date = parse_date(end_date)
             queryset = queryset.filter(order_date__lte=end_date)
-        
 
         # Filter by Search
         if search_query:
@@ -74,7 +73,6 @@ class OrderListView(LoginRequiredMixin, ListView):
                 Q(order_customer__phone_number__icontains=search_query) |
                 Q(order_customer__product__name__icontains=search_query)
             )
-            print(queryset)
         
         # Filter by Product
         if product_id and product_id.isdigit():
@@ -86,12 +84,16 @@ class OrderListView(LoginRequiredMixin, ListView):
         if work_assign and work_assign.isdigit():
             queryset = queryset.filter(work_assign__id__icontains=work_assign).distinct()
 
-        return queryset.distinct()
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         context['work_assign_choices'] = Custom_User.objects.all()
+        
+        # Count today's orders
+        # today = timezone.now().date()
+        # context['today_orders'] = Order.objects.filter(order_date__date=today)
         
         queryset = self.get_queryset()
         context['total_deal_value'] = queryset.aggregate(Sum('deal_value'))['deal_value__sum'] or 0
@@ -102,7 +104,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     
     def render_to_response(self, context, **response_kwargs):
         export_format = self.request.GET.get('export')
-        queryset = self.get_queryset()
+        queryset = self.get_queryset()  # Get the filtered queryset without pagination
         headers = ['ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'delivery_address', 'special_instructions', 'Source', 'Product(s)', 'Work Assign', 'Status', 'remark', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'due_amount', 'delivery_charge', 'delivery_charge_cost', 'extra_cost', 'total_amount', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'delivery_date', 'Last Update', 'order_date']
         
         if export_format == 'xlsx':
@@ -318,11 +320,12 @@ def add_new_order(request):
 
         if order_customer_form.is_valid() and order_form.is_valid():
             order_customer = order_customer_form.save()
+
             order = order_form.save(commit=False)
             order.order_customer = order_customer
             order.save()
             
-            # daily_profit_update(order)
+            daily_profit_update(order)
 
             return redirect('order_success')
         else:
@@ -346,7 +349,7 @@ def order_success(request):
 
 
 
-@login_required
+
 def order_view(request, id):
     order = get_object_or_404(Order, id=id)
     OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemUpdateForm, extra=0)
@@ -379,7 +382,6 @@ def order_view(request, id):
 
 
 
-# @login_required
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
     html = template.render(context_dict)
@@ -393,7 +395,28 @@ def render_to_pdf(template_src, context_dict={}):
 def print_invoice(request, id):
     order = get_object_or_404(Order, id=id)
     context = {'order': order}
-    return render_to_pdf('order/invoice.html', context)
+    return render_to_pdf('order/invoice3.html', context)
+
+
+
+# @login_required
+# def orderPaymentUpdate(request, pk):
+#     order = get_object_or_404(Order, pk=pk)
+#     OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemUpdateForm, extra=0)
+#     if request.method == 'POST':
+#         form2 = OrderPaymentUpdateForm(request.POST, instance=order)
+#         item_formset = OrderItemFormSet(request.POST, queryset=order.order_item.all())
+
+#         if form2.is_valid() and item_formset.is_valid():
+#             item_formset.save()
+#             object = form2.save()
+#             daily_profit_update(object)
+            
+#             messages.success(request, 'Payment details updated successfully!')
+#             return redirect('order_view', id=order.pk)
+#         else:
+#             messages.error(request, f'Something went wrong: {form2.errors} {item_formset.errors}')
+#             return redirect('order_view', id=order.pk)
 
 
 @login_required
@@ -408,7 +431,7 @@ def orderPaymentUpdate(request, pk):
         if form2.is_valid() and item_formset.is_valid():
             item_formset.save()
             order = form2.save()
-            # daily_profit_update(order)
+            daily_profit_update(order)
             
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # AJAX request check
                 return JsonResponse({'success': True, 'message': 'Payment details updated successfully!'})
@@ -421,6 +444,8 @@ def orderPaymentUpdate(request, pk):
             
             messages.error(request, f'Something went wrong: {form2.errors} {item_formset.errors}')
             return redirect('order_view', id=order.pk)
+
+
 
 
 @login_required
@@ -440,12 +465,12 @@ def CustomerOrderInfoUpdate(request, pk):
 
 
 
-# ------------Order Request Section Start------------
+
 class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'
     context_object_name = 'order_requests'
-    paginate_by = 20  # Pagination works for normal listing
+    paginate_by = 10  # Pagination works for normal listing
     ordering = ['-id']
 
     def get_queryset(self):
@@ -498,7 +523,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(work_assign__id__icontains=work_assign).distinct()
         
         
-        return queryset.distinct()
+        return queryset
 
     def get_context_data(self, **kwargs):
         """
@@ -593,6 +618,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         return response
 
 
+
 class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     model = OrderRequest
     form_class = OrderRequestForm
@@ -615,11 +641,10 @@ def order_request_view(request, pk):
     order_request = get_object_or_404(OrderRequest, id=pk)
 
     if request.method == 'POST':
-        form = OrderRequestStatusUpdateForm(request.POST, instance=order_request)
+        form = OrderRequestStatusUpdateForm(
+            request.POST, instance=order_request)
         if form.is_valid():
             form.save()
-            if hasattr(order_request, 'order'):
-                order_request.order.save()
         else:
             messages.error(request, f'Something went wrong: {form.errors}')
         return redirect('order_request_view', pk=order_request.pk)
@@ -650,6 +675,8 @@ def request_to_order(request, pk):
 
                 order_request.order_created = True
                 order_request.save()
+                
+                daily_profit_update(order)
 
                 messages.success(request, 'Order created successfully.')
                 return redirect('order_list')
@@ -670,5 +697,3 @@ def PictureUpdate(request, pk):
             messages.error(request, f'Something went wrong: {form3.errors}')
     return redirect('order_request_view', pk=order_request.pk)
 
-
-# ------------Order Request Section End------------

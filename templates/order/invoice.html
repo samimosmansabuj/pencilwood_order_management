@@ -1,24 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Invoice - {{ order.tracking_ID }}</title>
+    <link href="{% static 'assets/css/NotoSansBengali-Regular.ttf' %}" rel="stylesheet" />
     <style>
+        @font-face {
+            font-family: 'BanglaFont';
+            src: url("{% static 'assets/css/NotoSansBengali-Regular.ttf' %}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
         body {
-            font-family: sans-serif;
+            font-family: 'BanglaFont', sans-serif;
             font-size: 12px;
         }
+
+        /* body {
+            font-family: sans-serif;
+            font-size: 12px;
+        } */
 
         .invoice {
             width: 100%;
             margin: 0 auto;
         }
 
-        .header, .footer {
+        .header {
             text-align: center;
             margin-top: 10px;
             font-size: 14px;
+        }
+
+        .company-details {
+            margin-bottom: 20px;
+        }
+
+        .company-details-margin {
+            margin: auto;
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
         }
 
         .details, .items {
@@ -45,10 +73,23 @@
 
 <body>
     <div class="invoice">
+
+        <!-- Company Details Section -->
         <div class="header">
-            <h1>Invoice</h1>
+            <!-- <h1>Invoice</h1> -->
+            <!-- <img src="{% static 'images/logo.png' %}" alt="Company Logo" class="logo"> -->
+            <div class="company-details">
+                <p class="company-details-margin"><strong>Pencilwood BD - Invoice</strong></p>
+                <p class="company-details-margin">+8801780758825 | pencilwoodbd@gmail.com</p>
+                <p class="company-details-margin">pencilwoodbd.com</p>
+                <p class="company-details-margin">Advance Police Town, Savar, Bangladesh</p>
+            </div>
+            
         </div>
 
+        <hr>
+
+        <!-- Order Information Section -->
         <table class="details">
             <tr>
                 <td colspan="1"><strong>Order ID:</strong></td>
@@ -58,9 +99,24 @@
             </tr>
             <tr>
                 <td colspan="1"><strong>Customer Name:</strong></td>
-                <td colspan="2">{{ order.request_order.name }}</td>
+                <td colspan="2">
+                    {% if order.request_order %}
+                    {{ order.request_order.name }}
+                    {% else %}
+                    {{ order.order_customer.name }}
+                    {% endif %}
+                </td>
+                
+
                 <td colspan="1"><strong>Phone Number:</strong></td>
-                <td colspan="2">{{ order.request_order.phone_number }}</td>
+                <td colspan="2">
+                    {% if order.request_order %}
+                    {{ order.request_order.phone_number }}
+                    {% else %}
+                    {{ order.order_customer.phone_number }}
+                    {% endif %}
+                </td>
+                
             </tr>
             <tr>
                 <td colspan="2"><strong>Delivery Address:</strong></td>
@@ -68,53 +124,45 @@
             </tr>
         </table>
 
+        <!-- <h1 style="text-align: center;">Invoice</h1> -->
+
+        <!-- Product Information Section -->
         <table class="items">
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Deal Value</th>
-
-
-                    
-                    
+                    <th colspan="3">Title</th>
+                    <th colspan="1">Quantity</th>
+                    <th colspan="1">Unit Price</th>
+                    <th colspan="1">Deal Value</th>
                 </tr>
             </thead>
             <tbody>
+                {% for order_item in order.order_item.all %}
                 <tr>
-                    <td>
-                        {% if order.request_order %}
-                        {% for product in order.request_order.product.all %}
-                        {{product.name}},
-                        {% endfor %}
-                        {% else %}
-                        {% for product in order.order_customer.product.all %}
-                        {{product.name}},
-                        {% endfor %}
-                        {% endif %}
+                    <td colspan="3">
+                        {{order_item.product.name}}
                     </td>
-                    <td>{{ order.quantity }}</td>
-                    <td>{{ order.unit_price }}</td>
-                    <td>{{ order.deal_value }}</td>
-                    
-                    
+                    <td colspan="1">{{ order_item.quantity }}</td>
+                    <td colspan="1">{{ order_item.unit_price }}</td>
+                    <td colspan="1">{{ order_item.total }}</td>
                 </tr>
+                {% endfor %}
                 <tr>
-                    <td colspan="3">Delivery Charge</td>
+                    <td colspan="5">Delivery Charge</td>
                     <td>{{ order.delivery_charge }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Advance Amount</td>
+                    <td colspan="5">Advance Amount</td>
                     <td>{{ order.advance_amount }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Due Amount</td>
+                    <td colspan="5">Due Amount</td>
                     <td>{{ order.due_amount }}</td>
                 </tr>
             </tbody>
         </table>
 
+        <!-- Payment Information Section -->
         <table class="details">
             <tr>
                 <td><strong>Payment Method:</strong></td>
@@ -130,7 +178,7 @@
             </tr>
         </table>
 
-        <p class="footer">Thank you for your business!</p>
+        <p class="footer" style="text-align: center; font-weight: bold;">Thank you for your Order!</p>
     </div>
 </body>
 

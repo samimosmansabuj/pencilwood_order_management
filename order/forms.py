@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order, OrderRequest, Product, OrderCustomer
+from .models import Order, OrderRequest, Product, OrderCustomer, OrderItem
 from account.models import Custom_User
 from django.core.files.storage import default_storage
 import os
@@ -53,7 +53,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
+            'delivery_address', 'special_instructions', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
         ]
 
     delivery_address = forms.CharField(required=False, widget=forms.TextInput(attrs={
@@ -62,14 +62,6 @@ class OrderForm(forms.ModelForm):
 
     special_instructions = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control', 'id': 'inputSpecialInstructions', 'placeholder': 'Enter Special Instructions (optional)', 'rows': 3
-    }))
-
-    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
-    }))
-
-    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
     }))
 
     advance_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
@@ -168,23 +160,16 @@ class OrderStatusUpdateForm(forms.ModelForm):
     def save(self, commit=True):
         order = super().save(commit=False)
         if commit:
-            order.save()
+            # order.add_missing_order_items()  # Add missing OrderItems if needed
+            order.save()  # Save changes to Order instance
         return order
 
 
 class OrderPaymentUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['quantity', 'unit_price', 'advance_amount', 'delivery_charge', 'delivery_charge_cost']
-
-    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
-    }))
-
-    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
-    }))
-
+        fields = ['advance_amount', 'delivery_charge', 'delivery_charge_cost']
+    
     advance_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
         'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
     }))
@@ -197,6 +182,19 @@ class OrderPaymentUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputDeliveryChargeCost', 'placeholder': 'Enter Delivery Charge Cost'
     }))
 
+
+class OrderItemUpdateForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = ['quantity', 'unit_price']
+    
+    quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputQuantity', 'placeholder': 'Enter Quantity'
+    }))
+
+    unit_price = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'id': 'inputUnitPrice', 'placeholder': 'Enter Unit Price'
+    }))
 
 # ----------------Order Section End----------------
 
@@ -296,17 +294,14 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
     })
     )
-
     product = forms.ModelMultipleChoiceField(required=False, queryset=Product.objects.all(), widget=forms.CheckboxSelectMultiple(attrs={
         'class': 'form-check-inline', 'id': 'inputProduct'
     })
     )
-    
     name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
     })
     )
-
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
     })

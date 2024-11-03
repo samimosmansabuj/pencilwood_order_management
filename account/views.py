@@ -112,7 +112,7 @@ class MemberListView(LoginRequiredMixin, ListView):
     model = Custom_User
     template_name = 'account/member_list.html'
     context_object_name = 'member'
-    paginate_by = 5
+    paginate_by = 10
     
     def get_queryset(self):
         queryset = super().get_queryset()

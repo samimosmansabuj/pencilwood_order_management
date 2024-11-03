@@ -193,152 +193,81 @@
 
 
 
-                       <!-- Ensure jQuery is loaded -->
-                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                        <!-- -----------------Payment Details Start----------------- -->
+                        <form method="POST" action="{% url 'orderPaymentUpdate' order.id %}">
+                        {% csrf_token %}
+                        {{ item_formset.management_form }}
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="white-space: nowrap;" colspan="2">Title</th>
+                                        <th style="white-space: nowrap;" colspan="1">Unit Price</th>
+                                        <th style="white-space: nowrap;" colspan="1">Quantity</th>
+                                        <th style="width: 120px; white-space: nowrap;" colspan="2">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    {% for form in item_formset %}
+                                    <tr>
+                                        {{ form.id }}
+                                        <td colspan="2">{{ form.instance.product.name }}</td>
+                                        <td colspan="1">{{ form.unit_price }}</td>
+                                        <td colspan="1">{{ form.quantity }}</td>
+                                        <td colspan="2">{{ form.instance.total }} BDT</td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    
 
-                        <!-- Payment Details Start -->
-                        <form id="update-payment-items-form" method="POST" action="{% url 'orderPaymentUpdate' order.id %}">
-                            {% csrf_token %}
-                            {{ item_formset.management_form }}
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="2">Title</th>
-                                            <th>Unit Price</th>
-                                            <th>Quantity</th>
-                                            <th colspan="2">Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for form in item_formset %}
-                                        <tr>
-                                            {{ form.id }}
-                                            <td colspan="2">{{ form.instance.product.name }}</td>
-                                            <td>{{ form.unit_price }}</td>
-                                            <td>{{ form.quantity }}</td>
-                                            <td colspan="2">
-                                                <span class="total">{{ form.instance.total }} BDT</span>
-                                            </td>
-                                            <!-- <td colspan="1">
-                                                <input type="checkbox" name="{{ form.prefix }}-DELETE" id="{{ form.prefix }}-DELETE">
-                                                <label for="{{ form.prefix }}-DELETE">Delete</label>
-                                            </td> -->
-                                        </tr>
-                                        {% endfor %}
+                                    <tr>
+                                        <td colspan="4">Shipping Charge (Collect)</td>
+                                        <td colspan="2">
+                                            {{ form2.delivery_charge }}
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="4">Advanced Payment</td>
+                                        <td colspan="2" style="align-items: center; white-space: nowrap;">
+                                            <!-- <span>{{ form2.advance_amount }}</span> <span style="margin-left: 5px;">BDT</span> -->
+                                            <span style="white-space: nowrap;">{{ form2.delivery_charge }}</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="4">Total Due</td>
+                                        <td colspan="2">
+                                            {{order.due_amount}} BDT
+                                        </td>
+                                    </tr>
 
-                                        <tr>
-                                            <td style="background-color: #8cef8c" colspan="4">Deal Value (Sum of OrderItem Totals)</td>
-                                            <td style="background-color: #8cef8c" colspan="2">
-                                                <span id="deal-value">{{ order.deal_value|default:"0" }} BDT</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="4">Shipping Charge (Collect)</td>
-                                            <td colspan="2">
-                                                <input type="number" id="delivery-charge" name="delivery_charge" value="{{ form2.delivery_charge.value }}" step="0.01" class="form-control">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">Advanced Payment</td>
-                                            <td colspan="2">
-                                                <input type="number" id="advance-amount" name="advance_amount" value="{{ form2.advance_amount.value }}" step="0.01" class="form-control">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">Total Due</td>
-                                            <td colspan="2"><span id="total-due">{{ order.due_amount|default:"0" }} BDT</span></td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="background-color: #8cef8c"  colspan="2">Shipping Charge (Cost)</td>
-                                            <td style="background-color: #8cef8c"  colspan="1">
-                                                <input type="number" id="delivery-charge-cost" name="delivery_charge_cost" value="{{ form2.delivery_charge_cost.value }}" step="0.01" class="form-control">
-                                            </td>
-                                            <td style="background-color: #8cef8c"  colspan="2">Total Amount</td>
-                                            <td style="background-color: #8cef8c"  colspan="1">
-                                                <!-- {{ order.total_amount|default:"0" }} BDT -->
-                                                <span id="total-amount">{{ order.total_amount|default:"0" }} BDT</span>
-                                            </td>
-                                        </tr>
-                                        
-                                        <tr>
-                                            <td colspan="6" style="text-align: center;">
-                                                <button type="submit" class="btn btn-primary">Update Payment and Items</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    <tr>
+                                        <td style="background-color: #8cef8c"  colspan="2">Shipping Charge (Cost)</td>
+                                        <td style="background-color: #8cef8c"  colspan="1">
+                                            {{form2.delivery_charge_cost}}
+                                        </td>
+                                        <td style="background-color: #8cef8c"  colspan="2">Total Amount</td>
+                                        <td style="background-color: #8cef8c"  colspan="1">
+                                            {% if order.total_amount %}
+                                            {{order.total_amount}} BDT
+                                            {% else %}
+                                            0
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="6" style="text-align: center;">
+                                            <button type="submit" class="btn btn-primary">Update Payment and Items</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         </form>
-                        <!-- Payment Details End -->
-
-                        <!-- JavaScript for real-time calculation and AJAX submission -->
-                        <script>
-                            $(document).ready(function() {
-                                function updateTotals() {
-                                    let dealValue = 0;
-
-                                    // Calculate deal_value as the sum of OrderItem totals
-                                    $('tr').each(function() {
-                                        let unitPrice = parseFloat($(this).find('input[name$="-unit_price"]').val()) || 0;
-                                        let quantity = parseInt($(this).find('input[name$="-quantity"]').val()) || 0;
-                                        let total = (unitPrice * quantity).toFixed(2);
-
-                                        // Update item total
-                                        $(this).find('.total').text(`${total} BDT`);
-
-                                        // Add to dealValue
-                                        dealValue += parseFloat(total);
-                                        
-                                    });
-
-                                    // Update Deal Value (deal_value)
-                                    $('#deal-value').text(`${dealValue.toFixed(2)} BDT`);
-
-                                    // Calculate Total Due based on deal_value, delivery_charge, and advance_amount
-                                    let deliveryCharge = parseFloat($('#delivery-charge').val()) || 0;
-                                    let advanceAmount = parseFloat($('#advance-amount').val()) || 0;
-                                    let totalDue = (dealValue + deliveryCharge - advanceAmount).toFixed(2);
-
-                                    let deliveryChargeCost = parseFloat($('#delivery-charge-cost').val()) || 0;
-                                    let totalAmount = (deliveryCharge - deliveryChargeCost + dealValue).toFixed(2);
-
-                                    // Update Total Due
-                                    $('#total-due').text(`${totalDue} BDT`);
-                                    $('#total-amount').text(`${totalAmount} BDT`);
-                                }
-
-                                // Trigger updateTotals on input change in relevant fields
-                                $('input[name$="-unit_price"], input[name$="-quantity"], #delivery-charge, #advance-amount').on('input', updateTotals);
-                                $('input[name$="-unit_price"], input[name$="-quantity"], #delivery-charge, #advance-amount, #delivery-charge-cost').on('input', updateTotals);
-
-
-                                // AJAX form submission
-                                $('#update-payment-items-form').on('submit', function(e) {
-                                    e.preventDefault();
-                                    $.ajax({
-                                        url: $(this).attr('action'),
-                                        type: 'POST',
-                                        data: $(this).serialize(),
-                                        success: function(response) {
-                                            alert(response.message); // Show success message
-                                        },
-                                        error: function(xhr) {
-                                            console.error('Error Details:', xhr); // Full response for debugging
-                                            alert('Something went wrong. Please try again.');
-                                        }
-                                    });
-                                });
-                            });
-                        </script>
-
-
-                        
-                            
-                            
-
+                        <!-- -----------------Payment Details End----------------- -->
 
 
 

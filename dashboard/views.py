@@ -144,7 +144,7 @@ class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'product/product_list.html'  # Your template for listing
     context_object_name = 'products'
-    paginate_by = 5
+    paginate_by = 10
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -201,7 +201,7 @@ class MaintenanceCostListView(LoginRequiredMixin, ListView):
     model = Maintenance_Cost
     template_name = 'finance_section/maintenance_cost_list.html'
     context_object_name = 'costs'
-    paginate_by = 4
+    paginate_by = 10
     ordering = ['-id']
     
     def get_queryset(self):
@@ -305,7 +305,7 @@ class DailyProfitListView(ListView):
     template_name = 'daily_profit/list.html'
     context_object_name = 'profits'
     ordering = ['-date']
-    paginate_by = 4
+    paginate_by = 10
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -353,7 +353,7 @@ class TodoListView(ListView):
     model = Todo
     template_name = 'todo/todo_list.html'
     context_object_name = 'todos'
-    paginate_by = 10
+    paginate_by = 15
     
     def get_queryset(self):
         queryset = super().get_queryset()

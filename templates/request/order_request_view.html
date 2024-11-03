@@ -64,7 +64,7 @@
                                                     Company: {{order_request.company}} | Name: {{order_request.name}}
                                                 </p>
                                                 <p class="text-black-50 mb-1"><i class="fa fa-phone"></i>
-                                                    Phone Number: {{order_request.phone_number}}, {% if order_request.second_phone_number %}{{order_request.second_phone_number}}{% endif %}
+                                                    Phone Number: {{order_request.phone_number}}{% if order_request.second_phone_number %}, {{order_request.second_phone_number}}{% endif %}
                                                 </p>
                                                 <p class="mb-0 text-dark text-dark pt-2"><span
                                                         class="text-dark font-weight-bold">

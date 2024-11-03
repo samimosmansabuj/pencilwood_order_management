@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,24 +15,10 @@
             margin: 0 auto;
         }
 
-        .header {
+        .header, .footer {
             text-align: center;
             margin-top: 10px;
             font-size: 14px;
-        }
-
-        .company-details {
-            margin-bottom: 20px;
-        }
-
-        .company-details-margin {
-            margin: auto;
-        }
-
-        .logo {
-            width: 80px;
-            height: auto;
-            margin-bottom: 10px;
         }
 
         .details, .items {
@@ -60,23 +45,10 @@
 
 <body>
     <div class="invoice">
-
-        <!-- Company Details Section -->
         <div class="header">
-            <!-- <h1>Invoice</h1> -->
-            <!-- <img src="{% static 'images/logo.png' %}" alt="Company Logo" class="logo"> -->
-            <div class="company-details">
-                <p class="company-details-margin"><strong>Pencilwood BD - Invoice</strong></p>
-                <p class="company-details-margin">+8801780758825 | pencilwoodbd@gmail.com</p>
-                <p class="company-details-margin">pencilwoodbd.com</p>
-                <p class="company-details-margin">Advance Police Town, Savar, Bangladesh</p>
-            </div>
-            
+            <h1>Invoice</h1>
         </div>
 
-        <hr>
-
-        <!-- Order Information Section -->
         <table class="details">
             <tr>
                 <td colspan="1"><strong>Order ID:</strong></td>
@@ -96,9 +68,6 @@
             </tr>
         </table>
 
-        <!-- <h1 style="text-align: center;">Invoice</h1> -->
-
-        <!-- Product Information Section -->
         <table class="items">
             <thead>
                 <tr>
@@ -109,22 +78,26 @@
                 </tr>
             </thead>
             <tbody>
+                {% for product in order.order_item.all %}
                 <tr>
                     <td>
-                        {% if order.request_order %}
+                        <!-- {% if order.request_order %}
                         {% for product in order.request_order.product.all %}
-                        {{ product.name }},
+                        {{product.name}},
                         {% endfor %}
                         {% else %}
                         {% for product in order.order_customer.product.all %}
-                        {{ product.name }},
+                        {{product.name}},
                         {% endfor %}
-                        {% endif %}
+                        {% endif %} -->
+                        Product Name
+                        
                     </td>
                     <td>{{ order.quantity }}</td>
                     <td>{{ order.unit_price }}</td>
                     <td>{{ order.deal_value }}</td>
                 </tr>
+                {% endfor %}
                 <tr>
                     <td colspan="3">Delivery Charge</td>
                     <td>{{ order.delivery_charge }}</td>
@@ -140,7 +113,6 @@
             </tbody>
         </table>
 
-        <!-- Payment Information Section -->
         <table class="details">
             <tr>
                 <td><strong>Payment Method:</strong></td>
@@ -156,7 +128,7 @@
             </tr>
         </table>
 
-        <p class="footer" style="text-align: center; font-weight: bold;">Thank you for your Order!</p>
+        <p class="footer">Thank you for your business!</p>
     </div>
 </body>
 

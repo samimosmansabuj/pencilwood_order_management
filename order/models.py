@@ -2,6 +2,9 @@ from django.db import models
 import random, string
 from django.utils.text import slugify
 from account.models import Custom_User
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Product(models.Model):
@@ -66,11 +69,6 @@ class OrderRequest(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
-            self.tracking_ID = ''.join(random.choices(string.digits, k=5))
-        super().save(*args, **kwargs)
-    
-    def save(self, *args, **kwargs):
-        if not self.tracking_ID:
             unique = False
             while not unique:
                 tracking_ID_candidate = ''.join(random.choices(string.digits, k=5))
@@ -78,7 +76,7 @@ class OrderRequest(models.Model):
                     self.tracking_ID = tracking_ID_candidate
                     unique = True
         super().save(*args, **kwargs)
-
+            
 
 
 class OrderCustomer(models.Model):
@@ -100,15 +98,38 @@ class OrderCustomer(models.Model):
     picture1 = models.URLField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
             self.tracking_ID = ''.join(random.choices(string.digits, k=6))
         super().save(*args, **kwargs)
+        
+        if Order.objects.filter(order_customer=self).exists():
+            Order.objects.get(order_customer=self).save()
+        
     
     def __str__(self):
         return f"Order#{self.tracking_ID} from {self.company} ({self.name})"
     
 
+
+
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='orderitem_product')
+    quantity = quantity = models.IntegerField(default=1)
+    unit_price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    
+    def save(self, *args, **kwargs):
+        quantity = self.quantity or 0
+        unit_price = self.unit_price or 0
+        self.total = unit_price * quantity
+        super(OrderItem, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        order = self.order_items.first()
+        order_tracking_id = order.tracking_ID if order else "No Order"
+        return f"Order#{order_tracking_id} - {self.product.name}"
 
 
 class Order(models.Model):
@@ -143,16 +164,15 @@ class Order(models.Model):
     delivery_address = models.CharField(max_length=500, blank=True, null=True)
     special_instructions = models.TextField(blank=True, null=True)
     design_file = models.FileField(upload_to='order-design-files/', blank=True, null=True)
+    order_item = models.ManyToManyField(OrderItem, related_name='order_items')
     
-    quantity = models.IntegerField(default=1, blank=True, null=True)
-    unit_price = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    deal_value = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    advance_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    due_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    delivery_charge = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    delivery_charge_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    extra_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2)
+    deal_value = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    advance_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    due_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    delivery_charge = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    delivery_charge_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    extra_cost = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=9, blank=True, null=True, decimal_places=2, default=0)
     
     
     payment_number = models.CharField(max_length=13, blank=True, null=True)
@@ -169,15 +189,29 @@ class Order(models.Model):
     delivery_date = models.DateField(blank=True,null=True)
     return_date = models.DateField(blank=True,null=True)
     
+    
+    def add_missing_order_items(self):
+        products = set()
+        if self.order_customer:
+            products = self.order_customer.product.all()
+        elif self.request_order:
+            products = self.request_order.product.all()
+        
+        existing_products = {item.product for item in self.order_item.all()}
+        for product in products:
+            if product not in existing_products:
+                order_item = OrderItem.objects.create(product=product)
+                self.order_item.add(order_item)
+    
     def save(self, *args, **kwargs):
+        super(Order, self).save(*args, **kwargs)
+        self.add_missing_order_items()
+        
+        deal_value = sum(item.total for item in self.order_item.all())
         advance_amount = self.advance_amount or 0
         delivery_charge = self.delivery_charge or 0
         delivery_charge_cost = self.delivery_charge_cost or 0
-        unit_price = self.unit_price or 0
-        quantity = self.quantity or 0
-        
-        deal_value = unit_price * quantity
-        due_amount = (unit_price * quantity + delivery_charge) - advance_amount
+        due_amount = (deal_value + delivery_charge) - advance_amount
         extra_cost = delivery_charge_cost - delivery_charge
         
         self.deal_value = deal_value
@@ -191,7 +225,16 @@ class Order(models.Model):
             self.request_order.save()
         elif self.order_customer:
             self.tracking_ID = self.order_customer.tracking_ID
+        
         super(Order, self).save(*args, **kwargs)
+        
+        from dashboard.models import Daily_Profit
+        date = timezone.localtime(self.order_date).date()
+        daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
+        daily_profit.orders.add(self)
+        daily_profit.save()
+        
+        
     
     def __str__(self):
         if self.request_order:
@@ -202,19 +245,17 @@ class Order(models.Model):
             return f"Order#{self.tracking_ID}"
 
 
+@receiver(pre_delete, sender=Order)
+def reset_order_created(sender, instance, **kwargs):
+    if instance.request_order:
+        instance.request_order.order_created = False
+        instance.request_order.save()
+    from dashboard.models import Daily_Profit
+    date = timezone.localtime(instance.order_date).date()
+    daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
+    daily_profit.orders.remove(instance)
+    daily_profit.save()
 
 
-class OrderUpdateNote(models.Model):
-    order = models.ManyToManyField(Order, related_name='order_note')
-    note = models.CharField(max_length=50, blank=True, null=True)
-    date = models.DateTimeField(auto_now_add=True)
-    
-    def save(self, *args, **kwargs):
-        if not self.note:
-            self.note = f'Update this order status to {self.order.status} at {self.date}'
-        super().save(*args, **kwargs)
-    
-    def __str__(self):
-        return f'{self.order} | {self.date}'
 
 
