@@ -13,6 +13,12 @@
             <a href="{% url 'add_new_order' %}" class="btn btn-primary">Place another order</a>
             <a href="{% url 'order_list' %}">Go to Order list</a>
         </div>
+        <hr>
+        <div>
+            <a href="{% url 'order_view' order.id %}" class="btn" style="background-color: #c5c52f;color: black;">
+                View This Order!
+            </a>
+        </div>
     </div>
 </main>
 {% endblock dashboard_body %}

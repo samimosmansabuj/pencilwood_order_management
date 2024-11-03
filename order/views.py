@@ -324,7 +324,7 @@ def add_new_order(request):
             
             # daily_profit_update(order)
 
-            return redirect('order_success')
+            return redirect('order_success', id=order.id)
         else:
             messages.warning(
                 request, f"{order_customer_form.errors} and {order_form.errors}")
@@ -340,8 +340,9 @@ def add_new_order(request):
 
 
 @login_required
-def order_success(request):
-    return render(request, 'order/order_success.html')
+def order_success(request, id):
+    order = get_object_or_404(Order, id=id)
+    return render(request, 'order/order_success.html', {'order': order})
 
 
 
@@ -643,7 +644,7 @@ def request_to_order(request, pk):
             if form2.is_valid():
                 order = form2.save()
                 order.request_order = order_request
-                order.tracking_ID = order_request.tracking_ID
+                # order.tracking_ID = order_request.tracking_ID
                 if order.remark is None:
                     order.remark = order_request.remark
                 order.save()
@@ -652,7 +653,7 @@ def request_to_order(request, pk):
                 order_request.save()
 
                 messages.success(request, 'Order created successfully.')
-                return redirect('order_list')
+                return redirect('order_view', id=order.id)
             else:
                 messages.success(request, form2.errors)
                 return redirect('order_request_view', pk=order_request.pk)
