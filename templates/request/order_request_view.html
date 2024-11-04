@@ -257,6 +257,11 @@
             {% endif %}
             <!-- -------Place Order Section End------- -->
 
+            <div style="display: flex; justify-content: space-between;">
+                <p><b><i>Created By: {{ order_request.created_by }}</i></b></p>
+                <p><b><i>Last Updated By: {{ order_request.last_updated_by }}</i></b></p>
+            </div>
+
         </div>
     </div>
 </main>

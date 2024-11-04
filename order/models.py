@@ -5,6 +5,7 @@ from account.models import Custom_User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from .middleware import get_current_user
 
 
 class Product(models.Model):
@@ -40,7 +41,8 @@ class OrderRequest(models.Model):
         ('Website', 'Website'),
         ('Others', 'Others'),
     )
-    request_created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True)
+    created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='request_created_by')
+    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='request_last_updated_by')
     tracking_ID = models.CharField(max_length=5, unique=True, blank=True, null=True)
     
     company = models.CharField(max_length=250, blank=True, null=True)
@@ -68,6 +70,10 @@ class OrderRequest(models.Model):
         return f"OrderRequest#{self.tracking_ID} from {self.company} ({self.name})"
     
     def save(self, *args, **kwargs):
+        if not self.pk or not self.created_by_id:
+            self.created_by = get_current_user()
+        self.last_updated_by = get_current_user()
+        
         if not self.tracking_ID:
             unique = False
             while not unique:
@@ -181,9 +187,12 @@ class Order(models.Model):
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=50, default='Unpaid')
     
     status = models.CharField(choices=STATUS, max_length=50, default='Pending', blank=True, null=True)
+    urgent = models.BooleanField(blank=True, null=True)
     work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_assign')
     remark = models.TextField(blank=True, null=True)
     
+    created_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_created_by')
+    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_last_updated_by')
     order_date = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
     delivery_date = models.DateField(blank=True,null=True)
@@ -204,6 +213,10 @@ class Order(models.Model):
                 self.order_item.add(order_item)
     
     def save(self, *args, **kwargs):
+        if not self.pk or not self.created_by_id:
+            self.created_by = get_current_user()
+        self.last_updated_by = get_current_user()
+        
         super(Order, self).save(*args, **kwargs)
         self.add_missing_order_items()
         

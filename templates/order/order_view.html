@@ -7,7 +7,7 @@
 {% block dashboard_body %}
 <main>
     <div class="container-fluid">
-        <h3 class="mt-4">ORDER_ID#{{order.tracking_ID}}</h3>
+        <h3 class="mt-4">ORDER_ID#{{order.tracking_ID}} {% if order.urgent %}<p>(Urgent)</p>{% endif %}</h3>
 
         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
@@ -428,6 +428,13 @@
                             </div>
                         </div>
                         <!-- -----------------Image Details End----------------- -->
+
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <p><b><i>Created By: {{ order.created_by }}</i></b></p>
+                            <p><b><i>Last Updated By: {{ order.last_updated_by }}</i></b></p>
+                        </div>
+                        
 
                     </div>
                 </div>

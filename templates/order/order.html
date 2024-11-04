@@ -269,28 +269,28 @@
                                             <tbody>
                                                 <!---->
                                                 {% for order in orders %}
-                                                <tr role="row" class="odd">
-                                                    <td>
+                                                <tr role="row" class="odd text-red-{{order.id}}">
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.order_date}}
-                                                    </td>
-                                                    <td>
+                                                    </td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.tracking_ID}}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {% if order.request_order %}
                                                         {{order.request_order.company}}
                                                         {% else %}
                                                         {{order.order_customer.company}}
                                                         {% endif %}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {% if order.request_order %}
                                                         {{order.request_order.name}}
                                                         {% else %}
                                                         {{order.order_customer.name}}
                                                         {% endif %}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {% if order.request_order %}
                                                         {% for product in order.request_order.product.all %}
                                                         {{product.name}},
@@ -301,19 +301,19 @@
                                                         {% endfor %}
                                                         {% endif %}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.work_assign}}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.status}}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.deal_value}}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.due_amount}}
                                                     </td>
-                                                    <td>
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         <a href="{% url 'order_view' order.id %}"
                                                             class="btn btn-primary btn-sm">
                                                             View

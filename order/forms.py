@@ -53,7 +53,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
+            'delivery_address', 'special_instructions', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
         ]
 
     delivery_address = forms.CharField(required=False, widget=forms.TextInput(attrs={
@@ -99,6 +99,9 @@ class OrderForm(forms.ModelForm):
     status = forms.ChoiceField(required=False, choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     }))
+    urgent = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class': 'form-check-inline', 'id': 'inputUrgent'
+    }))
 
     work_assign = forms.ModelChoiceField(required=False, queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputWorkAssign'
@@ -120,11 +123,14 @@ class OrderStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'status', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
+            'status', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
         ]
 
     status = forms.ChoiceField(required=False, choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
+    }))
+    urgent = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class': 'form-check-inline', 'id': 'inputUrgent'
     }))
     work_assign = forms.ModelChoiceField(required=False, queryset=Custom_User.objects.all(), widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputWorkAssign'

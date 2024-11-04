@@ -49,6 +49,9 @@
                         <input type="text" class="form-control" value="{{order.last_update}}" name="last_update"
                             readonly>
                     </div>
+                    <div class="form-group">
+                        <p>Is it urgent? {{form.urgent}}</p>
+                    </div>
                 </div>
 
                 {% if order.status != 'Delivered' %}
