@@ -21,6 +21,8 @@ from xhtml2pdf import pisa
 import os
 from django.forms import modelformset_factory
 from django.http import JsonResponse
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import PatternFill, Font, Alignment
 
 # ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
@@ -103,7 +105,13 @@ class OrderListView(LoginRequiredMixin, ListView):
     def render_to_response(self, context, **response_kwargs):
         export_format = self.request.GET.get('export')
         queryset = self.get_queryset()
-        headers = ['ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'delivery_address', 'special_instructions', 'Source', 'Product(s)', 'Work Assign', 'Status', 'remark', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5', 'quantity', 'unit_price', 'deal_value', 'advance_amount', 'due_amount', 'delivery_charge', 'delivery_charge_cost', 'extra_cost', 'total_amount', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'delivery_date', 'Last Update', 'order_date']
+        headers = [
+            "Tracking ID", "Company", "Customer Name", "Phone Number", "Second Phone Number",
+            "Delivery Address", "Special Instructions", "Source", "Products", "Assigned Work",
+            "Status", "Remark", "Logo", "Picture1", "Picture2", "Picture3", "Picture4", "Picture5",
+            "Product", "Quantity", "Unit Price", "Item Total", "Deal Value", "Delivery Charge", "Advance Amount", "Due Amount",
+            "Delivery Charge Cost", "Extra Cost", "Total Product Amount","Payment Status", "Payment Method", "Payment Number", "Transaction ID", "Delivery Date", "Last Update", "Order Date"
+        ]
         
         if export_format == 'xlsx':
             return self.export_to_xlsx(queryset, headers)
@@ -111,98 +119,133 @@ class OrderListView(LoginRequiredMixin, ListView):
             return self.export_to_csv(queryset, headers)
 
         return super().render_to_response(context, **response_kwargs)
-
+    
+    
     def export_to_xlsx(self, orders, headers):
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.title = f'Orders - {timezone.now().date()}'
-
+        sheet.title = 'Orders'
         sheet.append(headers)
+        
+        header_fill = PatternFill(start_color="346754", end_color="346754", fill_type="solid")  # Yellow background
+        header_font = Font(color="ffffff", bold=True)  # Red font, bold
+        
+        for col_num, header in enumerate(headers, start=1):
+            cell = sheet.cell(row=1, column=col_num, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        column_widths = [
+            12, 20, 20, 15, 20,   # Tracking ID, Company, Customer Name, Phone Number, Second Phone Number
+            25, 20, 12, 25, 15,   # Delivery Address, Special Instructions, Source, Products, Assigned Work
+            10, 15, 15, 10, 10,   # Status, Remark, Logo, Picture1, Picture2
+            10, 10, 10, 15, 10, 10,   # Picture3, Picture4, Picture5, Product, Quantity, Unit Price
+            10, 10, 15, 15, 12,   # Item Total, Deal Value, Delivery Charge, Advance Amount, Due Amount
+            18, 10, 20, 15, 15,   # Delivery Charge Cost, Extra Cost, Total Amount, Payment Number, Transaction ID
+            15, 15, 15, 15, 15         # Payment Method, Payment Status, Delivery Date, Last Update, Order Date
+        ]
 
+        for i, width in enumerate(column_widths, start=1):
+            column_letter = get_column_letter(i)
+            sheet.column_dimensions[column_letter].width = width
+
+        current_row = 2
+
+        # Populate data rows
         for order in orders:
-            
             if order.request_order:
-                products = ', '.join([product.name for product in order.request_order.product.all()])
-                sheet.append([
-                    order.tracking_ID,
-                    order.request_order.company,
-                    order.request_order.name,
-                    order.request_order.phone_number,
-                    order.request_order.second_phone_number,
-                    order.delivery_address,
-                    order.special_instructions,
-                    order.request_order.source,
-                    products,
-                    str(order.work_assign),
-                    order.status,
-                    order.remark,
-                    order.request_order.logo,
-                    order.request_order.picture1,
-                    order.request_order.picture2,
-                    order.request_order.picture3,
-                    order.request_order.picture4,
-                    order.request_order.picture5,
-                    
-                    order.quantity,
-                    order.unit_price,
-                    order.deal_value,
-                    order.advance_amount,
-                    order.due_amount,
-                    order.delivery_charge,
-                    order.delivery_charge_cost,
-                    order.extra_cost,
-                    order.total_amount,
-                    order.payment_number,
-                    order.transaction_id,
-                    order.payment_method,
-                    order.payment_status,
-                    order.delivery_date,
-                    order.last_update,
-                    order.order_date,
-                    
-                ])
-            if order.order_customer:
-                products = ', '.join([product.name for product in order.order_customer.product.all()])
-                sheet.append([
-                    order.tracking_ID,
-                    order.order_customer.company,
-                    order.order_customer.name,
-                    order.order_customer.phone_number,
-                    order.order_customer.second_phone_number,
-                    order.delivery_address,
-                    order.special_instructions,
-                    order.order_customer.source,
-                    products,
-                    str(order.work_assign),
-                    order.status,
-                    order.remark,
-                    order.order_customer.logo,
-                    order.order_customer.picture1,
-                    None,
-                    None,
-                    None,
-                    None,
-                    
-                    order.quantity,
-                    order.unit_price,
-                    order.deal_value,
-                    order.advance_amount,
-                    order.due_amount,
-                    order.delivery_charge,
-                    order.delivery_charge_cost,
-                    order.extra_cost,
-                    order.total_amount,
-                    order.payment_number,
-                    order.transaction_id,
-                    order.payment_method,
-                    order.payment_status,
-                    str(order.delivery_date),
-                    str(order.last_update),
-                    str(order.order_date),
-                    
-                ])
+                customer = order.request_order
+            else:
+                customer = order.order_customer
 
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            if not customer:
+                continue
+
+            products = ', '.join([product.name for product in customer.product.all()])
+
+            # Get order items and calculate row range to merge cells over
+            order_items = list(order.order_item.all())
+            start_row = current_row
+            end_row = start_row + len(order_items) - 1
+
+            # Fill data for each order item, only showing order-level fields on the first row
+            for idx, item in enumerate(order_items):
+                row = []
+
+                # Only display order-level fields on the first row for each order
+                if idx == 0:
+                    row += [
+                        order.tracking_ID,
+                        customer.company,
+                        customer.name,
+                        customer.phone_number,
+                        customer.second_phone_number,
+                        order.delivery_address,
+                        order.special_instructions,
+                        customer.source,
+                        products,
+                        str(order.work_assign),
+                        order.status,
+                        order.remark,
+                        customer.logo,
+                        customer.picture1,
+                        getattr(customer, 'picture2', None),
+                        getattr(customer, 'picture3', None),
+                        getattr(customer, 'picture4', None),
+                        getattr(customer, 'picture5', None)
+                    ]
+                else:
+                    row += [''] * 18
+
+                # Item-specific fields
+                row += [
+                    item.product.name,
+                    item.quantity,
+                    item.unit_price,
+                    item.total
+                ]
+
+                # Order totals and other fields (only on the first row of the order)
+                if idx == 0:
+                    row += [
+                        order.deal_value,
+                        order.delivery_charge,
+                        order.advance_amount,
+                        order.due_amount,
+                        order.delivery_charge_cost,
+                        order.extra_cost,
+                        order.total_amount,
+                        order.payment_number,
+                        order.transaction_id,
+                        order.payment_method,
+                        order.payment_status,
+                        order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else '',
+                        order.last_update.strftime('%Y-%m-%d'),
+                        order.order_date.strftime('%Y-%m-%d')
+                    ]
+                else:
+                    row += [''] * 15
+
+                sheet.append(row)
+                for col_num, value in enumerate(row, start=1):
+                    cell = sheet.cell(row=current_row, column=col_num, value=value)
+                    cell.alignment = Alignment(horizontal="center", vertical="center")  # Center align all cells
+                current_row += 1
+
+            # Merge cells for each order-level field across the rows for this order
+            if len(order_items) > 1:
+                merge_columns = list(range(1, 19)) + list(range(23, 37))  # Columns to merge (tracking ID, company, etc.)
+                for col_idx in merge_columns:
+                    col_letter = get_column_letter(col_idx)
+                    sheet.merge_cells(f"{col_letter}{start_row}:{col_letter}{end_row}")
+                    # Center align merged cells
+                    merged_cell = sheet.cell(row=start_row, column=col_idx)
+                    merged_cell.alignment = Alignment(horizontal="center", vertical="center")
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
         response['Content-Disposition'] = f'attachment; filename=Orders - {timezone.now().date()}.xlsx'
         workbook.save(response)
         return response
@@ -210,95 +253,86 @@ class OrderListView(LoginRequiredMixin, ListView):
     def export_to_csv(self, orders, headers):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename=orders - {timezone.now().date()}.csv'
-
         writer = csv.writer(response)
         writer.writerow(headers)
 
+        # Populate data rows
         for order in orders:
             if order.request_order:
-                products = ', '.join([product.name for product in order.request_order.product.all()])
-                writer.writerow([
-                    order.tracking_ID,
-                    order.request_order.company,
-                    order.request_order.name,
-                    order.request_order.phone_number,
-                    order.request_order.second_phone_number,
-                    order.delivery_address,
-                    order.special_instructions,
-                    order.request_order.source,
-                    products,
-                    str(order.work_assign),
-                    order.status,
-                    order.remark,
-                    order.request_order.logo,
-                    order.request_order.picture1,
-                    order.request_order.picture2,
-                    order.request_order.picture3,
-                    order.request_order.picture4,
-                    order.request_order.picture5,
-                    
-                    order.quantity,
-                    order.unit_price,
-                    order.deal_value,
-                    order.advance_amount,
-                    order.due_amount,
-                    order.delivery_charge,
-                    order.delivery_charge_cost,
-                    order.extra_cost,
-                    order.total_amount,
-                    order.payment_number,
-                    order.transaction_id,
-                    order.payment_method,
-                    order.payment_status,
-                    order.delivery_date,
-                    order.last_update,
-                    order.order_date,
-                    
-                ])
-            
-            if order.order_customer:
-                products = ', '.join([product.name for product in order.order_customer.product.all()])
-                writer.writerow([
-                    order.tracking_ID,
-                    order.order_customer.company,
-                    order.order_customer.name,
-                    order.order_customer.phone_number,
-                    order.order_customer.second_phone_number,
-                    order.delivery_address,
-                    order.special_instructions,
-                    order.order_customer.source,
-                    products,
-                    str(order.work_assign),
-                    order.status,
-                    order.remark,
-                    order.order_customer.logo,
-                    order.order_customer.picture1,
-                    None,
-                    None,
-                    None,
-                    None,
-                    
-                    order.quantity,
-                    order.unit_price,
-                    order.deal_value,
-                    order.advance_amount,
-                    order.due_amount,
-                    order.delivery_charge,
-                    order.delivery_charge_cost,
-                    order.extra_cost,
-                    order.total_amount,
-                    order.payment_number,
-                    order.transaction_id,
-                    order.payment_method,
-                    order.payment_status,
-                    str(order.delivery_date),
-                    str(order.last_update),
-                    str(order.order_date),
-                    
-                ])
-            
+                customer = order.request_order
+            else:
+                customer = order.order_customer
+
+            if not customer:
+                continue
+
+            products = ', '.join([product.name for product in customer.product.all()])
+
+            # Iterate over order items and only display deal value and other order-level fields on the first row
+            order_items = list(order.order_item.all())
+            for idx, item in enumerate(order_items):
+                row = []
+
+                # Display order-level fields only for the first row of this order
+                if idx == 0:
+                    row += [
+                        order.tracking_ID,
+                        customer.company,
+                        customer.name,
+                        customer.phone_number,
+                        customer.second_phone_number,
+                        order.delivery_address,
+                        order.special_instructions,
+                        customer.source,
+                        products,
+                        str(order.work_assign),
+                        order.status,
+                        order.remark,
+                        customer.logo,
+                        customer.picture1,
+                        getattr(customer, 'picture2', None),
+                        getattr(customer, 'picture3', None),
+                        getattr(customer, 'picture4', None),
+                        getattr(customer, 'picture5', None)
+                    ]
+                else:
+                    # Add empty cells for these columns in subsequent rows for the same order
+                    row += [''] * 18
+
+                # Add item-specific fields for each row
+                row += [
+                    item.product.name,
+                    item.quantity,
+                    item.unit_price,
+                    item.total
+                ]
+
+                # Display these only for the first item of the order
+                if idx == 0:
+                    row += [
+                        order.deal_value,
+                        order.delivery_charge,
+                        order.advance_amount,
+                        order.due_amount,
+                        order.delivery_charge_cost,
+                        order.extra_cost,
+                        order.total_amount,
+                        order.payment_status,
+                        order.payment_method,
+                        order.payment_number,
+                        order.transaction_id,
+                        order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else '',
+                        order.last_update.strftime('%Y-%m-%d'),
+                        order.order_date.strftime('%Y-%m-%d')
+                    ]
+                else:
+                    # Append empty fields for subsequent items
+                    row += [''] * 15
+
+                writer.writerow(row)
 
         return response
+    
 
 
 
