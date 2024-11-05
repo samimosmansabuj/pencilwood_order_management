@@ -63,7 +63,7 @@ class OrderRequest(models.Model):
     picture4 = models.URLField(max_length=1000, blank=True, null=True)
     picture5 = models.URLField(max_length=1000, blank=True, null=True)
     
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(blank=True, null=True)
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -102,7 +102,7 @@ class OrderCustomer(models.Model):
     
     logo = models.URLField(max_length=1000, blank=True, null=True)
     picture1 = models.URLField(max_length=1000, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(blank=True, null=True)
     
     
     def save(self, *args, **kwargs):
@@ -193,7 +193,8 @@ class Order(models.Model):
     
     created_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_created_by')
     last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_last_updated_by')
-    order_date = models.DateTimeField(auto_now_add=True)
+    
+    order_date = models.DateField(blank=True, null=True)
     last_update = models.DateTimeField(auto_now=True)
     delivery_date = models.DateField(blank=True,null=True)
     return_date = models.DateField(blank=True,null=True)
@@ -242,13 +243,18 @@ class Order(models.Model):
         super(Order, self).save(*args, **kwargs)
         
         from dashboard.models import Daily_Profit
-        date = timezone.localtime(self.order_date).date()
+        # date = timezone.localtime(self.order_date).date()
+        date = self.order_date
         daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
         daily_profit.orders.add(self)
         daily_profit.save()
         
+        # if self.order_customer:
+        #     customer_order = self.order_customer
+        #     customer_order.created_at = date
+        #     customer_order.save()
         
-    
+        
     def __str__(self):
         if self.request_order:
             return f"Order#{self.tracking_ID} for {self.request_order}"

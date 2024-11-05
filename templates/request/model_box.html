@@ -77,7 +77,11 @@
                         {{form.product}}
                     </div>
                     <div class="form-group">
-                        <label>Date</label>
+                        {{form.created_at.label}}
+                        {{form.created_at}}
+                    </div>
+                    <div class="form-group">
+                        <label>Last Updated Date</label>
                         <input type="text" class="form-control" value="{{order_request.last_update}}" name="last_update"
                             readonly>
                     </div>
@@ -159,13 +163,21 @@
                             </div>
                         </div>
                     </div>
-
-
-                    
-                    <div class="form-group">
-                        <label>Is it Urgent?</label>
-                        {{form2.urgent}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{form2.order_date.label}}
+                                {{form2.order_date}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Is it Urgent?</label>
+                                {{form2.urgent}}
+                            </div>
+                        </div>
                     </div>
+  
 
                     <div class="form-group">
                         <label>{{form2.special_instructions.label}}</label>

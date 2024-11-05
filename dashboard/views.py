@@ -33,7 +33,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         today = timezone.now().date()
 
         # Filter today's orders
-        today_orders = order.filter(order_date__date=today)
+        today_orders = order.filter(order_date=today)
 
         # Calculate total deal value for today’s orders and all orders
         today_total_deal_value = today_orders.aggregate(total=Sum('deal_value'))['total'] or 0

@@ -47,7 +47,7 @@ class OrderListView(LoginRequiredMixin, ListView):
         if today_orders:
             today = timezone.localtime().date()
             
-            queryset = queryset.filter(order_date__date=today)
+            queryset = queryset.filter(order_date=today)
             return queryset
 
         # Filter by status

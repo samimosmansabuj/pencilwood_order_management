@@ -8,7 +8,7 @@ import os
 class OrderCustomerForm(forms.ModelForm):
     class Meta:
         model = OrderCustomer
-        fields = ['company', 'name', 'phone_number', 'second_phone_number', 'source', 'product', 'logo', 'picture1']
+        fields = ['company', 'name', 'phone_number', 'second_phone_number', 'source', 'product', 'logo', 'picture1', 'created_at']
         widgets = {
             'company': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -34,9 +34,13 @@ class OrderCustomerForm(forms.ModelForm):
             'picture1': forms.URLInput(attrs={
                 'class': 'form-control', 'id': 'inputPicture1', 'placeholder': 'Enter Picture URL'
             }),
+            'created_at': forms.DateInput(attrs={
+                'class': 'form-control', 'id': 'inputCreatedAt', 'type': 'date'
+            }),
         }
         labels = {
             'picture1': 'Picture 01',
+            'created_at': 'Created Date',
         }
         
     def __init__(self, *args, **kwargs):
@@ -47,13 +51,14 @@ class OrderCustomerForm(forms.ModelForm):
         self.fields['product'].required = False
         self.fields['logo'].required = False
         self.fields['picture1'].required = False
+        self.fields['created_at'].required = True
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_address', 'special_instructions', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file'
+            'delivery_address', 'special_instructions', 'advance_amount', 'delivery_charge', 'payment_number', 'transaction_id', 'payment_method', 'payment_status', 'status', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_charge_cost', 'design_file', 'order_date'
         ]
 
     delivery_address = forms.CharField(required=False, widget=forms.TextInput(attrs={
@@ -117,6 +122,9 @@ class OrderForm(forms.ModelForm):
     design_file = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={
         'class': 'form-control', 'id': 'inputDesignFile', 'placeholder': 'Upload Design File'
     }))
+    order_date = forms.DateField(required=True, label='Order Created Date', widget=forms.DateInput(attrs={
+        'class': 'form-control', 'id': 'inputOrderDate', 'type': 'date'
+    }))
 
 
 class OrderStatusUpdateForm(forms.ModelForm):
@@ -147,6 +155,9 @@ class OrderStatusUpdateForm(forms.ModelForm):
     design_file = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={
         'class': 'form-control', 'id': 'inputDesignFile', 'placeholder': 'Upload Design File'
     }))
+    # order_date = forms.DateField(required=True, label='Order Created Date', widget=forms.DateInput(attrs={
+    #     'class': 'form-control', 'id': 'inputOrderDate', 'type': 'date'
+    # }))
     
     def clean(self):
         cleaned_data = super().clean()
@@ -212,7 +223,7 @@ class OrderRequestForm(forms.ModelForm):
         fields = [
             'company', 'name', 'phone_number', 'second_phone_number', 'source', 'product',
             'status', 'remark', 'logo', 'picture1',
-            'picture2', 'picture3', 'picture4', 'picture5', 'work_assign'
+            'picture2', 'picture3', 'picture4', 'picture5', 'work_assign', 'created_at'
         ]
 
     company = forms.CharField(label='Company Name', max_length=50, required=False, widget=forms.TextInput(attrs={
@@ -288,13 +299,16 @@ class OrderRequestForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputPicture5', 'placeholder': 'Enter Picture 5 URL'
     })
     )
+    created_at = forms.DateField(required=True, label='Request Created Date', widget=forms.DateInput(attrs={
+        'class': 'form-control', 'id': 'inputCreatedAt', 'type': 'date'
+    }))
 
 
 class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign'
+            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at'
         ]
     company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -331,6 +345,9 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     })
     )
+    created_at = forms.DateField(required=True, label='Request Created Date', widget=forms.DateInput(attrs={
+        'class': 'form-control', 'id': 'inputCreatedAt', 'type': 'date'
+    }))
   
     
 class OrderRequestPictureUpdateForm(forms.ModelForm):
