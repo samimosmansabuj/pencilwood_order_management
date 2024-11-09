@@ -21,6 +21,7 @@ from xhtml2pdf import pisa
 import os
 from django.forms import modelformset_factory
 from django.http import JsonResponse
+from pathao_api import PathaoApi
 
 # ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
@@ -326,6 +327,33 @@ def add_new_order(request):
             order.save()
             
             daily_profit_update(order)
+            
+            # client = PathaoApi(
+            #     client_id = '8mepY5NaMy',
+            #     client_secret='y7KHNe1U1lh1s882WJ22kmHQbztUrlsJohrvMgcV',
+            #     username='safaworld20@gmail.com',
+            #     password='Safa-World-20',
+            #     base_url='https://api-hermes.pathao.com'
+            # )
+            # client.create_order(
+            #     store_id='131769',
+            #     order_id='Test #1', 
+            #     sender_name="Safa World",
+            #     sender_phone='01717171717', 
+            #     recipient_name=order.order_customer.name, 
+            #     recipient_phone=order.order_customer.phone_number, 
+            #     address=order.delivery_address,
+            #     city_id='1',
+            #     zone_id='4',
+            #     area_id='105',
+            #     special_instruction=order.special_instructions,
+            #     item_quantity='1',
+            #     item_weight=1,
+            #     amount_to_collect=int(order.due_amount),
+            #     item_description='None',
+            #     delivery_type=48,
+            #     item_type='2'
+            # )
 
             return redirect('order_success')
         else:

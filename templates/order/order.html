@@ -318,10 +318,10 @@
                                                             class="btn btn-primary btn-sm">
                                                             View
                                                         </a>
-                                                        <!-- <a href=""
-                                                            class="btn btn-primary btn-sm">
+                                                        <a href="{% url 'order_delete' order.id %}"
+                                                            class="btn btn-danger btn-sm">
                                                             Delete
-                                                        </a> -->
+                                                        </a>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}

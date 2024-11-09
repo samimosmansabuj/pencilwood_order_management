@@ -376,18 +376,26 @@
                                                 </li>
                                                 {% endif %}
 
-                                                <!-- Page numbers -->
+                                                <!-- Page numbers with ellipses -->
                                                 {% for num in page_obj.paginator.page_range %}
-                                                {% if page_obj.number == num %}
-                                                <li class="paginate_button page-item active">
-                                                    <a href="#" class="page-link">{{ num }}</a>
-                                                </li>
-                                                {% else %}
-                                                <li class="paginate_button page-item">
-                                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_order_requests %}&today_order_requests={{ request.GET.today_order_requests }}{% endif %}"
-                                                        class="page-link">{{ num }}</a>
-                                                </li>
-                                                {% endif %}
+                                                    {% if num == 1 or num == page_obj.paginator.num_pages %}
+                                                        <!-- Always show the first and last pages -->
+                                                        <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
+                                                            <a href="?page={{ num }}"
+                                                            class="page-link">{{ num }}</a>
+                                                        </li>
+                                                    {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
+                                                        <!-- Show pages around the current page -->
+                                                        <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
+                                                            <a href="?page={{ num }}"
+                                                            class="page-link">{{ num }}</a>
+                                                        </li>
+                                                    {% elif num == 2 or num == page_obj.paginator.num_pages|add:"-1" %}
+                                                        <!-- Display ellipses for gaps in pagination -->
+                                                        <li class="paginate_button page-item disabled">
+                                                            <a href="#" class="page-link">...</a>
+                                                        </li>
+                                                    {% endif %}
                                                 {% endfor %}
 
                                                 <!-- Next button -->

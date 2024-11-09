@@ -1,11 +1,11 @@
-from django.db import models
-import random, string
-from django.utils.text import slugify
-from account.models import Custom_User
 from django.db.models.signals import pre_delete
+from .middleware import get_current_user
+from account.models import Custom_User
+from django.utils.text import slugify
 from django.dispatch import receiver
 from django.utils import timezone
-from .middleware import get_current_user
+from django.db import models
+import random, string
 
 
 class Product(models.Model):
@@ -269,11 +269,25 @@ def reset_order_created(sender, instance, **kwargs):
     if instance.request_order:
         instance.request_order.order_created = False
         instance.request_order.save()
+    
     from dashboard.models import Daily_Profit
-    date = timezone.localtime(instance.order_date).date()
+    date = instance.order_date
     daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
     daily_profit.orders.remove(instance)
     daily_profit.save()
+    
+    if instance.order_item:
+        for order_item in instance.order_item.all():
+                order_item.delete()
+    
+    if instance.order_customer:
+        pre_delete.disconnect(reset_order_created, sender=Order)
+        try:
+            instance.order_customer.delete()
+            print(instance.order_item.all())
+        finally:
+            # Reconnect the signal after deletion is complete
+            pre_delete.connect(reset_order_created, sender=Order)
 
 
 

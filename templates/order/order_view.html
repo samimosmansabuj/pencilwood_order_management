@@ -108,6 +108,10 @@
                                                 </p>
                                                 <hr style="border-top: 5px solid rgb(0 0 0);">
                                                 <div class="float-right">
+                                                    <a href="{% url 'order_delete' order.id %}"
+                                                        class="btn btn-danger btn-sm">
+                                                        Delete
+                                                    </a>
                                                     <a class="btn btn-sm btn-warning">
                                                         {% if order.payment_status == 'Paid' %}
                                                         <i class="fa fa-check-circle"></i>

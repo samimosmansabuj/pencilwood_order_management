@@ -51,7 +51,7 @@ class OrderCustomerForm(forms.ModelForm):
         self.fields['product'].required = False
         self.fields['logo'].required = False
         self.fields['picture1'].required = False
-        self.fields['created_at'].required = True
+        self.fields['created_at'].required = False
 
 
 class OrderForm(forms.ModelForm):

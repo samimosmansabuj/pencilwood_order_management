@@ -1,0 +1,20 @@
+{% extends '../base.html' %}
+
+{% block dashboard_title %}
+<title>Delete Order-{{ object.tracking_ID }} - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+    <div class="container-fluid" style="text-align: center;padding: 50px;">
+        <h1 class="mt-4">Delete Order</h1>
+        <p>Are you sure you want to delete "Order-<b>{{ object.tracking_ID }}</b>"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-primary">Confirm</button>
+            <!-- <a href="{% url 'order_list' %}">Cancel</a> -->
+            <a href="javascript:history.back()">Cancel</a>
+        </form>
+    </div>
+</main>
+{% endblock dashboard_body %}

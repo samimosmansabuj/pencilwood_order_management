@@ -5,6 +5,7 @@ from .views import OrderListView
 urlpatterns = [
     # path('order/', order_list, name='order_list'),
     path('order-list/', OrderListView.as_view(), name='order_list'),
+    path('order/delete/<int:pk>/', OrderDeleteView.as_view(), name='order_delete'),
     path('order/add-new/', add_new_order, name='add_new_order'),
     path('order/add-success/<int:id>/', order_success, name='order_success'),
     path('order/<int:id>/', order_view, name='order_view'),

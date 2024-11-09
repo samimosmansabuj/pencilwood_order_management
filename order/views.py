@@ -23,6 +23,7 @@ from django.forms import modelformset_factory
 from django.http import JsonResponse
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill, Font, Alignment
+from pathao_api import PathaoApi
 
 # ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
@@ -334,6 +335,10 @@ class OrderListView(LoginRequiredMixin, ListView):
         return response
     
 
+class OrderDeleteView(LoginRequiredMixin, DeleteView):
+    model = Order
+    template_name = 'order/order_confirm_delete.html'
+    success_url = reverse_lazy('order_list')
 
 
 
@@ -356,8 +361,34 @@ def add_new_order(request):
             order.order_customer = order_customer
             order.save()
             
-            # daily_profit_update(order)
-
+            # client = PathaoApi(
+            #     client_id = '8mepY5NaMy',
+            #     client_secret='y7KHNe1U1lh1s882WJ22kmHQbztUrlsJohrvMgcV',
+            #     username='safaworld20@gmail.com',
+            #     password='Safa-World-20',
+            #     base_url='https://api-hermes.pathao.com'
+            # )
+            # client.create_order(
+            #     store_id='131769',
+            #     order_id='Test #1', 
+            #     sender_name="Safa World",
+            #     sender_phone='01717171717', 
+            #     recipient_name=order.order_customer.name, 
+            #     recipient_phone=order.order_customer.phone_number, 
+            #     address=order.delivery_address,
+            #     city_id='1',
+            #     zone_id='4',
+            #     area_id='105',
+            #     special_instruction=order.special_instructions,
+            #     item_quantity='1',
+            #     item_weight=1,
+            #     amount_to_collect=int(order.due_amount),
+            #     item_description='None',
+            #     delivery_type=48,
+            #     item_type='2'
+            # )
+            
+            
             return redirect('order_success', id=order.id)
         else:
             messages.warning(
@@ -566,7 +597,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         for order_request in order_requests:
             products = ', '.join([product.name for product in order_request.product.all()])
             sheet.append([
-                str(order_request.request_created_by),
+                str(order_request.created_by),
                 order_request.tracking_ID,
                 order_request.company,
                 order_request.name,
@@ -579,7 +610,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 str(order_request.work_assign),
                 order_request.order_created,
                 str(order_request.last_update),
-                str(order_request.created_at.date()),
+                str(order_request.created_at),
                 order_request.logo,
                 order_request.picture1,
                 order_request.picture2,
@@ -603,7 +634,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         for order_request in order_requests:
             products = ', '.join([product.name for product in order_request.product.all()])
             writer.writerow([
-                order_request.request_created_by,
+                order_request.created_by,
                 order_request.tracking_ID,
                 order_request.company,
                 order_request.name,
@@ -616,7 +647,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.work_assign,
                 order_request.order_created,
                 order_request.last_update,
-                order_request.created_at.date(),
+                order_request.created_at,
                 order_request.logo,
                 order_request.picture1,
                 order_request.picture2,
@@ -634,9 +665,9 @@ class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'request/order_request_form.html'
     success_url = reverse_lazy('order_request_list')
 
-    def form_valid(self, form):
-        form.instance.request_created_by = self.request.user  # Automatically set request_at
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.created_by = self.request.user  # Automatically set request_at
+    #     return super().form_valid(form)
 
 
 class OrderRequestDeleteView(LoginRequiredMixin, DeleteView):
