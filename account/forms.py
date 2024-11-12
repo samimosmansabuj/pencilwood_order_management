@@ -85,6 +85,7 @@ class UserProfileForm(forms.ModelForm):
     USER_TYPE = [
         ('Admin', 'Admin'),
         ('Staff', 'Staff'),
+        ('Factory Staff', 'Factory Staff'),
     ]
     first_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputFirstName', 'placeholder': 'Enter First Name',

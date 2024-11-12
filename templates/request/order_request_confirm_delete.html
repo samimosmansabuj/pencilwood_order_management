@@ -12,7 +12,7 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn-primary">Confirm</button>
-            <a href="{% url 'order_request_list' %}">Cancel</a>
+            <a href="javascript:history.back()">Cancel</a>
         </form>
     </div>
 </main>

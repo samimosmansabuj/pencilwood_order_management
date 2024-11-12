@@ -5,6 +5,7 @@ class Custom_User(AbstractUser):
     USER_TYPE = (
         ('Admin', 'Admin'),
         ('Staff', 'Staff'),
+        ('Factory Staff', 'Factory Staff'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE, blank=True, null=True)
     email = models.EmailField(("email address"), blank=True, unique=True)

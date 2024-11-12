@@ -1,29 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from dashboard.models import Daily_Profit
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from .models import Order, OrderRequest
-from dashboard.models import Maintenance_Cost, Daily_Profit
-from django.contrib import messages
-from django.utils.dateparse import parse_date
-from .forms import *
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django.views.generic import ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from openpyxl.styles import PatternFill, Font, Alignment
+from django.views.generic import ListView, DeleteView
+from django.template.loader import get_template
+from django.utils.dateparse import parse_date
+from django.forms import modelformset_factory
+from openpyxl.utils import get_column_letter
+from django.views.generic import CreateView
+from .models import Order, OrderRequest
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Sum
+from django.db.models import Q
+from xhtml2pdf import pisa
+from .forms import *
+from .utils import *
 import openpyxl
 import csv
-from django.http import HttpResponse
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-import os
-from django.forms import modelformset_factory
-from django.http import JsonResponse
-from openpyxl.utils import get_column_letter
-from openpyxl.styles import PatternFill, Font, Alignment
-from pathao_api import PathaoApi
+
 
 # ------------Order Section Start------------
 class OrderListView(LoginRequiredMixin, ListView):
@@ -77,7 +76,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                 Q(order_customer__phone_number__icontains=search_query) |
                 Q(order_customer__product__name__icontains=search_query)
             )
-            print(queryset)
+            
         
         # Filter by Product
         if product_id and product_id.isdigit():
@@ -341,14 +340,6 @@ class OrderDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('order_list')
 
 
-
-def daily_profit_update(object):
-    date = timezone.localtime(object.order_date).date()
-    daily_profit, created = Daily_Profit.objects.get_or_create(date=date)
-    daily_profit.orders.add(object)
-    daily_profit.save()
-
-
 @login_required
 def add_new_order(request):
     if request.method == 'POST':
@@ -360,35 +351,6 @@ def add_new_order(request):
             order = order_form.save(commit=False)
             order.order_customer = order_customer
             order.save()
-            
-            # client = PathaoApi(
-            #     client_id = '8mepY5NaMy',
-            #     client_secret='y7KHNe1U1lh1s882WJ22kmHQbztUrlsJohrvMgcV',
-            #     username='safaworld20@gmail.com',
-            #     password='Safa-World-20',
-            #     base_url='https://api-hermes.pathao.com'
-            # )
-            # client.create_order(
-            #     store_id='131769',
-            #     order_id='Test #1', 
-            #     sender_name="Safa World",
-            #     sender_phone='01717171717', 
-            #     recipient_name=order.order_customer.name, 
-            #     recipient_phone=order.order_customer.phone_number, 
-            #     address=order.delivery_address,
-            #     city_id='1',
-            #     zone_id='4',
-            #     area_id='105',
-            #     special_instruction=order.special_instructions,
-            #     item_quantity='1',
-            #     item_weight=1,
-            #     amount_to_collect=int(order.due_amount),
-            #     item_description='None',
-            #     delivery_type=48,
-            #     item_type='2'
-            # )
-            
-            
             return redirect('order_success', id=order.id)
         else:
             messages.warning(
@@ -410,6 +372,17 @@ def order_success(request, id):
     return render(request, 'order/order_success.html', {'order': order})
 
 
+@login_required
+def DeleteOrderItem(request, id):
+    order_item = get_object_or_404(OrderItem, id=id)
+    order = order_item.order_items.all().first()
+    order.order_item.remove(order_item)
+    if order.request_order:
+        order.request_order.product.remove(order_item.product)
+    elif order.order_customer:
+        order.order_customer.product.remove(order_item.product)
+    order_item.delete()
+    return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
@@ -444,8 +417,40 @@ def order_view(request, id):
     return render(request, 'order/order_view.html', context)
 
 
+@login_required
+def create_pathao_parcel(request, id):
+    order = get_object_or_404(Order, id=id)
+    if order.request_order:
+        recipient = order.request_order
+    elif order.order_customer:
+        recipient = order.order_customer
+    
+    access_token = get_access_token()
+    pathao_order_data = {
+            'store_id':"90968",
+            'merchant_order_id':order.tracking_ID,
+            'recipient_name':recipient.name,
+            'recipient_phone':recipient.phone_number,
+            'recipient_address':order.delivery_address,
+            # 'recipient_city':'1',
+            # 'recipient_zone':'4',
+            # 'recipient_area':'105',
+            'delivery_type':48,
+            'item_type':2,
+            'special_instruction':order.special_instructions,
+            'item_quantity':sum(item.quantity for item in order.order_item.all()),
+            'item_weight':1,
+            'amount_to_collect':float(order.due_amount),
+            'item_description':"None",
+        }
+    pathao_response = create_pathao_order(pathao_order_data, access_token)
+    consignment_id = pathao_response.get("data", {}).get("consignment_id")
+    if consignment_id:
+        order.pathao_parcel_id = consignment_id
+        order.save()
+    return redirect(request.META['HTTP_REFERER'])
 
-# @login_required
+
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
     html = template.render(context_dict)
@@ -454,6 +459,7 @@ def render_to_pdf(template_src, context_dict={}):
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
 
 @login_required
 def print_invoice(request, id):
@@ -665,10 +671,6 @@ class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'request/order_request_form.html'
     success_url = reverse_lazy('order_request_list')
 
-    # def form_valid(self, form):
-    #     form.instance.created_by = self.request.user  # Automatically set request_at
-    #     return super().form_valid(form)
-
 
 class OrderRequestDeleteView(LoginRequiredMixin, DeleteView):
     model = OrderRequest
@@ -735,6 +737,5 @@ def PictureUpdate(request, pk):
         else:
             messages.error(request, f'Something went wrong: {form3.errors}')
     return redirect('order_request_view', pk=order_request.pk)
-
 
 # ------------Order Request Section End------------

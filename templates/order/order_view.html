@@ -195,12 +195,12 @@
                         <!-- -----------------Order Details End----------------- -->
 
 
-
-
-                       <!-- Ensure jQuery is loaded -->
+                        <!-- Payment Details Start -->
+                        {% if request.user.user_type != 'Factory Staff' %}
+                        
+                        <!-- Ensure jQuery is loaded -->
                         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                        <!-- Payment Details Start -->
                         <form id="update-payment-items-form" method="POST" action="{% url 'orderPaymentUpdate' order.id %}">
                             {% csrf_token %}
                             {{ item_formset.management_form }}
@@ -208,6 +208,7 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th colspan="2">Title</th>
                                             <th>Unit Price</th>
                                             <th>Quantity</th>
@@ -218,6 +219,9 @@
                                         {% for form in item_formset %}
                                         <tr>
                                             {{ form.id }}
+                                            <td style="width: 1%; text-align: center;">
+                                                <a href="{% url 'DeleteOrderItem' form.instance.id %}"><i class="fa fa-trash"></i></a>
+                                            </td>
                                             <td colspan="2">{{ form.instance.product.name }}</td>
                                             <td>{{ form.unit_price }}</td>
                                             <td>{{ form.quantity }}</td>
@@ -276,8 +280,7 @@
                                 </table>
                             </div>
                         </form>
-                        <!-- Payment Details End -->
-
+                        
                         <!-- JavaScript for real-time calculation and AJAX submission -->
                         <script>
                             $(document).ready(function() {
@@ -338,12 +341,8 @@
                             });
                         </script>
 
-
-                        
-                            
-                            
-
-
+                        {% endif %}
+                        <!-- Payment Details End -->
 
 
 
@@ -432,16 +431,50 @@
                             </div>
                         </div>
                         <!-- -----------------Image Details End----------------- -->
-
-
-                        <div style="display: flex; justify-content: space-between;">
-                            <p><b><i>Created By: {{ order.created_by }}</i></b></p>
-                            <p><b><i>Last Updated By: {{ order.last_updated_by }}</i></b></p>
-                        </div>
                         
 
                     </div>
                 </div>
+            </div>
+
+            
+            <!-- -------Place Order Section Start------- -->
+            {% if request.user.user_type != 'Factory Staff' %}
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row justify-content-end total_order">
+                            <div class="col-xl-3 col-lg-4 col-md-5">
+                                {% if order.pathao_parcel_id %}
+                                <a href="https://merchant.pathao.com/courier/orders/{{order.pathao_parcel_id}}"
+                                    class="btn btn-success btn-block" target="_blank">
+                                    Go to Pathao Parcel
+                                </a>
+                                {% endif %}
+
+                                {% if order.pathao_parcel_id %}
+                                <a href="{% url 'create_pathao_parcel' order.id %}"
+                                    class="btn btn-primary btn-block">
+                                    Create Pathao Parcel Repeat
+                                </a>
+                                {% else %}
+                                <a href="{% url 'create_pathao_parcel' order.id %}"
+                                    class="btn btn-primary btn-block">
+                                    Create Pathao Parcel
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- -------Place Order Section End------- -->
+
+
+            <div style="display: flex; justify-content: space-between;">
+                <p><b><i>Created By: {{ order.created_by }}</i></b></p>
+                <p><b><i>Last Updated By: {{ order.last_updated_by }}</i></b></p>
             </div>
 
         </div>
