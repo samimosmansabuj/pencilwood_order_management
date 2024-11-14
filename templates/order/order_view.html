@@ -189,6 +189,12 @@
                                             {% endif %}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td style="white-space: nowrap;">Special Instructions</td>
+                                        <td style="white-space: nowrap;">
+                                            {{ order.special_instructions }}
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -228,10 +234,6 @@
                                             <td colspan="2">
                                                 <span class="total">{{ form.instance.total }} BDT</span>
                                             </td>
-                                            <!-- <td colspan="1">
-                                                <input type="checkbox" name="{{ form.prefix }}-DELETE" id="{{ form.prefix }}-DELETE">
-                                                <label for="{{ form.prefix }}-DELETE">Delete</label>
-                                            </td> -->
                                         </tr>
                                         {% endfor %}
 
@@ -341,6 +343,25 @@
                             });
                         </script>
 
+                        {% else %}
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Title</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order_item in order.order_item.all %}
+                                <tr>
+                                    <td colspan="2">{{ order_item.product.name }}</td>
+                                    <td>{{ order_item.unit_price }}</td>
+                                    <td>{{ order_item.quantity }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                         {% endif %}
                         <!-- Payment Details End -->
 

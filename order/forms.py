@@ -131,11 +131,14 @@ class OrderStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'status', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
+            'status', 'special_instructions', 'urgent', 'work_assign', 'remark', 'delivery_date', 'delivery_address', 'design_file'
         ]
 
     status = forms.ChoiceField(required=False, choices=Order.STATUS, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
+    }))
+    special_instructions = forms.CharField(required=False, widget=forms.Textarea(attrs={
+        'class': 'form-control', 'id': 'inputSpecialInstructions', 'placeholder': 'Enter Special Instructions (optional)', 'rows': 3
     }))
     urgent = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
         'class': 'form-check-inline', 'id': 'inputUrgent'

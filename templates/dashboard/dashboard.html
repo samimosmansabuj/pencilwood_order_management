@@ -1,4 +1,7 @@
 {% extends '../base.html' %}
+{% load custom_filters %}
+
+
 
 {% block dashboard_title %}
 <title>Dashboard - Pencilwood</title>
@@ -58,8 +61,32 @@
     </div>
 
 
-
-
+    <hr>
+    <div class="row">
+        <h3 style="text-align: center;">Order Status</h3>
+        {% for status, display_name in order.model.STATUS %}
+            <div class="col-md-3">
+                <a class="btn btn-info mb-2 w-100" style="color: white;" href="{% url 'order_list' %}?status={{ display_name }}">
+                    {{ display_name }} 
+                    <span class="badge badge-light">{{ order_status_counts|get_item:status|default:0 }}</span>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <hr>
+    <div class="row">
+        <h3 style="text-align: center;">Order Request Status</h3>
+        {% for status, display_name in order_request.model.STATUS_CHOICES %}
+            <div class="col-md-3">
+                <a class="btn btn-info mb-2 w-100" style="color: white;" href="{% url 'order_request_list' %}?status={{ display_name }}">
+                    {{ display_name }} 
+                    <span class="badge badge-light">{{ request_status_counts|get_item:status|default:0 }}</span>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    
 
 
 

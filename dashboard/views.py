@@ -16,6 +16,7 @@ from django.utils.timezone import localdate
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import os
+from django.db.models import Count
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -31,8 +32,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
         # Get today's date
         today = timezone.now().date()
-
-        # Filter today's orders
         today_orders = order.filter(order_date=today)
 
         # Calculate total deal value for today’s orders and all orders
@@ -88,8 +87,16 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             todos_paginated = paginator.page(paginator.num_pages)
         
         
-
+        order_status_counts = order.values('status').annotate(count=Count('id')).order_by('status')
+        order_status_counts_dict = {item['status']: item['count'] for item in order_status_counts}
+        request_status_counts = order_request.values('status').annotate(count=Count('id')).order_by('status')
+        request_status_counts_dict = {item['status']: item['count'] for item in request_status_counts}
+        print(request_status_counts_dict)
+        
+        
         # Pass values to the context
+        context['order_status_counts'] = order_status_counts_dict
+        context['request_status_counts'] = request_status_counts_dict
         context['user'] = user
         context['order'] = order
         context['today_orders'] = today_orders
