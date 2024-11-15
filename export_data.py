@@ -14,6 +14,6 @@ def export_data(app_label, output_file):
         call_command('dumpdata', app_label, stdout=f)
 
 # Call the function with 'order' app and desired output filename
-export_data('order.OrderRequest', 'OrderRequest_last10_data.json')
+export_data('dashboard', 'json_file/dashboard_data.json')
 
 # open terminal and write "python export_data.py" then enter for export data....
