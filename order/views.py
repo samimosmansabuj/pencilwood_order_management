@@ -521,9 +521,6 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
     ordering = ['-id']
 
     def get_queryset(self):
-        """
-        Retrieves the queryset for displaying and also used when exporting.
-        """
         queryset = super().get_queryset()
 
         # Get filter parameters from the request
@@ -538,7 +535,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         # Apply filters
         if today_order_requests:
             today = timezone.now().date()
-            queryset = queryset.filter(created_at__date=today)
+            queryset = queryset.filter(created_at=today)
 
         if status and status != 'All':
             queryset = queryset.filter(status=status)
@@ -573,9 +570,6 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         return queryset.distinct()
 
     def get_context_data(self, **kwargs):
-        """
-        Adds additional context data to the template.
-        """
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         context['work_assign_choices'] = Custom_User.objects.all()

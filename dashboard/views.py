@@ -91,7 +91,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         order_status_counts_dict = {item['status']: item['count'] for item in order_status_counts}
         request_status_counts = order_request.values('status').annotate(count=Count('id')).order_by('status')
         request_status_counts_dict = {item['status']: item['count'] for item in request_status_counts}
-        print(request_status_counts_dict)
         
         
         # Pass values to the context
