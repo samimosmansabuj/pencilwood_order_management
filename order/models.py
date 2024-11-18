@@ -55,6 +55,7 @@ class OrderRequest(models.Model):
     remark = models.TextField(blank=True, null=True)
     work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_request_assign')
     order_created = models.BooleanField(default=False)
+    urgent = models.BooleanField(blank=True, null=True)
     
     logo = models.URLField(max_length=1000, blank=True, null=True)
     picture1 = models.URLField(max_length=1000, blank=True, null=True)

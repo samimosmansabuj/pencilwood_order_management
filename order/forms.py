@@ -226,63 +226,55 @@ class OrderRequestForm(forms.ModelForm):
         fields = [
             'company', 'name', 'phone_number', 'second_phone_number', 'source', 'product',
             'status', 'remark', 'logo', 'picture1',
-            'picture2', 'picture3', 'picture4', 'picture5', 'work_assign', 'created_at'
+            'picture2', 'picture3', 'picture4', 'picture5', 'work_assign', 'created_at', 'urgent'
         ]
 
     company = forms.CharField(label='Company Name', max_length=50, required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
     })
     )
-
     name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
     })
     )
-
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPhoneNumber', 'placeholder': 'Enter Phone Number'
     })
     )
-    
     second_phone_number = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputSecondPhoneNumber', 'placeholder': 'Second Phone Number'
     })
     )
-
     source = forms.ChoiceField(choices=OrderRequest.SOURCE, required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputSource'
     })
     )
-
     product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), required=False, widget=forms.CheckboxSelectMultiple(attrs={
         'class': 'form-check-inline', 'id': 'inputProduct'
     })
     )
-
     status = forms.ChoiceField(choices=OrderRequest.STATUS_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'
     })
     )
-
     remark = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark'
     })
     )
-    
     work_assign = forms.ModelChoiceField(queryset=Custom_User.objects.all(), required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputWorkAssign'
     }))
-
+    urgent = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class': 'form-check-inline', 'id': 'inputUrgent'
+    }))
     logo = forms.URLField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputLogo', 'placeholder': 'Enter Logo URL'
     })
     )
-
     picture1 = forms.URLField(label="Picture 01", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture1', 'placeholder': 'Enter Picture 1 URL'
     })
     )
-
     picture2 = forms.URLField(label="Picture 02", required=False, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputPicture2', 'placeholder': 'Enter Picture 2 URL'
     })
@@ -311,7 +303,7 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at'
+            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at', 'urgent'
         ]
     company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -348,6 +340,9 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputRemark', 'placeholder': 'Enter Remark', 'rows': 3
     })
     )
+    urgent = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class': 'form-check-inline', 'id': 'inputUrgent'
+    }))
     created_at = forms.DateField(required=True, label='Request Created Date', widget=forms.DateInput(attrs={
         'class': 'form-control', 'id': 'inputCreatedAt', 'type': 'date'
     }))
