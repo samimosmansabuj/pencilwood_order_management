@@ -56,7 +56,7 @@
 
 
 
-                                <form method="GET">
+                            <form method="GET">
                                 <!-- -------------Order Filtering Section------------- -->
                                 <div class="container-fluid">
                                     
@@ -209,6 +209,14 @@
                                             Excel</button>
                                         <button name="export" value="csv" class="btn btn-primary">Download as
                                             CSV</button>
+
+                                        <button name="urgent" value="true" class="btn btn{% if request.GET.urgent %}-danger{% endif %}">
+                                            Urgent
+                                        </button>
+                                        
+                                        <button name="today_orders" value="true" class="btn btn{% if request.GET.today_orders %}-danger{% endif %}">
+                                            Today Orders
+                                        </button>
                                     </div>
                                 </div>
 

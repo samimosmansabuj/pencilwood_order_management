@@ -42,9 +42,14 @@ class OrderListView(LoginRequiredMixin, ListView):
         product_id = self.request.GET.get('product')
         work_assign = self.request.GET.get('work_assign')
         today_orders = self.request.GET.get('today_orders')
+        urgent = self.request.GET.get('urgent')
+        
+        # Filter by urgent
+        if urgent == 'true':
+            queryset = queryset.filter(urgent=True)
 
         # Filter by today order
-        if today_orders:
+        if today_orders == 'true':
             today = timezone.localtime().date()
             
             queryset = queryset.filter(order_date=today)
