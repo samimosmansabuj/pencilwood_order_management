@@ -1,21 +1,18 @@
 import requests
 from django.conf import settings
 import json
+import os
 
 API_BASE_URL = "https://api-hermes.pathao.com"
-CLIENT_ID = "ELe3Q94b69"
-CLIENT_SECRET = "f0Al9C3TZggJLtCFiP20CEhjsMfkkE1bkNAsxhzL"
-USERNAME = "pencilwoodbd@gmail.com"
-PASSWORD = "Pathaopencilwood@1"
 
 
 def get_access_token():
     url = f"{API_BASE_URL}/aladdin/api/v1/issue-token"
     payload = {
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "username": USERNAME,
-        "password": PASSWORD,
+        "client_id": os.getenv('Pathao_CLIENT_ID'),
+        "client_secret": os.getenv('Pathao_CLIENT_SECRET'),
+        "username": os.getenv('Pathao_USERNAME'),
+        "password": os.getenv('Pathao_PASSWORD'),
         "grant_type": "password",
     }
     response = requests.post(url, json=payload)
