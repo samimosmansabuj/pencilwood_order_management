@@ -536,10 +536,14 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         product_id = self.request.GET.get('product')
         work_assign = self.request.GET.get('work_assign')
         today_order_requests = self.request.GET.get('today_order_requests')
+        urgent = self.request.GET.get('urgent')
+        
+        if urgent == 'true':
+            queryset = queryset.filter(urgent=True)
 
         # Apply filters
-        if today_order_requests:
-            today = timezone.now().date()
+        if today_order_requests == 'true':
+            today = timezone.localtime().date()
             queryset = queryset.filter(created_at=today)
 
         if status and status != 'All':
@@ -583,21 +587,41 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
     def render_to_response(self, context, **response_kwargs):
         export_format = self.request.GET.get('export')
         queryset = self.get_queryset()  # Get the filtered queryset without pagination
+        headers = [
+            'Created By', 'ID', 'Company', 'Name', 'Phone Number', 'Second Phone Number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'
+        ]
         
         if export_format == 'xlsx':
-            return self.export_to_xlsx(queryset)
+            return self.export_to_xlsx(queryset, headers)
         elif export_format == 'csv':
-            return self.export_to_csv(queryset)
+            return self.export_to_csv(queryset, headers)
 
         return super().render_to_response(context, **response_kwargs)
 
-    def export_to_xlsx(self, order_requests):
+    def export_to_xlsx(self, order_requests, headers):
         workbook = openpyxl.Workbook()
         sheet = workbook.active
         sheet.title = f'Order Requests - {timezone.now().date()}'
-
-        headers = ['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5']
         sheet.append(headers)
+        
+        header_fill = PatternFill(start_color="346754", end_color="346754", fill_type="solid")  # Yellow background
+        header_font = Font(color="ffffff", bold=True)  # Red font, bold
+        for col_num, header in enumerate(headers, start=1):
+            cell = sheet.cell(row=1, column=col_num, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        column_widths = [
+            15, 12, 20, 20, 15, 20,   # Created By, ID, Company, Name, Phone Number, second_phone_number
+            12, 25, 10, 20, 15,   # Source, Products, Status, remark, Assigned Work
+            10, 15, 15, # Order Created, Last Update, Created At, 
+            15, 10, 10, 10, 10, 10  # Logo, Picture1, Picture2, Picture3, Picture4, Picture5
+        ]
+        for i, width in enumerate(column_widths, start=1):
+            column_letter = get_column_letter(i)
+            sheet.column_dimensions[column_letter].width = width
+            
 
         for order_request in order_requests:
             products = ', '.join([product.name for product in order_request.product.all()])
@@ -623,18 +647,20 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.picture4,
                 order_request.picture5
             ])
+            # Center align merged cells
+            # merged_cell = sheet.cell(row=1, column=1)
+            # merged_cell.alignment = Alignment(horizontal="center", vertical="center")
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename=order_requests - {timezone.now().date()}.xlsx'
         workbook.save(response)
         return response
 
-    def export_to_csv(self, order_requests):
+    def export_to_csv(self, order_requests, headers):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename=order_requests - {timezone.now().date()}.csv'
-
         writer = csv.writer(response)
-        writer.writerow(['Created By', 'ID', 'Company', 'Name', 'Phone Number', 'second_phone_number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'])
+        writer.writerow(headers)
 
         for order_request in order_requests:
             products = ', '.join([product.name for product in order_request.product.all()])

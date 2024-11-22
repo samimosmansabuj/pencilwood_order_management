@@ -206,10 +206,20 @@
                                             <!-- <a href="?export=xlsx" class="btn btn-success">Download as Excel</a>
                                         <a href="?export=csv" class="btn btn-primary">Download as CSV</a> -->
 
-                                            <button name="export" value="xlsx" class="btn btn-success">Download as
-                                                Excel</button>
-                                            <button name="export" value="csv" class="btn btn-primary">Download as
-                                                CSV</button>
+                                            <button name="export" value="xlsx" class="btn btn-success">
+                                                Download as Excel
+                                            </button>
+                                            <button name="export" value="csv" class="btn btn-primary">
+                                                Download as CSV
+                                            </button>
+                                            
+                                            <button name="urgent" value="true" class="btn btn{% if request.GET.urgent %}-danger{% endif %}">
+                                                Urgent
+                                            </button>
+                                            
+                                            <button name="today_order_requests" value="true" class="btn btn{% if request.GET.today_order_requests %}-danger{% endif %}">
+                                                Today Orders
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
