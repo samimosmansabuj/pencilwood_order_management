@@ -28,7 +28,7 @@
         {% for messages in messages %}
         <ol class="breadcrumb mb-4">
             <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
-                <strong>Dear {{request.user}}!</strong> {{messages}}
+                <strong>Dear {{request.user}}!</strong> {{messages|linebreaksbr}}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -176,7 +176,7 @@
                                     <tr>
                                         <td style="white-space: nowrap;">Remark</td>
                                         <td style="white-space: nowrap;">
-                                            {{ order.remark }}
+                                            {{ order.remark|linebreaksbr }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -201,7 +201,7 @@
                         <!-- -----------------Order Details End----------------- -->
 
 
-                        <!-- Payment Details Start -->
+                        <!----------------- Payment Details Start ----------------->
                         {% if request.user.user_type != 'Factory Staff' %}
                         
                         <!-- Ensure jQuery is loaded -->
@@ -363,7 +363,7 @@
                             </tbody>
                         </table>
                         {% endif %}
-                        <!-- Payment Details End -->
+                        <!----------------- Payment Details End ----------------->
 
 
 
@@ -474,15 +474,15 @@
                                 {% endif %}
 
                                 {% if order.pathao_parcel_id %}
-                                <a href="{% url 'create_pathao_parcel' order.id %}"
-                                    class="btn btn-primary btn-block">
+                                <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create Pathao Parcel Repeat
                                 </a>
+                                <p id="error-message" style="color: red; margin-top: 10px;"></p>
                                 {% else %}
-                                <a href="{% url 'create_pathao_parcel' order.id %}"
-                                    class="btn btn-primary btn-block">
+                                <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create Pathao Parcel
                                 </a>
+                                <p id="error-message" style="color: red; margin-top: 10px;"></p>
                                 {% endif %}
                             </div>
                         </div>
@@ -490,6 +490,47 @@
                 </div>
             </div>
             {% endif %}
+
+            <!-- Hidden inputs or elements to simulate real-time values -->
+            <input type="hidden" id="delivery-address" value="{{ order.delivery_address }}">
+            <input type="hidden" id="phone-number" value="{{ order.request_order.phone_number }}">
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get elements
+                const button = document.getElementById('create-pathao-parcel');
+                const deliveryAddress = document.getElementById('delivery-address');
+                const phoneNumber = document.getElementById('phone-number');
+                const errorMessage = document.getElementById('error-message');
+            
+                // Function to validate conditions and update error message
+                function validateConditions() {
+                    const addressValid = deliveryAddress.value.length > 10;
+                    const phoneValid = phoneNumber.value.length === 11;
+                    
+                    if (addressValid && phoneValid) {
+                        button.style.pointerEvents = 'auto'; // Enable clicking
+                        button.style.opacity = '1';         // Reset opacity
+                        errorMessage.textContent = '';      // Clear error message
+                    } else {
+                        button.style.pointerEvents = 'none'; // Disable clicking
+                        button.style.opacity = '0.5';       // Dim button
+                        if (!phoneValid) {
+                            errorMessage.textContent = 'Phone number must be exactly 11 digits.';
+                        } else if (!addressValid) {
+                            errorMessage.textContent = 'Delivery address must be more than 10 words.';
+                        }
+                    }
+                }
+            
+                // Run validation on page load
+                validateConditions();
+            
+                // If these values are dynamically updated (e.g., through AJAX), attach event listeners
+                deliveryAddress.addEventListener('input', validateConditions);
+                phoneNumber.addEventListener('input', validateConditions);
+            });
+            </script>
             <!-- -------Place Order Section End------- -->
 
 

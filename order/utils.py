@@ -31,7 +31,8 @@ def create_pathao_order(order_data, access_token):
     response = requests.post(url, headers=headers, json=order_data)
 
     if response.status_code == 422:
-        print("Validation error:", json.dumps(response.json(), indent=2))
+        # print("Validation error:", json.dumps(response.json(), indent=2))
+        return response.json()     
     
     response.raise_for_status()  # This will raise an error if status is 4xx or 5xx
     return response.json()

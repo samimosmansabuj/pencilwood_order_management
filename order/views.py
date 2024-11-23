@@ -449,11 +449,28 @@ def create_pathao_parcel(request, id):
             'item_description':"None",
         }
     pathao_response = create_pathao_order(pathao_order_data, access_token)
-    consignment_id = pathao_response.get("data", {}).get("consignment_id")
-    if consignment_id:
-        order.pathao_parcel_id = consignment_id
-        order.save()
-    return redirect(request.META['HTTP_REFERER'])
+    if pathao_response['type'] == 'success':
+        consignment_id = pathao_response.get("data", {}).get("consignment_id")
+        if consignment_id:
+            order.pathao_parcel_id = consignment_id
+            order.save()
+        return redirect(request.META['HTTP_REFERER'])
+    
+    elif pathao_response['type'] == 'error':
+        error_message = ""
+        for field, message in pathao_response['errors'].items():
+            for message in message:
+                error_message += f"{message}"
+        
+        # for field, message in pathao_response['errors'].items():
+        #     error_message += f"{field}:\n"
+        #     for message in message:
+        #         error_message += f"{message}\n"
+        
+        messages.error(request, error_message)
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        return redirect(request.META['HTTP_REFERER'])
 
 
 def render_to_pdf(template_src, context_dict={}):
