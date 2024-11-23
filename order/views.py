@@ -446,7 +446,7 @@ def create_pathao_parcel(request, id):
             'item_quantity':sum(item.quantity for item in order.order_item.all()),
             'item_weight':1,
             'amount_to_collect':float(order.due_amount),
-            'item_description':"None",
+            'item_description':order.remark
         }
     pathao_response = create_pathao_order(pathao_order_data, access_token)
     if pathao_response['type'] == 'success':

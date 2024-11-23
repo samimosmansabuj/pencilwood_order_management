@@ -260,6 +260,14 @@
                                                         rowspan="1" colspan="1"
                                                         aria-label="Status: activate to sort column ascending">Status
                                                     </th>
+
+                                                    {% if request.user.user_type == 'Factory Staff' %}
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Delivery Date: activate to sort column ascending">
+                                                        Delivery Date
+                                                    </th>
+                                                    {% else %}
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Deal Value: activate to sort column ascending">Deal
@@ -268,6 +276,13 @@
                                                         rowspan="1" colspan="1"
                                                         aria-label="Due Amount: activate to sort column ascending">Due
                                                         Amount</th>
+                                                    {% endif %}
+                                                    
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Pathao ID: activate to sort column ascending">
+                                                        Pathao ID
+                                                    </th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Action: activate to sort column ascending">Action
@@ -316,11 +331,30 @@
                                                     <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.status}}
                                                     </td>
+
+                                                    {% if request.user.user_type == 'Factory Staff' %}
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                                                        {{order.delivery_date}}
+                                                    </td>
+                                                    {% else %}
                                                     <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.deal_value}}
                                                     </td>
                                                     <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order.due_amount}}
+                                                    </td>
+                                                    {% endif %}
+
+
+                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                                                        {% if order.pathao_parcel_id %}
+                                                        <a href="https://merchant.pathao.com/courier/orders/{{order.pathao_parcel_id}}"
+                                                            class="btn btn-success btn-block" target="_blank">
+                                                            Tracking
+                                                        </a>
+                                                        {% else %}
+                                                        No
+                                                        {% endif %}
                                                     </td>
                                                     <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         <a href="{% url 'order_view' order.id %}"
@@ -338,6 +372,7 @@
                                             </tbody>
 
                                             <!-- Total Order Amount Start-->
+                                            {% if request.user.user_type != 'Factory Staff' %}
                                             <tfoot>
                                                 <tr role="row" class="odd">
                                                     <td colspan="7" class="text-right">
@@ -351,6 +386,7 @@
                                                     </td>
                                                 </tr>
                                             </tfoot>
+                                            {% endif %}
                                             <!-- Total Order Amount End-->
                                         </table>
                                     </div>

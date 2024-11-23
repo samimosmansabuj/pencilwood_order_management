@@ -120,9 +120,11 @@
                     <a class="nav-link" href="{% url 'maintenance_cost_list' %}?today_costs=True">
                         Today's Cost </span>
                     </a>
+                    {% if request.user.user_type == 'Admin' %}
                     <a href="{% url 'daily_profit_list' %}" class="nav-link">
                         Daily Profit </span>
                     </a>
+                    {% endif %}
                 </nav>
             </div>
             <!-- --------------------Maintenance Cost End---------------------- -->
