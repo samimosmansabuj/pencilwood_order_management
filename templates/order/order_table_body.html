@@ -1,0 +1,128 @@
+{% for order in orders %}
+<tr role="row" class="odd text-red-{{ order.id }}">
+    <form id="update-order-form-{{ order.id }}">
+    {% csrf_token %}
+        <td>
+            <button type="button" class="btn btn-primary update-order-btn" data-order-id="{{ order.id }}">Update</button>
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {{ order.order_date }}
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <a href="{% url 'order_view' order.id %}">{{ order.tracking_ID }}</a>
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <input type="text" name="company" class="form-control" 
+                value="{% if order.request_order %}{{ order.request_order.company }}{% else %}{{ order.order_customer.company }}{% endif %}" style="width: 150px;">
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <input type="text" name="name" class="form-control" 
+                value="{% if order.request_order %}{{ order.request_order.name }}{% else %}{{ order.order_customer.name }}{% endif %}" style="width: 150px;">
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {% if order.request_order %}
+            {% for product in order.request_order.product.all %}
+            {{ product.name }},
+            {% endfor %}
+            {% else %}
+            {% for product in order.order_customer.product.all %}
+            {{ product.name }},
+            {% endfor %}
+            {% endif %}
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <input type="text" name="phone_number" class="form-control" 
+                value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}" style="width: 120px;">
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {{ order.total_quantity }}
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <select name="status" class="form-control" style="width: 100px;">
+                {% for choice, display in order.get_status_choices %}
+                <option value="{{ choice }}" {% if choice == order.status %}selected{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <select name="work_assign" class="form-control" style="width: 150px;">
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if user.id == order.work_assign_id %}selected{% endif %}>
+                    {{ user.first_name }} {{ user.last_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <textarea name="remark" id="" class="form-control" style="width: 200px;">{{ order.remark }}</textarea>
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <input type="text" name="delivery_address" class="form-control" value="{{ order.delivery_address }}" style="width: 200px;">
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            <input type="date" name="delivery_date" class="form-control" value="{{ order.delivery_date|date:'Y-m-d' }}">
+        </td>
+        {% if request.user.user_type != 'Factory Staff' %}
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {{ order.deal_value }}
+        </td>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {{ order.due_amount }}
+        </td>
+        {% endif %}
+        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+            {% if order.pathao_parcel_id %}
+            <a href="https://merchant.pathao.com/courier/orders/{{ order.pathao_parcel_id }}" 
+            class="btn btn-success btn-block" target="_blank">Tracking</a>
+            {% else %}
+            <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
+                Create
+            </a>
+            <p id="error-message" style="color: red; margin-top: 10px;"></p>
+
+            <!-- Hidden inputs or elements to simulate real-time values -->
+            <input type="hidden" id="delivery-address" value="{{ order.delivery_address }}">
+            <input type="hidden" id="phone-number" value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Get elements
+                    const button = document.getElementById('create-pathao-parcel-{{order.id}}');
+                    const deliveryAddress = document.getElementById('delivery-address');
+                    const phoneNumber = document.getElementById('phone-number');
+                    const errorMessage = document.getElementById('error-message');
+                
+                    // Function to validate conditions and update error message
+                    function validateConditions() {
+                        const addressValid = deliveryAddress.value.length > 10;
+                        const phoneValid = phoneNumber.value.length === 11;
+                        
+                        if (addressValid && phoneValid) {
+                            button.style.pointerEvents = 'auto'; // Enable clicking
+                            button.style.opacity = '1';         // Reset opacity
+                            errorMessage.textContent = '';      // Clear error message
+                        } else {
+                            button.style.pointerEvents = 'none'; // Disable clicking
+                            button.style.opacity = '0.5';       // Dim button
+                            if (!phoneValid) {
+                                errorMessage.textContent = 'Phone number must be exactly 11 digits.';
+                            } else if (!addressValid) {
+                                errorMessage.textContent = 'Delivery address must be more than 10 words.';
+                            }
+                        }
+                    }
+                
+                    // Run validation on page load
+                    validateConditions();
+                
+                    // If these values are dynamically updated (e.g., through AJAX), attach event listeners
+                    deliveryAddress.addEventListener('input', validateConditions);
+                    phoneNumber.addEventListener('input', validateConditions);
+                });
+            </script>
+            {% endif %}
+        </td>
+        
+    </form>
+</tr>
+{% endfor %}

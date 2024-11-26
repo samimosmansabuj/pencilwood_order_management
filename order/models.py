@@ -117,7 +117,7 @@ class OrderCustomer(models.Model):
     
     def __str__(self):
         return f"Order#{self.tracking_ID} from {self.company} ({self.name})"
-    
+ 
 
 
 
@@ -143,11 +143,8 @@ class Order(models.Model):
     STATUS = (
         ('None', 'None'),
         ('Got Design', 'Got Design'),
+        ('Processing', 'Processing'),
         ('Sample', 'Sample'),
-        ('Cutting', 'Cutting'),
-        ('Cutout Ready', 'Cutout Ready'),
-        ('Engrave', 'Engrave'),
-        ('Finishing', 'Finishing'),
         ('Packaging', 'Packaging'),
         ('Delivered', 'Delivered'),
         ('Return', 'Return'),
@@ -195,12 +192,16 @@ class Order(models.Model):
     
     created_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_created_by')
     last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_last_updated_by')
-    
     order_date = models.DateField(blank=True, null=True)
     last_update = models.DateTimeField(auto_now=True)
     delivery_date = models.DateField(blank=True,null=True)
     return_date = models.DateField(blank=True,null=True)
     
+    def total_quantity(self):
+        return sum(item.quantity for item in self.order_item.all())
+    
+    def get_status_choices(self):
+        return self.STATUS
     
     def add_missing_order_items(self):
         products = set()

@@ -1,4 +1,5 @@
 {% extends '../base.html' %}
+{% load static %}
 
 {% block dashboard_title %}
 <title>Order - Pencilwood</title>
@@ -51,13 +52,11 @@
                         All Order ({{page_obj.paginator.count}})
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
 
-
-
-                            <form method="GET">
-                                <!-- -------------Order Filtering Section------------- -->
+                        <!-- -------------Order Filtering Section------------- -->
+                        <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                            <form method="GET" id="filter-form">
+                                    
                                 <div class="container-fluid">
                                     
                                         <div class="row">
@@ -195,11 +194,7 @@
                                         }
                                     });
                                 </script>
-                                <!-- -------------Order Filtering Section------------- -->
-
-
-
-
+                                
                                 <div class="row mb-3">
                                     <div class="col-sm-12">
                                         <!-- <a href="?export=xlsx" class="btn btn-success">Download as Excel</a>
@@ -221,156 +216,118 @@
                                 </div>
 
                             </form>
+                        </div>
+                        <!-- -------------Order Filtering Section------------- -->
 
-                            
-
-
-                                <!-- -------------Order Section------------- -->
+                        <!-- -------------Order Section------------- -->
+                        <div class="table-responsive">
+                            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <table class="table table-bordered dataTable no-footer" id="dataTable"
-                                            width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info"
-                                            style="width: 100%;">
+                                        <table class="table table-bordered dataTable no-footer" id="dataTable" cellspacing="0" role="grid" aria-describedby="dataTable_info">
                                             <thead>
                                                 <tr class="text-uppercase" role="row">
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Created Date: activate to sort column ascending">
-                                                        Created Date</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="ID: activate to sort column ascending"
-                                                        style="width: fixed;">ID</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Company: activate to sort column ascending">Company
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">
+                                                        Action
                                                     </th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Name: activate to sort column ascending">Name</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Product: activate to sort column ascending">Product
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Created Date: activate to sort column ascending">
+                                                        Date
                                                     </th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Work Assign: activate to sort column ascending">Work Assign
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="ID: activate to sort column ascending" style="width: fixed;">
+                                                        ID
                                                     </th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Status: activate to sort column ascending">Status
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Company: activate to sort column ascending">
+                                                        Company
                                                     </th>
-
-                                                    {% if request.user.user_type == 'Factory Staff' %}
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Delivery Date: activate to sort column ascending">
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">
+                                                        Name
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Product: activate to sort column ascending">
+                                                        Product
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Phone Number: activate to sort column ascending">
+                                                        Phone Number
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Quantity: activate to sort column ascending">
+                                                        Quantity
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">
+                                                        Status
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Work Assign: activate to sort column ascending">
+                                                        Work Assign
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Note: activate to sort column ascending">
+                                                        Note
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Address: activate to sort column ascending">
+                                                        Address
+                                                    </th>
+                                                    
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Delivery Date: activate to sort column ascending">
                                                         Delivery Date
                                                     </th>
-                                                    {% else %}
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Deal Value: activate to sort column ascending">Deal
-                                                        Value</th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Due Amount: activate to sort column ascending">Due
-                                                        Amount</th>
+                                                    {% if request.user.user_type != 'Factory Staff' %}
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Deal Value: activate to sort column ascending">
+                                                        Deal Value
+                                                    </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Due Amount: activate to sort column ascending">
+                                                        Due Amount
+                                                    </th>
                                                     {% endif %}
                                                     
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Pathao ID: activate to sort column ascending">
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Pathao ID: activate to sort column ascending">
                                                         Pathao ID
                                                     </th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Action: activate to sort column ascending">Action
-                                                    </th>
+                                                    
                                                 </tr>
                                             </thead>
-
+                                
                                             <tbody>
-                                                <!---->
-                                                {% for order in orders %}
-                                                <tr role="row" class="odd text-red-{{order.id}}">
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.order_date}}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.tracking_ID}}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {% if order.request_order %}
-                                                        {{order.request_order.company}}
-                                                        {% else %}
-                                                        {{order.order_customer.company}}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {% if order.request_order %}
-                                                        {{order.request_order.name}}
-                                                        {% else %}
-                                                        {{order.order_customer.name}}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {% if order.request_order %}
-                                                        {% for product in order.request_order.product.all %}
-                                                        {{product.name}},
-                                                        {% endfor %}
-                                                        {% else %}
-                                                        {% for product in order.order_customer.product.all %}
-                                                        {{product.name}},
-                                                        {% endfor %}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.work_assign}}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.status}}
-                                                    </td>
+                                                
+                                                
+                                                {% include 'order/order_table_body.html' %}
+                                                <div id="loading-icon" style="display: none; text-align: center;">
+                                                    <img src="{% static 'assets/img/loading.gif' %}" alt="Loading..." />
+                                                </div>
+                                                
 
-                                                    {% if request.user.user_type == 'Factory Staff' %}
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.delivery_date}}
-                                                    </td>
-                                                    {% else %}
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.deal_value}}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order.due_amount}}
-                                                    </td>
-                                                    {% endif %}
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $(".update-order-btn").click(function () {
+                                                            const orderId = $(this).data("order-id");
+                                                            const form = $(`#update-order-form-${orderId}`);
+                                                            const formData = form.serialize(); // Serialize form data
+                                                            const button = $(this);
+                                                            button.prop("disabled", true).text("Updating...");
 
+                                                            // $("#loading-icon").show();
+                                                            // $("tbody").hide();
 
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {% if order.pathao_parcel_id %}
-                                                        <a href="https://merchant.pathao.com/courier/orders/{{order.pathao_parcel_id}}"
-                                                            class="btn btn-success btn-block" target="_blank">
-                                                            Tracking
-                                                        </a>
-                                                        {% else %}
-                                                        No
-                                                        {% endif %}
-                                                    </td>
-                                                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        <a href="{% url 'order_view' order.id %}"
-                                                            class="btn btn-primary btn-sm">
-                                                            View
-                                                        </a>
-                                                        <a href="{% url 'order_delete' order.id %}"
-                                                            class="btn btn-danger btn-sm">
-                                                            Delete
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
+                                                            $.ajax({
+                                                                url: `/update-order/${orderId}/`,
+                                                                type: "POST",
+                                                                data: formData,
+                                                                headers: {
+                                                                    "X-CSRFToken": form.find('input[name="csrfmiddlewaretoken"]').val(),
+                                                                },
+                                                                success: function (response) {
+                                                                    alert("Order updated successfully!");
+                                                                    button.prop("disabled", false).text("Update");
+                                                                    // $("#loading-icon").hide();
+                                                                    // $("tbody").show();
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    alert("An error occurred: " + xhr.responseText);
+                                                                },
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+
                                                 <!---->
                                             </tbody>
-
+                                
                                             <!-- Total Order Amount Start-->
                                             {% if request.user.user_type != 'Factory Staff' %}
                                             <tfoot>
@@ -378,11 +335,17 @@
                                                     <td colspan="7" class="text-right">
                                                         Total
                                                     </td>
+                                
+                                                    <td><strong>{{ total_quantity }}</strong></td>
+
+                                                    <td colspan="5" class="text-right">
+                                                        
+                                                    </td>
 
                                                     <td><strong>{{ total_deal_value }}</strong></td>
                                                     <td><strong>{{ total_due_amount }}</strong></td>
                                                     <td colspan="2">
-
+                                
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -391,74 +354,74 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- -------------Order Section------------- -->
-
-
-                                <!-- -------------Pagination Section------------- -->
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-5">
-                                        <div class="dataTables_info" id="dataTable_info" role="status"
-                                            aria-live="polite">
-                                            Showing {{page_obj.start_index}} to {{page_obj.end_index}} of
-                                            {{page_obj.paginator.count}} entries
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-7">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
-                                            <ul class="pagination">
-                                                <!-- Previous button -->
-                                                {% if page_obj.has_previous %}
-                                                <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                        class="page-link">Previous</a>
-                                                </li>
-                                                {% else %}
-                                                <li class="paginate_button page-item disabled">
-                                                    <a href="#" class="page-link">Previous</a>
-                                                </li>
-                                                {% endif %}
-
-                                                <!-- Page numbers with ellipses -->
-                                                {% for num in page_obj.paginator.page_range %}
-                                                    {% if num == 1 or num == page_obj.paginator.num_pages %}
-                                                        <!-- Always show the first and last pages -->
-                                                        <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
-                                                            <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                            class="page-link">{{ num }}</a>
-                                                        </li>
-                                                    {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
-                                                        <!-- Show pages around the current page -->
-                                                        <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
-                                                            <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                            class="page-link">{{ num }}</a>
-                                                        </li>
-                                                    {% elif num == 2 or num == page_obj.paginator.num_pages|add:"-1" %}
-                                                        <!-- Display ellipses for gaps in pagination -->
-                                                        <li class="paginate_button page-item disabled">
-                                                            <a href="#" class="page-link">...</a>
-                                                        </li>
-                                                    {% endif %}
-                                                {% endfor %}
-
-                                                <!-- Next button -->
-                                                {% if page_obj.has_next %}
-                                                <li class="paginate_button page-item">
-                                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
-                                                        class="page-link">Next</a>
-                                                </li>
-                                                {% else %}
-                                                <li class="paginate_button page-item disabled">
-                                                    <a href="#" class="page-link">Next</a>
-                                                </li>
-                                                {% endif %}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- -------------Pagination Section------------- -->
-
                             </div>
                         </div>
+                        <!-- -------------Order Section------------- -->
+
+                        <!-- -------------Pagination Section------------- -->
+                        <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-5">
+                                    <div class="dataTables_info" id="dataTable_info" role="status"
+                                        aria-live="polite">
+                                        Showing {{page_obj.start_index}} to {{page_obj.end_index}} of
+                                        {{page_obj.paginator.count}} entries
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-7">
+                                    <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                        <ul class="pagination">
+                                            <!-- Previous button -->
+                                            {% if page_obj.has_previous %}
+                                            <li class="paginate_button page-item">
+                                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                    class="page-link">Previous</a>
+                                            </li>
+                                            {% else %}
+                                            <li class="paginate_button page-item disabled">
+                                                <a href="#" class="page-link">Previous</a>
+                                            </li>
+                                            {% endif %}
+
+                                            <!-- Page numbers with ellipses -->
+                                            {% for num in page_obj.paginator.page_range %}
+                                                {% if num == 1 or num == page_obj.paginator.num_pages %}
+                                                    <!-- Always show the first and last pages -->
+                                                    <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
+                                                        <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                        class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
+                                                    <!-- Show pages around the current page -->
+                                                    <li class="paginate_button page-item{% if page_obj.number == num %} active{% endif %}">
+                                                        <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                        class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% elif num == 2 or num == page_obj.paginator.num_pages|add:"-1" %}
+                                                    <!-- Display ellipses for gaps in pagination -->
+                                                    <li class="paginate_button page-item disabled">
+                                                        <a href="#" class="page-link">...</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            <!-- Next button -->
+                                            {% if page_obj.has_next %}
+                                            <li class="paginate_button page-item">
+                                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.product %}&product={{ request.GET.product }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}{% if request.GET.work_assign %}&work_assign={{ request.GET.work_assign }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.today_orders %}&today_orders={{ request.GET.today_orders }}{% endif %}"
+                                                    class="page-link">Next</a>
+                                            </li>
+                                            {% else %}
+                                            <li class="paginate_button page-item disabled">
+                                                <a href="#" class="page-link">Next</a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- -------------Pagination Section------------- -->
                     </div>
                 </div>
             </div>

@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+
+<div id="excel-table" class="handsontable-container"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+const container = document.getElementById("excel-table");
+
+// Django data passed into the template
+const data = JSON.parse('{{ order_data_json|escapejs }}');
+
+const colHeaders = [
+"Created Date",
+"ID",
+"Company",
+"Name",
+"Product",
+"Work Assign",
+"Status",
+"Delivery Date",
+"Deal Value",
+"Due Amount",
+"Pathao ID",
+"Action",
+];
+
+const hot = new Handsontable(container, {
+data: data,
+colHeaders: colHeaders,
+rowHeaders: true,
+filters: true,
+dropdownMenu: true,
+licenseKey: "non-commercial-and-evaluation",
+});
+});
+</script>
+  

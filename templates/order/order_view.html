@@ -493,7 +493,7 @@
 
             <!-- Hidden inputs or elements to simulate real-time values -->
             <input type="hidden" id="delivery-address" value="{{ order.delivery_address }}">
-            <input type="hidden" id="phone-number" value="{{ order.request_order.phone_number }}">
+            <input type="hidden" id="phone-number" value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
 
             <script>
             document.addEventListener('DOMContentLoaded', function () {

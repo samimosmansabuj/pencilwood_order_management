@@ -1,0 +1,290 @@
+
+<!-- -------------Order Filtering Section------------- -->
+
+<style>
+    @media (min-width: 768px) {
+        .filter-section {
+            display: none;
+            /* Hide on larger screens */
+        }
+    }
+</style>
+
+<div class="filter-section" id="filterSection" style="display: none;">
+    <form>
+
+        <div class="row">
+
+            <!-- Filter by Status -->
+            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status"
+                        class="custom-select custom-select-sm form-control form-control-sm">
+                        {% if request.GET.status %}
+                        <option value="{{request.GET.status}}" selected>{{request.GET.status}}</option>
+                        {% endif %}
+                        <option value="All">All</option>
+                        <option value="Got Design">Got Design</option>
+                        <option value="Cutting">Cutting</option>
+                        <option value="Cutout Ready">Cutout Ready</option>
+                        <option value="Engrave">Engrave</option>
+                        <option value="Finishing">Finishing</option>
+                        <option value="Packaging">Packaging</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Return">Return</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter by Products -->
+            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                <div class="form-group">
+                    <label for="status">Product</label>
+                    <select name="product" id="product"
+                        class="custom-select custom-select-sm form-control form-control-sm">
+                        <option value="">-- Select Product --</option>
+                        <!-- Blank option -->
+                        {% for product in products %}
+                        <option value="{{ product.id }}"
+                        {% if request.GET.product == product.id|stringformat:"d" %}
+                        selected
+                        {% endif %}
+                        >{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter by Date From -->
+            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                <div class="form-group">
+                    <label for="start_date">From:</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control form-control-sm"
+                        value="{{request.GET.start_date}}">
+                </div>
+            </div>
+
+            <!-- Filter by Date To -->
+            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                <div class="form-group">
+                    <label for="end_date">To:</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control form-control-sm"
+                        value="{{request.GET.end_date}}">
+                </div>
+            </div>
+
+            <!-- Search by Tracking ID or Customer Name -->
+            <div class="col-12 col-sm-6 col-md-2 mb-1">
+                <div class="form-group">
+                    <label for="search">Search:</label>
+                    <input type="text" name="search" id="search" placeholder="Search by tracking ID or customer name"
+                        class="form-control form-control-sm" value="{{ request.GET.search }}">
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-12 col-sm-6 col-md-1 mb-1">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <input type="submit" class="form-control form-control-sm btn btn-primary" aria-controls="dataTable"
+                        value="Search">
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+<div class="col-12 col-sm-6 col-md-1 mb-1">
+    <div class="form-group">
+        <label>&nbsp;</label>
+        <button id="filterButton" class="form-control form-control-sm btn btn-primary">Filter</button>
+        <a href="{% url 'order_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById("filterButton").addEventListener("click", function () {
+        var filterSection = document.getElementById("filterSection");
+        if (window.innerWidth < 768) { // Only for mobile view
+            filterSection.style.display = filterSection.style.display === "none" ? "block" : "none";
+        }
+    });
+</script>
+<!-- -------------Order Filtering Section------------- -->
+
+
+
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-bordered dataTable no-footer" id="dataTable"
+            width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info"
+            style="width: 100%;">
+            <thead>
+                <tr class="text-uppercase" role="row">
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Created Date: activate to sort column ascending">
+                        Created Date</th>
+                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="ID: activate to sort column ascending"
+                        style="width: fixed;">ID</th>
+                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Company: activate to sort column ascending">Company
+                    </th>
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Name: activate to sort column ascending">Name</th>
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Product: activate to sort column ascending">Product
+                    </th>
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Work Assign: activate to sort column ascending">Work Assign
+                    </th>
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Status: activate to sort column ascending">Status
+                    </th>
+
+                    {% if request.user.user_type == 'Factory Staff' %}
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Delivery Date: activate to sort column ascending">
+                        Delivery Date
+                    </th>
+                    {% else %}
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Deal Value: activate to sort column ascending">Deal
+                        Value</th>
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Due Amount: activate to sort column ascending">Due
+                        Amount</th>
+                    {% endif %}
+                    
+                    <th class=" sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Pathao ID: activate to sort column ascending">
+                        Pathao ID
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                        rowspan="1" colspan="1"
+                        aria-label="Action: activate to sort column ascending">Action
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!---->
+                {% for order in orders %}
+                <tr role="row" class="odd text-red-{{order.id}}">
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.order_date}}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.tracking_ID}}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {% if order.request_order %}
+                        {{order.request_order.company}}
+                        {% else %}
+                        {{order.order_customer.company}}
+                        {% endif %}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {% if order.request_order %}
+                        {{order.request_order.name}}
+                        {% else %}
+                        {{order.order_customer.name}}
+                        {% endif %}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {% if order.request_order %}
+                        {% for product in order.request_order.product.all %}
+                        {{product.name}},
+                        {% endfor %}
+                        {% else %}
+                        {% for product in order.order_customer.product.all %}
+                        {{product.name}},
+                        {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.work_assign}}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.status}}
+                    </td>
+
+                    {% if request.user.user_type == 'Factory Staff' %}
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.delivery_date}}
+                    </td>
+                    {% else %}
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.deal_value}}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {{order.due_amount}}
+                    </td>
+                    {% endif %}
+
+
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        {% if order.pathao_parcel_id %}
+                        <a href="https://merchant.pathao.com/courier/orders/{{order.pathao_parcel_id}}"
+                            class="btn btn-success btn-block" target="_blank">
+                            Tracking
+                        </a>
+                        {% else %}
+                        No
+                        {% endif %}
+                    </td>
+                    <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                        <a href="{% url 'order_view' order.id %}"
+                            class="btn btn-primary btn-sm">
+                            View
+                        </a>
+                        <a href="{% url 'order_delete' order.id %}"
+                            class="btn btn-danger btn-sm">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <!---->
+            </tbody>
+
+            <!-- Total Order Amount Start-->
+            {% if request.user.user_type != 'Factory Staff' %}
+            <tfoot>
+                <tr role="row" class="odd">
+                    <td colspan="7" class="text-right">
+                        Total
+                    </td>
+
+                    <td><strong>{{ total_deal_value }}</strong></td>
+                    <td><strong>{{ total_due_amount }}</strong></td>
+                    <td colspan="2">
+
+                    </td>
+                </tr>
+            </tfoot>
+            {% endif %}
+            <!-- Total Order Amount End-->
+        </table>
+    </div>
+</div>
+
+
+

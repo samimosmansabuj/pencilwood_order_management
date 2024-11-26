@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from openpyxl.styles import PatternFill, Font, Alignment
 from django.views.generic import ListView, DeleteView
+from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from django.utils.dateparse import parse_date
 from django.forms import modelformset_factory
@@ -25,6 +26,46 @@ import csv
 
 
 # ------------Order Section Start------------
+@csrf_exempt
+def update_order(request, pk):
+    if request.method == 'POST':
+        try:
+            order = get_object_or_404(Order, pk=pk)
+            data = request.POST
+            work_assign_id = data.get('work_assign')
+            
+            if order.request_order:
+                request_order = order.request_order
+                request_order.company = data.get('company', request_order.company)
+                request_order.name = data.get('name', request_order.name)
+                request_order.phone_number = data.get('phone_number', request_order.phone_number)
+                request_order.save()  # Save the related model
+            elif order.order_customer:
+                order_customer = order.order_customer
+                order_customer.company = data.get('company', order_customer.company)
+                order_customer.name = data.get('name', order_customer.name)
+                order_customer.phone_number = data.get('phone_number', order_customer.phone_number)
+                order_customer.save()
+            
+            # Update fields of the Order model
+            order.status = data.get('status', order.status)
+            if work_assign_id:
+                work_assign_user = get_object_or_404(Custom_User, pk=work_assign_id)
+                order.work_assign = work_assign_user
+            
+            order.remark = data.get('remark', order.remark)
+            order.delivery_address = data.get('delivery_address', order.delivery_address)
+            if data.get('delivery_date'):
+                order.delivery_date = data.get('delivery_date', order.delivery_date)
+            order.save()
+            
+            return JsonResponse({'success': True, 'message': 'Order updated successfully!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order/order.html'
@@ -99,10 +140,32 @@ class OrderListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         context['work_assign_choices'] = Custom_User.objects.all()
+        context['users'] = Custom_User.objects.all()
         
         queryset = self.get_queryset()
         context['total_deal_value'] = queryset.aggregate(Sum('deal_value'))['deal_value__sum'] or 0
         context['total_due_amount'] = queryset.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
+        context['total_quantity'] = sum(sum(item.quantity for item in order.order_item.all()) for order in queryset)
+        
+        # context = {
+        #     "order_data": json.dumps([
+        #         [
+        #             order.order_date,
+        #             order.tracking_ID,
+        #             order.request_order.company if order.request_order else order.order_customer.company,
+        #             order.request_order.name if order.request_order else order.order_customer.name,
+        #             ", ".join([p.name for p in (order.request_order.product.all() if order.request_order else order.order_customer.product.all())]),
+        #             order.work_assign,
+        #             order.status,
+        #             order.delivery_date,
+        #             order.deal_value,
+        #             order.due_amount,
+        #             order.pathao_parcel_id if order.pathao_parcel_id else "No",
+        #             "View/Delete",  # Placeholder for actions
+        #         ]
+        #         for order in queryset
+        #     ]),
+        # }
         
         return context
     

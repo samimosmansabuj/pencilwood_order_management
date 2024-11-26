@@ -4,6 +4,7 @@ from .views import OrderListView
 
 urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
+    path('update-order/<int:pk>/', update_order, name='update_order'),
     path('order/delete/<int:pk>/', OrderDeleteView.as_view(), name='order_delete'),
     path('order/add-new/', add_new_order, name='add_new_order'),
     path('order/create-pathao-parcel/<int:id>/', create_pathao_parcel, name='create_pathao_parcel'),
