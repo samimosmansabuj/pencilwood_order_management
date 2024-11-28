@@ -39,6 +39,7 @@
 
 
             <!-- --------------------Request Start---------------------- -->
+            {% if request.user.user_type != 'Factory Staff' %}
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRequest"
                 aria-expanded="false" aria-controls="collapseRequest">
                 <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
@@ -58,6 +59,7 @@
                     </a>
                 </nav>
             </div>
+            {% endif %}
             <!-- --------------------Request End---------------------- -->
 
 
@@ -106,6 +108,7 @@
 
 
             <!-- --------------------Maintenance Cost Start---------------------- -->
+            {% if request.user.user_type != 'Factory Staff' %}
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFinancial"
                 aria-expanded="false" aria-controls="collapseRequest">
                 <div class="sb-nav-link-icon"><i class="fa fa-list"></i></div>
@@ -127,6 +130,7 @@
                     {% endif %}
                 </nav>
             </div>
+            {% endif %}
             <!-- --------------------Maintenance Cost End---------------------- -->
 
 

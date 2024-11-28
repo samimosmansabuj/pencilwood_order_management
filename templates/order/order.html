@@ -223,7 +223,7 @@
                         <div class="table-responsive">
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12 table-container">
                                         <table class="table table-bordered dataTable no-footer" id="dataTable" cellspacing="0" role="grid" aria-describedby="dataTable_info">
                                             <thead>
                                                 <tr class="text-uppercase" role="row">
@@ -245,28 +245,39 @@
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Product: activate to sort column ascending">
                                                         Product
                                                     </th>
+
+                                                    {% if request.user.user_type != 'Factory Staff' %}
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Phone Number: activate to sort column ascending">
                                                         Phone Number
                                                     </th>
+                                                    {% endif %}
+
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Quantity: activate to sort column ascending">
                                                         Quantity
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">
                                                         Status
                                                     </th>
-                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Work Assign: activate to sort column ascending">
-                                                        Work Assign
-                                                    </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Note: activate to sort column ascending">
                                                         Note
+                                                    </th>
+
+                                                    {% if request.user.user_type != 'Factory Staff' %}
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Work Assign: activate to sort column ascending">
+                                                        Work Assign
                                                     </th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Address: activate to sort column ascending">
                                                         Address
                                                     </th>
-                                                    
+                                                    {% endif %}
+
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Delivery Date: activate to sort column ascending">
                                                         Delivery Date
                                                     </th>
+                                                    <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Design File: activate to sort column ascending">
+                                                        Design File
+                                                    </th>
+
                                                     {% if request.user.user_type != 'Factory Staff' %}
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Deal Value: activate to sort column ascending">
                                                         Deal Value
@@ -274,11 +285,10 @@
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Due Amount: activate to sort column ascending">
                                                         Due Amount
                                                     </th>
-                                                    {% endif %}
-                                                    
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Pathao ID: activate to sort column ascending">
                                                         Pathao ID
                                                     </th>
+                                                    {% endif %}
                                                     
                                                 </tr>
                                             </thead>
@@ -328,29 +338,32 @@
                                                 <!---->
                                             </tbody>
                                 
-                                            <!-- Total Order Amount Start-->
-                                            {% if request.user.user_type != 'Factory Staff' %}
+                                            
                                             <tfoot>
                                                 <tr role="row" class="odd">
+                                                    {% if request.user.user_type != 'Factory Staff' %}
                                                     <td colspan="7" class="text-right">
                                                         Total
                                                     </td>
+                                                    {% else %}
+                                                    <td colspan="6" class="text-right">
+                                                        Total
+                                                    </td>
+                                                    {% endif %}
                                 
                                                     <td><strong>{{ total_quantity }}</strong></td>
 
-                                                    <td colspan="5" class="text-right">
-                                                        
-                                                    </td>
-
+                                                    {% if request.user.user_type != 'Factory Staff' %}
+                                                    <td colspan="5" class="text-right"></td>
                                                     <td><strong>{{ total_deal_value }}</strong></td>
                                                     <td><strong>{{ total_due_amount }}</strong></td>
-                                                    <td colspan="2">
-                                
-                                                    </td>
+                                                    <td colspan="2"></td>
+                                                    {% else %}
+                                                    <td colspan="4" class="text-right"></td>
+                                                    {% endif %}
+                                                    
                                                 </tr>
                                             </tfoot>
-                                            {% endif %}
-                                            <!-- Total Order Amount End-->
                                         </table>
                                     </div>
                                 </div>
