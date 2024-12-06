@@ -41,8 +41,7 @@
                                             <div class="col-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
-                                                    <input type="text" name="search" id="search"
-                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm" value="{{ request.GET.search }}">
+                                                    <input type="text" name="search" id="search-box" placeholder="Search by product name" class="form-control form-control-sm" value="{{ request.GET.search }}">
                                                 </div>
                                             </div>
 
@@ -50,9 +49,7 @@
                                             <div class="col-12 col-sm-6 col-md-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <input type="submit"
-                                                        class="form-control form-control-sm btn btn-primary"
-                                                        aria-controls="dataTable" value="Search">
+                                                    <input type="submit" class="form-control form-control-sm btn btn-primary" aria-controls="dataTable" value="Search">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-sm-6 col-md-1">
@@ -67,7 +64,6 @@
                                     </form>
                                 </div>
                                 <!-- -------------Order Filtering Section------------- -->
-
 
                                 <!-- -------------Product Content Section------------- -->
                                 <div class="row">
@@ -97,7 +93,7 @@
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="product-list">
                                                 <!---->
                                                 {% for product in products %}
                                                 <tr role="row" class="odd">
@@ -126,6 +122,28 @@
                                         </table>
                                     </div>
                                 </div>
+                                <script>
+                                    $("#search-box").on("input", function () {
+                                        const query = $(this).val().toLowerCase();
+                                        $("#product-list tr").filter(function () {
+                                            $(this).toggle($(this).text().toLowerCase().indexOf(query) > -1);
+                                        });
+                                    });
+
+                                    // document.getElementById("search-box").addEventListener("input", function () {
+                                    //     const query = this.value.toLowerCase(); // Convert search query to lowercase
+                                    //     const rows = document.querySelectorAll("#product-list tr"); // Select all rows in the tbody
+
+                                    //     rows.forEach(row => {
+                                    //         const cells = row.querySelectorAll("td"); // Get all table cells in the row
+                                    //         const matches = Array.from(cells).some(cell => 
+                                    //             cell.textContent.toLowerCase().includes(query) // Check if any cell contains the query
+                                    //         );
+
+                                    //         row.style.display = matches ? "" : "none"; // Show or hide the row based on the match
+                                    //     });
+                                    // });
+                                </script>
                                 <!-- -------------Product Content Section------------- -->
 
 

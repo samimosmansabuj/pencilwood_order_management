@@ -64,27 +64,21 @@
                                             </div>
                                             <div class="col-12 col-md-2">
                                                 <div class="form-group">
-                                                    <a href="{% url 'todo_list' %}"
-                                                        class="form-control form-control-sm btn btn-primary">Reset</a>
+                                                    <a href="{% url 'todo_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
                                                 </div>
                                             </div>
-
                                             <!-- Full Filtering Section (Hidden on Mobile) -->
                                             <div id="filterSection" class="col-12 d-none d-md-flex">
                                                 <!-- Filter by Status -->
                                                 <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
-                                                        <label for="priority">Priority</label>
-                                                        <select name="priority" id="priority"
+                                                        <label for="filter-priority">Priority</label>
+                                                        <select name="priority" id="filter-priority"
                                                             class="custom-select custom-select-sm form-control form-control-sm">
-                                                            {% if request.GET.priority %}
-                                                            <option value="{{request.GET.priority}}" selected>
-                                                                {{request.GET.priority}}</option>
-                                                            {% endif %}
-                                                            <option value="All">All</option>
-                                                            <option value="Low">Low</option>
-                                                            <option value="Medium">Medium</option>
-                                                            <option value="High">High</option>
+                                                            <option value="All" {% if request.GET.priority == "All" %}selected{% endif %}>All</option>
+                                                            <option value="Low" {% if request.GET.priority == "Low" %}selected{% endif %}>Low</option>
+                                                            <option value="Medium" {% if request.GET.priority == "Medium" %}selected{% endif %}>Medium</option>
+                                                            <option value="High" {% if request.GET.priority == "High" %}selected{% endif %}>High</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -93,7 +87,7 @@
                                                 <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
                                                         <label for="work_assign">Assigned User</label>
-                                                        <select name="work_assign" id="work_assign"
+                                                        <select name="work_assign" id="filter-work-assign"
                                                             class="custom-select custom-select-sm form-control form-control-sm">
                                                             <option value="">-- Select User --</option>
                                                             {% for users in work_assign_choices %}
@@ -131,12 +125,20 @@
                                                 <div class="col-12 col-sm-6 col-md-2 mb-1">
                                                     <div class="form-group">
                                                         <label for="search">Search:</label>
-                                                        <input type="text" name="search" id="search"
+                                                        <input type="text" name="search" id="filter-search"
                                                             placeholder="Search by tracking ID or customer name"
                                                             class="form-control form-control-sm"
                                                             value="{{ request.GET.search }}">
                                                     </div>
                                                 </div>
+                                                <script>
+                                                    $("#filter-search").on("input", function () {
+                                                        const query = $(this).val().toLowerCase();
+                                                        $("#todo-list tr").filter(function () {
+                                                            $(this).toggle($(this).text().toLowerCase().indexOf(query) > -1);
+                                                        });
+                                                    });
+                                                </script>
 
 
                                                 <!-- Submit Button -->
@@ -217,7 +219,7 @@
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="todo-list">
                                                 <!---->
                                                 {% if todos %}
                                                 {% for todo in todos %}
@@ -263,7 +265,7 @@
                                                 {% endfor %}
                                                 {% else %}
                                                 <tr class="row" class="odd">
-                                                    <td colspan="6">
+                                                    <td style="text-align: center; padding: auto;">
                                                         Not Found
                                                     </td>
                                                 </tr>
@@ -273,7 +275,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- -------------Order Section------------- -->
+                                <!-- -------------Todo Section------------- -->
 
 
                                 <!-- -------------Pagination Section------------- -->

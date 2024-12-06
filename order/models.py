@@ -243,6 +243,9 @@ class Order(models.Model):
         elif self.order_customer:
             self.tracking_ID = self.order_customer.tracking_ID
         
+        if self.status == 'Delivered' or self.status == 'Return':
+            self.urgent = False
+        
         super(Order, self).save(*args, **kwargs)
         
         from dashboard.models import Daily_Profit

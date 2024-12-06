@@ -49,14 +49,18 @@ def update_order(request, pk):
             
             # Update fields of the Order model
             order.status = data.get('status', order.status)
+            order.remark = data.get('remark', order.remark)
+            order.delivery_address = data.get('delivery_address', order.delivery_address)
+            
             if work_assign_id:
                 work_assign_user = get_object_or_404(Custom_User, pk=work_assign_id)
                 order.work_assign = work_assign_user
             
-            order.remark = data.get('remark', order.remark)
-            order.delivery_address = data.get('delivery_address', order.delivery_address)
             if data.get('delivery_date'):
                 order.delivery_date = data.get('delivery_date', order.delivery_date)
+            elif not data.get('delivery_date'):
+                order.delivery_date = None
+            
             order.save()
             
             return JsonResponse({'success': True, 'message': 'Order updated successfully!'})
@@ -516,6 +520,7 @@ def create_pathao_parcel(request, id):
         consignment_id = pathao_response.get("data", {}).get("consignment_id")
         if consignment_id:
             order.pathao_parcel_id = consignment_id
+            order.status = 'Delivered'
             order.save()
         return redirect(request.META['HTTP_REFERER'])
     

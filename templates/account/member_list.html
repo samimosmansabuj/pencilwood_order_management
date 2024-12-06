@@ -42,9 +42,7 @@
                                             <div class="col-12 col-sm-12 col-md-6 mb-1">
                                                 <div class="form-group">
                                                     <label for="search">Search:</label>
-                                                    <input type="text" name="search" id="search"
-                                                        placeholder="Search by tracking ID or customer name" class="form-control form-control-sm"
-                                                        value="{{ request.GET.search }}">
+                                                    <input type="text" name="search" id="search-box" placeholder="Search user name" class="form-control form-control-sm" value="{{ request.GET.search }}">
                                                 </div>
                                             </div>
 
@@ -110,7 +108,7 @@
                                                 </tr>
                                             </thead>
 
-                                            <tbody>
+                                            <tbody id="user-list">
                                                 <!----><!---->
                                                 {% for member in member %}
                                                 <tr role="row" class="odd">
@@ -153,6 +151,14 @@
                                         </table>
                                     </div>
                                 </div>
+                                <script>
+                                    $("#search-box").on("input", function () {
+                                        const query = $(this).val().toLowerCase();
+                                        $("#user-list tr").filter(function () {
+                                            $(this).toggle($(this).text().toLowerCase().indexOf(query) > -1);
+                                        });
+                                    });
+                                </script>
 
 
                                 <!-- -------------Pagination Content Section------------- -->
