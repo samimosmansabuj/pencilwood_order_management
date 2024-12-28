@@ -13,6 +13,9 @@ class Product(models.Model):
     slug = models.SlugField(max_length=250, blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['name']
+    
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -185,7 +188,7 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD, blank=True, null=True)
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=50, default='Unpaid')
     
-    status = models.CharField(choices=STATUS, max_length=50, default='Pending', blank=True, null=True)
+    status = models.CharField(choices=STATUS, max_length=50, blank=True, null=True)
     urgent = models.BooleanField(blank=True, null=True)
     work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_assign')
     remark = models.TextField(blank=True, null=True)
