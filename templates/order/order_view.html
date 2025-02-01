@@ -247,7 +247,7 @@
                                         <tr>
                                             <td colspan="4">Shipping Charge (Collect)</td>
                                             <td colspan="2">
-                                                <input type="number" id="delivery-charge" name="delivery_charge" value="{{ form2.delivery_charge.value }}" step="0.01" class="form-control">
+                                                <input type="text" id="delivery-charge" name="delivery_charge" value="{% if form2.delivery_charge.value %}{{ form2.delivery_charge.value }}{% else %}Free{% endif %}" step="0.01" class="form-control">
                                             </td>
                                         </tr>
                                         <tr>
