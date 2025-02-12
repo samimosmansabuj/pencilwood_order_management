@@ -36,7 +36,6 @@ class OrderRequest(models.Model):
         ('Done', 'Done'),
         ('Hold', 'Hold'),
         ('Cancel', 'Cancel'),
-        ('Mockup', 'Mockup'),
     )
     SOURCE = (
         ('Facebook', 'Facebook'),
@@ -45,7 +44,7 @@ class OrderRequest(models.Model):
         ('Others', 'Others'),
     )
     created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='request_created_by')
-    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='request_last_updated_by')
+    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='request_last_updated_by')
     tracking_ID = models.CharField(max_length=5, unique=True, blank=True, null=True)
     
     company = models.CharField(max_length=250, blank=True, null=True)
@@ -56,7 +55,7 @@ class OrderRequest(models.Model):
     product = models.ManyToManyField(Product)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='None')
     remark = models.TextField(blank=True, null=True)
-    work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_request_assign')
+    work_assign = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='order_request_assign')
     order_created = models.BooleanField(default=False)
     urgent = models.BooleanField(blank=True, null=True)
     
@@ -190,11 +189,11 @@ class Order(models.Model):
     
     status = models.CharField(choices=STATUS, max_length=50, blank=True, null=True)
     urgent = models.BooleanField(blank=True, null=True)
-    work_assign = models.ForeignKey(Custom_User, on_delete=models.CASCADE, blank=True, null=True, related_name='order_assign')
+    work_assign = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='order_assign')
     remark = models.TextField(blank=True, null=True)
     
-    created_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_created_by')
-    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_last_updated_by')
+    created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='order_created_by')
+    last_updated_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='order_last_updated_by')
     order_date = models.DateField(blank=True, null=True)
     last_update = models.DateTimeField(auto_now=True)
     delivery_date = models.DateField(blank=True,null=True)

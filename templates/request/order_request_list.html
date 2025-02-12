@@ -243,6 +243,9 @@
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Name: activate to sort column ascending">Name</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Number: activate to sort column ascending">Number</th>
                                                     <th class=" sorting" tabindex="0" aria-controls="dataTable"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Source: activate to sort column ascending">Source
@@ -283,6 +286,9 @@
                                                     </td>
                                                     <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order_request.name}}
+                                                    </td>
+                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+                                                        {{order_request.phone_number}}
                                                     </td>
                                                     <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
                                                         {{order_request.source}}

@@ -149,11 +149,17 @@
                 {% endfor %}
                 <tr>
                     <td colspan="5">Delivery Charge</td>
-                    <td>{{ order.delivery_charge }}</td>
+                    <td>
+                        {% if order.delivery_charge %}
+                        {{ order.delivery_charge }}
+                        {% else %}
+                        Free
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="5">Advance Amount</td>
-                    <td>{{ order.advance_amount }}</td>
+                    <td>{{ order.advance_amount|default:'0' }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">Due Amount</td>
