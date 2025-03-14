@@ -51,6 +51,7 @@ class OrderRequest(models.Model):
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     second_phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
     product = models.ManyToManyField(Product)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='None')
@@ -100,6 +101,7 @@ class OrderCustomer(models.Model):
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
     second_phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
     source = models.CharField(choices=SOURCE, max_length=50, default='Others')
     product = models.ManyToManyField(Product)
     
