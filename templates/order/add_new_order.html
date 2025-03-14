@@ -67,13 +67,19 @@
                      </div>
                      <!-- /row-->
                      <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_customer_form.email.label}}</label>
+                              {{order_customer_form.email}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
                            <div class="form-group">
                               <label>{{order_customer_form.phone_number.label}}</label>
                               {{order_customer_form.phone_number}}
                            </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                            <div class="form-group">
                               <label>{{order_customer_form.second_phone_number.label}} (Optional)</label>
                               {{order_customer_form.second_phone_number}}

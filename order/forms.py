@@ -8,13 +8,16 @@ import os
 class OrderCustomerForm(forms.ModelForm):
     class Meta:
         model = OrderCustomer
-        fields = ['company', 'name', 'phone_number', 'second_phone_number', 'source', 'product', 'logo', 'picture1', 'created_at']
+        fields = ['company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'product', 'logo', 'picture1', 'created_at']
         widgets = {
             'company': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
             }),
             'name': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Your Name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control', 'id': 'inputEmail', 'placeholder': 'Enter email address'
             }),
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'inputPhone', 'placeholder': 'Enter Phone Number'
@@ -224,7 +227,7 @@ class OrderRequestForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'product',
+            'company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'product',
             'status', 'remark', 'logo', 'picture1',
             'picture2', 'picture3', 'picture4', 'picture5', 'work_assign', 'created_at', 'urgent'
         ]
@@ -235,6 +238,10 @@ class OrderRequestForm(forms.ModelForm):
     )
     name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
+    })
+    )
+    email = forms.EmailField(max_length=255, widget=forms.EmailInput(attrs={
+        'class': 'form-control', 'id': 'inputEmail', 'placeholder': 'Enter email'
     })
     )
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
@@ -303,7 +310,7 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at', 'urgent'
+            'company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at', 'urgent'
         ]
     company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -314,6 +321,10 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     })
     )
     name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
+    })
+    )
+    email = forms.EmailField(max_length=50, widget=forms.EmailInput(attrs={
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
     })
     )

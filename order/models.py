@@ -240,6 +240,14 @@ class Order(models.Model):
         self.extra_cost = extra_cost
         self.total_amount = deal_value - extra_cost
         
+        print(due_amount < deal_value+delivery_charge)
+        if due_amount == 0:
+            self.payment_status = 'Paid'
+        elif due_amount < deal_value+delivery_charge:
+            self.payment_status = 'Partial'
+        elif due_amount == deal_value+delivery_charge:
+            self.payment_status = 'Unpaid'
+        
         if self.request_order:
             self.tracking_ID = self.request_order.tracking_ID
             self.request_order.order_created = True
