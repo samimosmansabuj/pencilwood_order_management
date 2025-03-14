@@ -57,6 +57,20 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                {{form.email.label}}
+                                {{form.email}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- <div class="form-group">
+                                {{form.second_phone_number.label}}
+                                {{form.second_phone_number}}
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 {{form.source.label}}
                                 {{form.source}}
                             </div>
@@ -150,6 +164,20 @@
                                 <label>Phone Number</label>
                                 <input type="text" class="form-control" value="{{order_request.phone_number}}" readonly>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control" value="{{order_request.email}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" value="{{order_request.phone_number}}" readonly>
+                            </div> -->
                         </div>
                     </div>
                     <div class="row">

@@ -94,6 +94,14 @@
                                                     {{order.order_customer.phone_number}}{% if order.order_customer.second_phone_number %}, {{order.order_customer.second_phone_number}}{% endif %}
                                                     {% endif %}
                                                 </p>
+                                                <p class="text-black-50 mb-1"><i class="fa fa-envelope"></i>
+                                                    Email:
+                                                    {% if order.request_order %}
+                                                    {{order.request_order.email}}
+                                                    {% else %}
+                                                    {{order.order_customer.email}}
+                                                    {% endif %}
+                                                </p>
 
 
                                                 <p class="mb-0 text-dark text-dark pt-2"><span
@@ -115,11 +123,10 @@
                                                     <a class="btn btn-sm btn-warning">
                                                         {% if order.payment_status == 'Paid' %}
                                                         <i class="fa fa-check-circle"></i>
-                                                        Paid
                                                         {% else %}
-                                                        <i class="fa fa-xmark"></i>
-                                                        Unpaid
+                                                        <i class="fa fa-close"></i>
                                                         {% endif %}
+                                                        {{order.payment_status}}
                                                     </a>
                                                     <a class="btn btn-sm btn-success">
                                                         <i class="fa fa-check-circle"></i> {{order.status}}
