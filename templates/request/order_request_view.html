@@ -47,14 +47,18 @@
                                 <div class="media">
                                     <div class="media-body">
                                         <div class="row">
-                                            <div class="col-md-2 col-lg-2">
+
+
+                                            <!-- <div class="col-md-2 col-lg-2">
                                                 {% if order_request.logo %}
                                                 <div style="height: 100%;" class="pb-3">
                                                     <img src="{{order_request.logo}}" alt="" style="height: 100%;">
                                                 </div>
                                                 {% endif %}
-                                            </div>
-                                            <div class="col-md-10 col-lg-10">
+                                            </div> -->
+
+
+                                            <div class="col-md-12 col-lg-12">
                                                 <a>
                                                     <span class="float-right text-success">{{order_request.status}} on
                                                         {{order_request.last_update}}
@@ -139,90 +143,7 @@
                         <!-- -------Order Details Section End------- -->
 
                         <!-- -----------------Image Details Start----------------- -->
-                        <style>
-                            .image-container {
-                                display: grid;
-                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                                gap: 10px;
-                                padding: 10px;
-                                background: #cbb9d075;
-                                border-radius: 5px;
-
-                            }
-
-                            .image-box {
-                                overflow: hidden;
-                                border-radius: 10px;
-                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                                transition: transform 0.3s ease;
-                            }
-
-                            .image-box img {
-                                width: 100%;
-                                height: 100%;
-                                object-fit: cover;
-                                display: block;
-                            }
-
-                            .image-box:hover {
-                                transform: scale(1.05);
-                            }
-
-                            /* Media queries to make it more responsive */
-                            @media (max-width: 768px) {
-                                .image-container {
-                                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                                }
-                            }
-
-                            @media (max-width: 480px) {
-                                .image-container {
-                                    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                                }
-                            }
-                        </style>
-                        <div class="image-container">
-                            <div class="image-box">
-                                <img src="
-                                    {% if order_request.picture1 %}
-                                    {{order_request.picture1}}
-                                    {% endif %}
-                                    " alt="Picture 1">
-                            </div>
-                            <div class="image-box">
-                                <img src="
-                                    {% if order_request.picture2 %}
-                                    {{order_request.picture2}}
-                                    {% endif %}
-                                    " alt="Picture 2">
-                            </div>
-                            <div class="image-box">
-                                <img src="
-                                    {% if order_request.picture3 %}
-                                    {{order_request.picture3}}
-                                    {% endif %}
-                                    " alt="Picture 3">
-                            </div>
-                            <div class="image-box">
-                                <img src="
-                                    {% if order_request.picture4 %}
-                                    {{order_request.picture4}}
-                                    {% endif %}
-                                    " alt="Picture 4">
-                            </div>
-                            <div class="image-box">
-                                <img src="
-                                    {% if order_request.picture5 %}
-                                    {{order_request.picture5}}
-                                    {% endif %}
-                                    " alt="Picture 5">
-                            </div>
-                        </div>
-                        <div>
-                            <a href="#0" class="btn btn-sm btn-info" data-toggle="modal" data-target="#EditPictureLink">
-                                <i class="fa fa-edit"></i> Edit
-                            </a>
-                        </div>
+                        <!-- {% include 'request/order_request_view_image_section.html' %} -->
                         <!-- -----------------Image Details End----------------- -->
 
                     </div>
