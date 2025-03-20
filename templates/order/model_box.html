@@ -199,3 +199,53 @@
  {% endif %}
 
 
+
+
+<!-- Customer Info Edit Modal -->
+<div class="modal fade" id="CreateRemainder" tabindex="-1" role="dialog" aria-labelledby="edit_orderLabel"
+    aria-hidden="true">
+    <form method="POST" action="{% url 'create_order_remainder' order.id %}">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_bookingLabel">Create Remainder</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Remainder Note</label>
+                                <textarea name="remainder_note" id="" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create Remainder</button>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Customer Info Edit Modal -->
+
+
+

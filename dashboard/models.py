@@ -1,5 +1,5 @@
 from django.db import models
-from order.models import Order
+from order.models import Order, OrderRequest
 from account.models import Custom_User
 
 class Site_Settings(models.Model):
@@ -79,4 +79,14 @@ class Todo(models.Model):
     def __str__(self):
         return self.title
 
+
+class Remainder(models.Model):
+    date = models.DateField()
+    note = models.TextField(blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_remainder')
+    order_request = models.ForeignKey(OrderRequest, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='order_request_remainder')
+    is_complete = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f'{self.date} | {self.order if self.order else None} - {self.order_request if self.order_request else None}'
 
