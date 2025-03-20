@@ -27,4 +27,8 @@ urlpatterns = [
     path('todos/new/', TodoCreateView.as_view(), name='todo_create'),
     path('todos/edit/<int:pk>/', TodoUpdateView.as_view(), name='todo_update'),
     path('todos/delete/<int:pk>/', TodoDeleteView.as_view(), name='todo_delete'),  # Add this line
+    
+    path('create-order-remainder/<int:id>/', create_order_remainder, name='create_order_remainder'),
+    path('create-order-request-remainder/<int:id>/', create_order_request_remainder, name='create_order_request_remainder'),
+    path('remainder-list/', RemainderListView.as_view(), name='remainder_list'),
 ]

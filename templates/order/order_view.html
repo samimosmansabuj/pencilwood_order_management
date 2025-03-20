@@ -15,8 +15,8 @@
                 <li class="breadcrumb-item"><a href="{% url 'order_list' %}">All Order</a></li>
             </div>
             <li class="breadcrumb-item ml-auto">
-                <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
-                    Add Order
+                <a href="#0" class="btn btn-primary" style="margin-left: 10px;" data-toggle="modal" data-target="#CreateRemainder">
+                    Add Remainder
                 </a>
                 <a href="{% url 'generate_pdf' id=order.id %}" target="_blank"  class="btn btn-primary" style="margin-left: 10px;">
                     Print Invoice

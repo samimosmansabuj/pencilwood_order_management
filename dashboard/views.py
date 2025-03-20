@@ -18,6 +18,55 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import os
 from django.db.models import Count
 
+def create_remainder(date, note):
+    remainder = Remainder.objects.create(date=date, note=note)
+    return remainder
+
+def create_order_remainder(request, id):
+    if request.method == 'POST':
+        order = Order.objects.get(id=id)
+        date = request.POST.get('date')
+        remainder_note = request.POST.get('remainder_note')
+        remainder = create_remainder(date, remainder_note)
+        remainder.order = order
+        remainder.save()
+        return redirect(request.META['HTTP_REFERER'])
+
+def create_order_request_remainder(request, id):
+    if request.method == 'POST':
+        order_request = OrderRequest.objects.get(id=id)
+        date = request.POST.get('date')
+        remainder_note = request.POST.get('remainder_note')
+        remainder = create_remainder(date, remainder_note)
+        remainder.order_request = order_request
+        remainder.save()
+        return redirect(request.META['HTTP_REFERER'])
+
+
+def remainder_list(request):
+    remainders = Remainder.objects.all()
+    return render(request, 'remainder/list.html')
+
+class RemainderListView(LoginRequiredMixin, ListView):
+    model = Remainder
+    template_name = 'remainder/list.html'
+    context_object_name = 'remainders'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # search_query = self.request.GET.get('search')
+
+        # if search_query:
+        #     queryset = queryset.filter(
+        #         Q(id__icontains=search_query) |
+        #         Q(name__icontains=search_query) |
+        #         Q(slug__icontains=search_query) |
+        #         Q(created_date__icontains=search_query)
+        #     )
+        
+        return queryset
+
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
