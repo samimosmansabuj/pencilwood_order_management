@@ -104,9 +104,9 @@
                                                     </td>
                                                     <td>
                                                         {% if remainder.order %}
-                                                        {{remainder.order}}
+                                                        <a href="{% url 'order_view' remainder.order.id %}" class="btn btn-success" target="_blank">View Order</a>
                                                         {% elif remainder.order_request %}
-                                                        {{remainder.order_request}}
+                                                        <a href="{% url 'order_request_view' remainder.order_request.id %}" class="btn btn-success" target="_blank">View Order Request</a>
                                                         {% else %}
                                                         No Order/Request
                                                         {% endif %}
