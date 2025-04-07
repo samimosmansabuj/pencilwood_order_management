@@ -178,7 +178,7 @@ class OrderListView(LoginRequiredMixin, ListView):
         export_format = self.request.GET.get('export')
         queryset = self.get_queryset()
         headers = [
-            "Tracking ID", "Company", "Customer Name", "Phone Number", "Second Phone Number",
+            "Tracking ID", "Company", "Customer Name", "Phone Number", "Second Phone Number", "Email",
             "Delivery Address", "Special Instructions", "Source", "Products", "Assigned Work",
             "Status", "Remark", "Logo", "Picture1", "Picture2", "Picture3", "Picture4", "Picture5",
             "Product", "Quantity", "Unit Price", "Item Total", "Deal Value", "Delivery Charge", "Advance Amount", "Due Amount",
@@ -209,7 +209,7 @@ class OrderListView(LoginRequiredMixin, ListView):
             cell.alignment = Alignment(horizontal="center", vertical="center")
         
         column_widths = [
-            12, 20, 20, 15, 20,   # Tracking ID, Company, Customer Name, Phone Number, Second Phone Number
+            12, 20, 20, 15, 20, 20,   # Tracking ID, Company, Customer Name, Phone Number, Second Phone Number, Email
             25, 20, 12, 25, 15,   # Delivery Address, Special Instructions, Source, Products, Assigned Work
             10, 15, 15, 10, 10,   # Status, Remark, Logo, Picture1, Picture2
             10, 10, 10, 15, 10, 10,   # Picture3, Picture4, Picture5, Product, Quantity, Unit Price
@@ -253,6 +253,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                         customer.name,
                         customer.phone_number,
                         customer.second_phone_number,
+                        customer.email,
                         order.delivery_address,
                         order.special_instructions,
                         customer.source,
@@ -268,7 +269,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                         getattr(customer, 'picture5', None)
                     ]
                 else:
-                    row += [''] * 18
+                    row += [''] * 19
 
                 # Item-specific fields
                 row += [
@@ -307,7 +308,7 @@ class OrderListView(LoginRequiredMixin, ListView):
 
             # Merge cells for each order-level field across the rows for this order
             if len(order_items) > 1:
-                merge_columns = list(range(1, 19)) + list(range(23, 37))  # Columns to merge (tracking ID, company, etc.)
+                merge_columns = list(range(1, 20)) + list(range(24, 38))  # Columns to merge (tracking ID, company, etc.)
                 for col_idx in merge_columns:
                     col_letter = get_column_letter(col_idx)
                     sheet.merge_cells(f"{col_letter}{start_row}:{col_letter}{end_row}")
@@ -353,6 +354,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                         customer.name,
                         customer.phone_number,
                         customer.second_phone_number,
+                        customer.email,
                         order.delivery_address,
                         order.special_instructions,
                         customer.source,
@@ -369,7 +371,7 @@ class OrderListView(LoginRequiredMixin, ListView):
                     ]
                 else:
                     # Add empty cells for these columns in subsequent rows for the same order
-                    row += [''] * 18
+                    row += [''] * 19
 
                 # Add item-specific fields for each row
                 row += [
@@ -673,7 +675,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         export_format = self.request.GET.get('export')
         queryset = self.get_queryset()  # Get the filtered queryset without pagination
         headers = [
-            'Created By', 'ID', 'Company', 'Name', 'Phone Number', 'Second Phone Number', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'
+            'Created By', 'ID', 'Company', 'Name', 'Phone Number', 'Second Phone Number', 'email', 'Source', 'Product(s)', 'Status', 'remark', 'Work Assign', 'Order Created', 'Last Update', 'Created At', 'logo', 'picture1', 'picture2', 'picture3', 'picture4', 'picture5'
         ]
         
         if export_format == 'xlsx':
@@ -698,7 +700,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
             cell.alignment = Alignment(horizontal="center", vertical="center")
         
         column_widths = [
-            15, 12, 20, 20, 15, 20,   # Created By, ID, Company, Name, Phone Number, second_phone_number
+            15, 12, 20, 20, 15, 20, 20,   # Created By, ID, Company, Name, Phone Number, second_phone_number, Email
             12, 25, 10, 20, 15,   # Source, Products, Status, remark, Assigned Work
             10, 15, 15, # Order Created, Last Update, Created At, 
             15, 10, 10, 10, 10, 10  # Logo, Picture1, Picture2, Picture3, Picture4, Picture5
@@ -717,6 +719,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.name,
                 order_request.phone_number,
                 order_request.second_phone_number,
+                order_request.email,
                 order_request.source,
                 products,
                 order_request.status,
@@ -756,6 +759,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
                 order_request.name,
                 order_request.phone_number,
                 order_request.second_phone_number,
+                order_request.email,
                 order_request.source,
                 products,
                 order_request.status,
