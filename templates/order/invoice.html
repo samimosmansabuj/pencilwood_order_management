@@ -13,7 +13,7 @@
             font-weight: normal;
             font-style: normal;
         }
-        
+
         body {
             font-family: 'BanglaFont', sans-serif;
             font-size: 12px;
@@ -49,13 +49,16 @@
             margin-bottom: 10px;
         }
 
-        .details, .items {
+        .details,
+        .items {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        .details td, .items th, .items td {
+        .details td,
+        .items th,
+        .items td {
             padding: 5px;
             border: 1px solid #000;
             text-align: left;
@@ -75,17 +78,55 @@
     <div class="invoice">
 
         <!-- Company Details Section -->
+        <style>
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .logo-details {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .logo {
+                height: 50px;
+                /* Adjust size as needed */
+            }
+
+            .company-details {
+                text-align: center;
+            }
+
+            .company-details-margin {
+                margin: 0;
+                padding: 2px 0;
+            }
+        </style>
+
         <div class="header">
-            <!-- <h1>Invoice</h1> -->
-            <!-- <img src="{% static 'images/logo.png' %}" alt="Company Logo" class="logo"> -->
+            <div class="logo-details">
+                <!-- <h1>Invoice</h1> -->
+                <!-- {% if website_setting.invoice_logo %}
+                <img src="{{ website_setting.invoice_logo.url }}" alt="Company Logo" class="logo">
+                {% else %}
+                <p>No Logo Found</p>
+                {% endif %}
+                 -->
+
+            </div>
+
             <div class="company-details">
                 <p class="company-details-margin"><strong>Pencilwood BD - Invoice</strong></p>
                 <p class="company-details-margin">+8801810447799 | pencilwoodbd@gmail.com</p>
                 <p class="company-details-margin">pencilwoodbd.com</p>
                 <p class="company-details-margin">Advance Police Town, Savar, Bangladesh</p>
             </div>
-            
         </div>
+
 
         <hr>
 
@@ -106,7 +147,7 @@
                     {{ order.order_customer.name }}
                     {% endif %}
                 </td>
-                
+
 
                 <td colspan="1"><strong>Phone Number:</strong></td>
                 <td colspan="2">
@@ -116,7 +157,7 @@
                     {{ order.order_customer.phone_number }}
                     {% endif %}
                 </td>
-                
+
             </tr>
             <tr>
                 <td colspan="1"><strong>Email:</strong></td>
@@ -132,7 +173,7 @@
                 <td colspan="2"><strong>Delivery Address:</strong></td>
                 <td colspan="4">{{ order.delivery_address }}</td>
             </tr>
-            
+
         </table>
 
         <!-- <h1 style="text-align: center;">Invoice</h1> -->
