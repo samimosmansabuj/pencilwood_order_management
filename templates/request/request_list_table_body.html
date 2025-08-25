@@ -1,0 +1,110 @@
+{% for order_request in order_requests %}
+<tr role="row" class="odd text-red-{{ order_request.id }} {% if forloop.counter|divisibleby:2 %}even-row{% else %}odd-row{% endif %}">
+
+    <form id="update-order_request-form-{{ order_request.id }}">
+
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <a href="{% url 'order_request_view' order_request.id %}" target="_blank">{{order_request.tracking_ID}}</a>
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <!-- {{order_request.company}} -->
+        <input type="text" name="company" class="form-control" value="{{ order_request.company }}" style="width: 100px;">
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <!-- {{order_request.name}} -->
+        <input type="text" name="name" class="form-control" value="{{ order_request.name }}" style="width: 100px;">
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <!-- {{order_request.phone_number}} -->
+        <input type="text" name="phone_number" class="form-control" value="{{ order_request.phone_number }}" style="width: 100px;">
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        {{order_request.source}}
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        {% for product in order_request.product.all %}
+        {{product.name}},
+        {% endfor %}
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+
+        <select name="work_assign" class="form-control" style="width: 90px;">
+            {% for user in users %}
+            <option value="{{ user.id }}" {% if user.id == order_request.work_assign_id %}selected{% endif %}>
+                {{ user.first_name }} {{ user.last_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <!-- {{order_request.work_assign}} -->
+    </td>
+    <td>
+        <select name="status" class="form-control" style="width: 90px;">
+            {% for choice, display in order_request.get_status_choices %}
+            <option value="{{ choice }}" {% if choice == order_request.status %}selected{% endif %}>{{ display }}</option>
+            {% endfor %}
+        </select>
+
+        
+        <!-- <a class="btn"
+        {% if order_request.status == 'None' %}
+        style="background-color: #e6e6e6; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Design' %}
+        style="background-color: #ffe5a0; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Correction' %}
+        style="background-color: #bee1f5; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Call' %}
+        style="background-color: #c6dae1; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Knock' %}
+        style="background-color: #ffc8aa; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Other' %}
+        style="background-color: #b00201; color: white; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Done' %}
+        style="background-color: #11734c; color: white; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Cancel' %}
+        style="background-color: #ff2929; color: white; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Hold' %}
+        style="background-color: #39fcff; font-weight: bold;"
+        {% endif %}
+
+        {% if order_request.status == 'Mockup' %}
+        style="background-color: #c263fe; font-weight: bold;"
+        {% endif %}
+        >{{order_request.status}}</a> -->
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        {{order_request.created_at}}
+    </td>
+    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <button type="button" class="btn btn-primary update-order_request-btn" data-order-id="{{ order_request.id }}">Update</button>
+
+        
+        <!-- <a href="{% url 'order_request_view' order_request.id %}"
+            class="btn btn-primary btn-sm">
+            View
+        </a> -->
+        <a href="{% url 'order_request_delete' order_request.id %}"
+            class="btn btn-primary btn-sm">
+            Delete
+        </a>
+    </td>
+
+    </form>
+</tr>
+{% endfor %}

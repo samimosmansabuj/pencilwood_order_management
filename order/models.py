@@ -69,6 +69,9 @@ class OrderRequest(models.Model):
     
     created_at = models.DateField(blank=True, null=True)
     last_update = models.DateTimeField(auto_now=True)
+    
+    def get_status_choices(self):
+        return self.STATUS_CHOICES
 
     def __str__(self):
         return f"OrderRequest#{self.tracking_ID} from {self.company} ({self.name})"

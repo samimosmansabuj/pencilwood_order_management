@@ -605,6 +605,31 @@ def CustomerOrderInfoUpdate(request, pk):
 
 
 # ------------Order Request Section Start------------
+@csrf_exempt
+def update_order_request(request, pk):
+    if request.method == 'POST':
+        try:
+            order_request = get_object_or_404(OrderRequest, pk=pk)
+            data = request.POST
+            work_assign_id = data.get('work_assign')
+            
+            order_request.company = data.get('company', order_request.company)
+            order_request.name = data.get('name', order_request.name)
+            order_request.phone_number = data.get('phone_number', order_request.phone_number)
+            order_request.status = data.get('status', order_request.status)
+            if work_assign_id:
+                work_assign_user = get_object_or_404(Custom_User, pk=work_assign_id)
+                order_request.work_assign = work_assign_user
+            
+            order_request.save()
+            
+            return JsonResponse({'success': True, 'message': 'Order Request updated successfully!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
 class OrderRequestListView(LoginRequiredMixin, ListView):
     model = OrderRequest
     template_name = 'request/order_request_list.html'
@@ -669,6 +694,7 @@ class OrderRequestListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         context['work_assign_choices'] = Custom_User.objects.all()
+        context['users'] = Custom_User.objects.all()
         return context
 
     def render_to_response(self, context, **response_kwargs):

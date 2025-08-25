@@ -1,4 +1,5 @@
 {% extends '../base.html' %}
+{% load static %}
 
 {% block dashboard_title %}
 <title>Order Request - Pencilwood</title>
@@ -276,89 +277,46 @@
 
                                             <tbody>
                                                 <!---->
-                                                {% for order_request in order_requests %}
-                                                <tr role="row" class="odd">
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.tracking_ID}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.company}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.name}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.phone_number}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.source}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {% for product in order_request.product.all %}
-                                                        {{product.name}},
-                                                        {% endfor %}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.work_assign}}
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn"
-                                                        {% if order_request.status == 'None' %}
-                                                        style="background-color: #e6e6e6; font-weight: bold;"
-                                                        {% endif %}
+                                                {% include 'request/request_list_table_body.html' %}
+                                                
 
-                                                        {% if order_request.status == 'Design' %}
-                                                        style="background-color: #ffe5a0; font-weight: bold;"
-                                                        {% endif %}
+                                                <div id="loading-icon" style="display: none; text-align: center;">
+                                                    <img src="{% static 'assets/img/loading.gif' %}" alt="Loading..." />
+                                                </div>
+                                                
 
-                                                        {% if order_request.status == 'Correction' %}
-                                                        style="background-color: #bee1f5; font-weight: bold;"
-                                                        {% endif %}
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $(".update-order_request-btn").click(function () {
+                                                            const orderId = $(this).data("order-id");
+                                                            const form = $(`#update-order_request-form-${orderId}`);
+                                                            const formData = form.serialize(); // Serialize form data
+                                                            const button = $(this);
+                                                            button.prop("disabled", true).text("Updating...");
 
-                                                        {% if order_request.status == 'Call' %}
-                                                        style="background-color: #c6dae1; font-weight: bold;"
-                                                        {% endif %}
+                                                            // $("#loading-icon").show();
+                                                            // $("tbody").hide();
 
-                                                        {% if order_request.status == 'Knock' %}
-                                                        style="background-color: #ffc8aa; font-weight: bold;"
-                                                        {% endif %}
-
-                                                        {% if order_request.status == 'Other' %}
-                                                        style="background-color: #b00201; color: white; font-weight: bold;"
-                                                        {% endif %}
-
-                                                        {% if order_request.status == 'Done' %}
-                                                        style="background-color: #11734c; color: white; font-weight: bold;"
-                                                        {% endif %}
-
-                                                        {% if order_request.status == 'Cancel' %}
-                                                        style="background-color: #ff2929; color: white; font-weight: bold;"
-                                                        {% endif %}
-
-                                                        {% if order_request.status == 'Hold' %}
-                                                        style="background-color: #39fcff; font-weight: bold;"
-                                                        {% endif %}
-
-                                                        {% if order_request.status == 'Mockup' %}
-                                                        style="background-color: #c263fe; font-weight: bold;"
-                                                        {% endif %}
-                                                        >{{order_request.status}}</a>
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        {{order_request.created_at}}
-                                                    </td>
-                                                    <td {% if order_request.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-                                                        <a href="{% url 'order_request_view' order_request.id %}"
-                                                            class="btn btn-primary btn-sm">
-                                                            View
-                                                        </a>
-                                                        <a href="{% url 'order_request_delete' order_request.id %}"
-                                                            class="btn btn-primary btn-sm">
-                                                            Delete
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
+                                                            $.ajax({
+                                                                url: `/update-order-request/${orderId}/`,
+                                                                type: "POST",
+                                                                data: formData,
+                                                                headers: {
+                                                                    "X-CSRFToken": form.find('input[name="csrfmiddlewaretoken"]').val(),
+                                                                },
+                                                                success: function (response) {
+                                                                    alert("Order Request updated successfully!");
+                                                                    button.prop("disabled", false).text("Update");
+                                                                    // $("#loading-icon").hide();
+                                                                    // $("tbody").show();
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    alert("An error occurred: " + xhr.responseText);
+                                                                },
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
                                                 <!---->
                                             </tbody>
                                         </table>

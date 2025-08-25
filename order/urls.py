@@ -17,6 +17,7 @@ urlpatterns = [
     
     path('order-request/create/', OrderRequestCreateView.as_view(), name='order_request_create'),
     path('order-request/', OrderRequestListView.as_view(), name='order_request_list'),
+    path('update-order-request/<int:pk>/', update_order_request, name='update_order_request'),
     path('order-request/delete/<int:pk>/', OrderRequestDeleteView.as_view(), name='order_request_delete'),
     path('order-request/view/<int:pk>/', order_request_view, name='order_request_view'),
     path('request-to-order-create/<int:pk>/', request_to_order, name='request_to_order'),
