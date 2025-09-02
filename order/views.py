@@ -525,22 +525,57 @@ def create_pathao_parcel(request, id):
             order.status = 'Delivered'
             order.save()
         return redirect(request.META['HTTP_REFERER'])
-    
     elif pathao_response['type'] == 'error':
         error_message = ""
         for field, message in pathao_response['errors'].items():
             for message in message:
                 error_message += f"{message}"
-        
-        # for field, message in pathao_response['errors'].items():
-        #     error_message += f"{field}:\n"
-        #     for message in message:
-        #         error_message += f"{message}\n"
-        
         messages.error(request, error_message)
         return redirect(request.META['HTTP_REFERER'])
     else:
         return redirect(request.META['HTTP_REFERER'])
+
+@login_required
+def create_steadfast_parcel(request, id):
+    order = get_object_or_404(Order, id=id)
+    recipient = order.request_order or order.order_customer
+    
+    order_data = {
+        "invoice": order.tracking_ID,
+        "recipient_name":recipient.name,
+        "recipient_phone":recipient.phone_number,
+        "alternative_phone": recipient.second_phone_number,
+        "recipient_email": recipient.email,
+        "recipient_address": order.delivery_address,
+        "cod_amount": float(order.due_amount),
+        "note": order.special_instructions,
+        "item_description": order.remark,
+        "total_lot": sum(item.quantity for item in order.order_item.all()),
+        "delivery_type": 0
+    }
+    response = create_steadfast_order(order_data)
+    if response.status_code == 200:
+        response_data = response.json()
+        consignment = response_data.get("consignment", {})
+        if response_data.get("status") == 200 and consignment:
+            order.steadfast_parcel_id = consignment.get("consignment_id")
+            order.status = 'Delivered'
+            order.save()
+        elif response_data.get("status") == 400:
+            error_message = ""
+            # error_messages = []
+            for field, message in response_data.get("errors").items():
+                # error_messages.append(f"{field.replace('_', ' ').capitalize()}: {', '.join(message)}")
+                for message in message:
+                    error_message += f"{message}"
+            # messages.error(request, "Failed to create consignment: " + " | ".join(error_messages))
+            messages.error(request, error_message)
+        else:
+            messages.error(request, f"Failed to create consignment: {response_data.get('message')}")
+    else:
+        messages.error(request, f"Error in API request: {response.status_code} - {response.text}")
+    
+    return redirect(request.META['HTTP_REFERER'])
 
 
 def render_to_pdf(template_src, context_dict={}):

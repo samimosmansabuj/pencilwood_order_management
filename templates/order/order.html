@@ -307,12 +307,9 @@
                                                         $(".update-order-btn").click(function () {
                                                             const orderId = $(this).data("order-id");
                                                             const form = $(`#update-order-form-${orderId}`);
-                                                            const formData = form.serialize(); // Serialize form data
+                                                            const formData = form.serialize();
                                                             const button = $(this);
                                                             button.prop("disabled", true).text("Updating...");
-
-                                                            // $("#loading-icon").show();
-                                                            // $("tbody").hide();
 
                                                             $.ajax({
                                                                 url: `/update-order/${orderId}/`,
@@ -324,8 +321,6 @@
                                                                 success: function (response) {
                                                                     alert("Order updated successfully!");
                                                                     button.prop("disabled", false).text("Update");
-                                                                    // $("#loading-icon").hide();
-                                                                    // $("tbody").show();
                                                                 },
                                                                 error: function (xhr, status, error) {
                                                                     alert("An error occurred: " + xhr.responseText);

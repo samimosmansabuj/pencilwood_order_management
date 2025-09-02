@@ -173,6 +173,7 @@ class Order(models.Model):
     
     tracking_ID = models.CharField(max_length=6, blank=True, null=True, unique=True)
     pathao_parcel_id = models.CharField(max_length=20, blank=True, null=True)
+    steadfast_parcel_id = models.CharField(max_length=20, blank=True, null=True)
     delivery_address = models.CharField(max_length=500, blank=True, null=True)
     special_instructions = models.TextField(blank=True, null=True)
     design_file = models.FileField(upload_to='order-design-files/', blank=True, null=True)

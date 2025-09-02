@@ -7,7 +7,11 @@ urlpatterns = [
     path('update-order/<int:pk>/', update_order, name='update_order'),
     path('order/delete/<int:pk>/', OrderDeleteView.as_view(), name='order_delete'),
     path('order/add-new/', add_new_order, name='add_new_order'),
+    #logistic Company api connect========
     path('order/create-pathao-parcel/<int:id>/', create_pathao_parcel, name='create_pathao_parcel'),
+    path('order/create-steadfast-parcel/<int:id>/', create_steadfast_parcel, name='create_steadfast_parcel'),
+    #logistic Company api connect========
+    
     path('order/item/delete/<int:id>/', DeleteOrderItem, name='DeleteOrderItem'),
     path('order/add-success/<int:id>/', order_success, name='order_success'),
     path('order/<int:id>/', order_view, name='order_view'),

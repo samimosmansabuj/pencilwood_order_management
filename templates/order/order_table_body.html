@@ -84,12 +84,23 @@
             {{ order.due_amount }}
         </td>
         <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            {% if order.pathao_parcel_id %}
-            <a href="https://merchant.pathao.com/courier/orders/{{ order.pathao_parcel_id }}" 
-            class="btn btn-success btn-block" target="_blank">Tracking</a>
+            {% if order.pathao_parcel_id or order.steadfast_parcel_id %}
+                {% if order.pathao_parcel_id %}
+                <a href="https://merchant.pathao.com/courier/orders/{{ order.pathao_parcel_id }}" 
+                class="btn btn-success btn-block" target="_blank">Pathao Tracking</a>
+                {% endif %}
+
+                {% if order.steadfast_parcel_id %}
+                <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}" 
+                class="btn btn-success btn-block" target="_blank">SteadFast Tracking</a>
+                {% endif %}
             {% else %}
-            <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
-                Create
+
+            <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
+                Create Pathao
+            </a> -->
+            <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
+                Create SteadFast
             </a>
             <p id="error-message" style="color: red; margin-top: 10px;"></p>
 
@@ -101,6 +112,7 @@
                 document.addEventListener('DOMContentLoaded', function () {
                     // Get elements
                     const button = document.getElementById('create-pathao-parcel-{{order.id}}');
+                    const steadfast_button = document.getElementById('create-steadfast-parcel-{{order.id}}');
                     const deliveryAddress = document.getElementById('delivery-address');
                     const phoneNumber = document.getElementById('phone-number');
                     const errorMessage = document.getElementById('error-message');
@@ -111,12 +123,16 @@
                         const phoneValid = phoneNumber.value.length === 11;
                         
                         if (addressValid && phoneValid) {
-                            button.style.pointerEvents = 'auto'; // Enable clicking
-                            button.style.opacity = '1';         // Reset opacity
+                            // button.style.pointerEvents = 'auto'; // Enable clicking
+                            steadfast_button.style.pointerEvents = 'auto'; // Enable clicking
+                            // button.style.opacity = '1';         // Reset opacity
+                            steadfast_button.style.opacity = '1';         // Reset opacity
                             errorMessage.textContent = '';      // Clear error message
                         } else {
-                            button.style.pointerEvents = 'none'; // Disable clicking
-                            button.style.opacity = '0.5';       // Dim button
+                            // button.style.pointerEvents = 'none'; // Disable clicking
+                            steadfast_button.style.pointerEvents = 'none'; // Disable clicking
+                            // button.style.opacity = '0.5';       // Dim button
+                            steadfast_button.style.opacity = '0.5';       // Dim button
                             if (!phoneValid) {
                                 errorMessage.textContent = 'Phone number must be exactly 11 digits.';
                             } else if (!addressValid) {

@@ -406,16 +406,32 @@
                                 </a>
                                 {% endif %}
 
-                                {% if order.pathao_parcel_id %}
-                                <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
+                                {% if order.steadfast_parcel_id %}
+                                <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}"
+                                    class="btn btn-success btn-block" target="_blank">
+                                    Go to SteadFast Parcel
+                                </a>
+                                {% endif %}
+
+                                {% if order.pathao_parcel_id or order.steadfast_parcel_id %}
+                                <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create Pathao Parcel Repeat
+                                </a> -->
+                                <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel" style="pointer-events: none; opacity: 0.5;">
+                                    Create SteadFast Parcel Repeat
                                 </a>
                                 <p id="error-message" style="color: red; margin-top: 10px;"></p>
                                 {% else %}
-                                <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
+
+                                <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create Pathao Parcel
+                                </a> -->
+                                <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel" style="pointer-events: none; opacity: 0.5;">
+                                    Create SteadFast Parcel
                                 </a>
+
                                 <p id="error-message" style="color: red; margin-top: 10px;"></p>
+
                                 {% endif %}
                             </div>
                         </div>
@@ -429,40 +445,45 @@
             <input type="hidden" id="phone-number" value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
 
             <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Get elements
-                const button = document.getElementById('create-pathao-parcel');
-                const deliveryAddress = document.getElementById('delivery-address');
-                const phoneNumber = document.getElementById('phone-number');
-                const errorMessage = document.getElementById('error-message');
-            
-                // Function to validate conditions and update error message
-                function validateConditions() {
-                    const addressValid = deliveryAddress.value.length > 10;
-                    const phoneValid = phoneNumber.value.length === 11;
-                    
-                    if (addressValid && phoneValid) {
-                        button.style.pointerEvents = 'auto'; // Enable clicking
-                        button.style.opacity = '1';         // Reset opacity
-                        errorMessage.textContent = '';      // Clear error message
-                    } else {
-                        button.style.pointerEvents = 'none'; // Disable clicking
-                        button.style.opacity = '0.5';       // Dim button
-                        if (!phoneValid) {
-                            errorMessage.textContent = 'Phone number must be exactly 11 digits.';
-                        } else if (!addressValid) {
-                            errorMessage.textContent = 'Delivery address must be more than 10 words.';
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Get elements
+                    // const button = document.getElementById('create-pathao-parcel');
+                    const steadfast_button = document.getElementById('create-steadfast-parcel');
+                    const deliveryAddress = document.getElementById('delivery-address');
+                    const phoneNumber = document.getElementById('phone-number');
+                    const errorMessage = document.getElementById('error-message');
+                
+                    // Function to validate conditions and update error message
+                    function validateConditions() {
+                        const addressValid = deliveryAddress.value.length > 10;
+                        const phoneValid = phoneNumber.value.length === 11;
+                        
+                        if (addressValid && phoneValid) {
+                            // button.style.pointerEvents = 'auto'; // Enable clicking
+                            steadfast_button.style.pointerEvents = 'auto'; // Enable clicking
+                            // button.style.opacity = '1';         // Reset opacity
+                            steadfast_button.style.opacity = '1';         // Reset opacity
+                            errorMessage.textContent = '';      // Clear error message
+                        } else {
+                            // button.style.pointerEvents = 'none'; // Disable clicking
+                            steadfast_button.style.pointerEvents = 'none'; // Disable clicking
+                            // button.style.opacity = '0.5';       // Dim button
+                            steadfast_button.style.opacity = '0.5';       // Dim button
+                            if (!phoneValid) {
+                                errorMessage.textContent = 'Phone number must be exactly 11 digits.';
+                            } else if (!addressValid) {
+                                errorMessage.textContent = 'Delivery address must be more than 10 words.';
+                            }
                         }
                     }
-                }
-            
-                // Run validation on page load
-                validateConditions();
-            
-                // If these values are dynamically updated (e.g., through AJAX), attach event listeners
-                deliveryAddress.addEventListener('input', validateConditions);
-                phoneNumber.addEventListener('input', validateConditions);
-            });
+                
+                    // Run validation on page load
+                    validateConditions();
+                
+                    // If these values are dynamically updated (e.g., through AJAX), attach event listeners
+                    deliveryAddress.addEventListener('input', validateConditions);
+                    phoneNumber.addEventListener('input', validateConditions);
+                });
             </script>
             <!-- -------Place Order Section End------- -->
 

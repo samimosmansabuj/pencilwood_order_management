@@ -50,4 +50,12 @@ def get_order_info(consignment_id, access_token):
     return response.json()
 
 
+def create_steadfast_order(order_data):
+    url = f"{os.getenv("SteadFastAPIBASEURL")}/create_order"
+    headers = {
+        "Content-Type": "application/json",
+        "Api-Key": os.getenv("SteadFastApiKey"),
+        "Secret-Key": os.getenv("SteadFastSecretKey"),
+    }
+    return requests.post(url, headers=headers, json=order_data)
 
