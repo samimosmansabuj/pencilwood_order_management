@@ -540,6 +540,14 @@ def create_steadfast_parcel(request, id):
     order = get_object_or_404(Order, id=id)
     recipient = order.request_order or order.order_customer
     
+    type = request.GET.get("type")
+    if type.lower() == "home":
+        delivery_type = 0
+    elif type.lower() == "point":
+        delivery_type = 1
+    else:
+        delivery_type = 0
+        
     order_data = {
         "invoice": order.tracking_ID,
         "recipient_name":recipient.name,
@@ -550,8 +558,8 @@ def create_steadfast_parcel(request, id):
         "cod_amount": float(order.due_amount),
         "note": order.special_instructions,
         "item_description": order.remark,
-        "total_lot": sum(item.quantity for item in order.order_item.all()),
-        "delivery_type": 0
+        # "total_lot": sum(item.quantity for item in order.order_item.all()),
+        "delivery_type": delivery_type
     }
     response = create_steadfast_order(order_data)
     if response.status_code == 200:

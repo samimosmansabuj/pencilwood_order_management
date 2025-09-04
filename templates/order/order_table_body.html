@@ -1,3 +1,5 @@
+{% load static %}
+
 {% for order in orders %}
 <tr role="row" class="odd text-red-{{ order.id }} {% if forloop.counter|divisibleby:2 %}even-row{% else %}odd-row{% endif %}">
     <form id="update-order-form-{{ order.id }}">
@@ -99,55 +101,152 @@
             <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
                 Create Pathao
             </a> -->
-            <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
-                Create SteadFast
-            </a>
-            <p id="error-message" style="color: red; margin-top: 10px;"></p>
 
-            <!-- Hidden inputs or elements to simulate real-time values -->
-            <input type="hidden" id="delivery-address" value="{{ order.delivery_address }}">
-            <input type="hidden" id="phone-number" value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
+            <div class="steadfast-row" data-order-id="{{ order.id }}" style="position: relative; display: inline-block; margin: 8px;">
+                <!-- Button (use javascript:void(0) to avoid navigation) -->
+                <a href="javascript:void(0)" class="btn btn-primary btn-block steadfast-btn" aria-expanded="false"
+                    style="pointer-events: none; opacity: 0.5; background-color: white; cursor: pointer;">
+                    <img src="{% static 'assets/img/logo.svg' %}" alt="steadfast-logo">
+                </a>
+
+                <!-- Dropdown -->
+                <div class="steadfast-dropdown" role="menu" style="display: none; position: absolute; top: 100%; left: 0; min-width: 160px; background: white; border: 1px solid #ccc; padding: 8px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;">
+                    <a href="{% url 'create_steadfast_parcel' order.id %}?type=home" class="dropdown-item">🏠 Home Delivery</a><br>
+                    <a href="{% url 'create_steadfast_parcel' order.id %}?type=point" class="dropdown-item">📍 Point Delivery</a>
+                </div>
+
+                <!-- Error message -->
+                <p class="error-message" style="color: red; margin-top: 6px;"></p>
+
+                <!-- Hidden inputs (or use data-* attributes) -->
+                <input type="hidden" class="delivery-address" value="{{ order.delivery_address|default:'' }}">
+                <input type="hidden" class="phone-number" value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}">
+            </div>
+
 
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    // Get elements
-                    const button = document.getElementById('create-pathao-parcel-{{order.id}}');
-                    const steadfast_button = document.getElementById('create-steadfast-parcel-{{order.id}}');
-                    const deliveryAddress = document.getElementById('delivery-address');
-                    const phoneNumber = document.getElementById('phone-number');
-                    const errorMessage = document.getElementById('error-message');
-                
-                    // Function to validate conditions and update error message
-                    function validateConditions() {
-                        const addressValid = deliveryAddress.value.length > 10;
-                        const phoneValid = phoneNumber.value.length === 11;
-                        
-                        if (addressValid && phoneValid) {
-                            // button.style.pointerEvents = 'auto'; // Enable clicking
-                            steadfast_button.style.pointerEvents = 'auto'; // Enable clicking
-                            // button.style.opacity = '1';         // Reset opacity
-                            steadfast_button.style.opacity = '1';         // Reset opacity
-                            errorMessage.textContent = '';      // Clear error message
-                        } else {
-                            // button.style.pointerEvents = 'none'; // Disable clicking
-                            steadfast_button.style.pointerEvents = 'none'; // Disable clicking
-                            // button.style.opacity = '0.5';       // Dim button
-                            steadfast_button.style.opacity = '0.5';       // Dim button
-                            if (!phoneValid) {
-                                errorMessage.textContent = 'Phone number must be exactly 11 digits.';
-                            } else if (!addressValid) {
-                                errorMessage.textContent = 'Delivery address must be more than 10 words.';
-                            }
-                        }
+            document.addEventListener('DOMContentLoaded', function () {
+                const DEBUG = true;
+                if (DEBUG) console.log('[steadfast] script loaded');
+
+                // small helper to close all dropdowns
+                function closeAllDropdowns() {
+                    document.querySelectorAll('.steadfast-dropdown.show').forEach(d => {
+                    d.classList.remove('show');
+                    d.style.display = 'none';
+                    });
+                    document.querySelectorAll('.steadfast-btn[aria-expanded="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+                }
+
+                // initial validation: for every row set enabled/disabled
+                document.querySelectorAll('.steadfast-row').forEach(row => {
+                    const btn = row.querySelector('.steadfast-btn');
+                    const addr = (row.querySelector('.delivery-address')?.value || '').trim();
+                    const ph = (row.querySelector('.phone-number')?.value || '').trim();
+                    const err = row.querySelector('.error-message');
+
+                    function setInvalid(message) {
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.5';
+                    if (err) err.textContent = message || '';
                     }
-                
-                    // Run validation on page load
-                    validateConditions();
-                
-                    // If these values are dynamically updated (e.g., through AJAX), attach event listeners
-                    deliveryAddress.addEventListener('input', validateConditions);
-                    phoneNumber.addEventListener('input', validateConditions);
+                    function setValid() {
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.opacity = '1';
+                    if (err) err.textContent = '';
+                    }
+
+                    if (addr.length > 10 && ph.length === 11) {
+                    setValid();
+                    } else {
+                    if (ph.length !== 11) setInvalid('Phone number must be exactly 11 digits.');
+                    else if (addr.length <= 10) setInvalid('Delivery address must be more than 10 characters.');
+                    else setInvalid('');
+                    }
                 });
+
+                // document-level click: handle button toggles & outside clicks (delegation)
+                document.addEventListener('click', function (e) {
+                    // If clicked on a button (or its child), handle toggle
+                    const btn = e.target.closest('.steadfast-btn');
+                    if (btn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const row = btn.closest('.steadfast-row');
+                    if (!row) {
+                        if (DEBUG) console.log('[steadfast] no row found for button');
+                        return;
+                    }
+
+                    // Validate on click (fresh)
+                    const addr = (row.querySelector('.delivery-address')?.value || '').trim();
+                    const ph = (row.querySelector('.phone-number')?.value || '').trim();
+                    const err = row.querySelector('.error-message');
+                    if (!(addr.length > 10 && ph.length === 11)) {
+                        // invalid: keep disabled and show message
+                        btn.style.pointerEvents = 'none';
+                        btn.style.opacity = '0.5';
+                        if (err) {
+                        if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
+                        else err.textContent = 'Delivery address must be more than 10 characters.';
+                        }
+                        if (DEBUG) console.log('[steadfast] row invalid, dropdown not opening', { addr, ph });
+                        return;
+                    }
+
+                    // valid: toggle its dropdown, close others first
+                    closeAllDropdowns();
+                    const dropdown = row.querySelector('.steadfast-dropdown');
+                    if (!dropdown) return;
+                    const open = dropdown.classList.toggle('show');
+                    dropdown.style.display = open ? 'block' : 'none';
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+                    // position dropdown if needed (ensures visible under button)
+                    const rect = btn.getBoundingClientRect();
+                    // using relative positioning in markup; adjust top in case button height changed
+                    dropdown.style.top = (btn.offsetHeight + 6) + 'px';
+                    dropdown.style.left = '0px';
+
+                    if (DEBUG) console.log('[steadfast] toggled dropdown for row', row.dataset.orderId, 'open=', open);
+                    return;
+                    }
+
+                    // If click not on any btn, but inside dropdown, prevent closing
+                    const insideDropdown = e.target.closest('.steadfast-dropdown');
+                    if (insideDropdown) {
+                    // allow clicks inside dropdown (links will navigate)
+                    e.stopPropagation();
+                    return;
+                    }
+
+                    // Otherwise clicked outside => close all
+                    closeAllDropdowns();
+                });
+
+                // ESC key closes all
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') closeAllDropdowns();
+                });
+
+                // Optional: If your hidden inputs can change dynamically via JS/AJAX, call this function to re-validate a row
+                window.steadfastRevalidateRow = function (rowElement) {
+                    if (!rowElement) return;
+                    const btn = rowElement.querySelector('.steadfast-btn');
+                    const addr = (rowElement.querySelector('.delivery-address')?.value || '').trim();
+                    const ph = (rowElement.querySelector('.phone-number')?.value || '').trim();
+                    const err = rowElement.querySelector('.error-message');
+                    if (addr.length > 10 && ph.length === 11) {
+                    btn.style.pointerEvents = 'auto'; btn.style.opacity = '1'; if (err) err.textContent = '';
+                    } else {
+                    btn.style.pointerEvents = 'none'; btn.style.opacity = '0.5';
+                    if (err) {
+                        if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
+                        else err.textContent = 'Delivery address must be more than 10 characters.';
+                    }
+                    }
+                };
+            });
             </script>
             {% endif %}
         </td>

@@ -1,0 +1,113 @@
+<div class="steadfast-row" data-order-id="{{order.id}}" style="position: relative; display: inline-block;">
+                <!-- Button -->
+                <a class="btn btn-primary btn-block steadfast-btn" 
+                data-order-id="{{order.id}}"
+                style="pointer-events: none; opacity: 0.5; background-color: white; cursor: pointer;">
+                    <img src="{% static 'assets/img/logo.svg' %}" alt="steadfast-logo">
+                </a>
+
+                <!-- Dropdown -->
+                <!-- <div class="steadfast-dropdown" 
+                    style="display: none; position: absolute; top: 100%; left: 0; 
+                            background: white; border: 1px solid #ccc; 
+                            padding: 8px; border-radius: 6px; 
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 100;">
+                    <a href="?type=home&id={{order.id}}" class="dropdown-item">🏠 Home Delivery</a><br>
+                    <a href="?type=point&id={{order.id}}" class="dropdown-item">📍 Point Delivery</a>
+                </div> -->
+
+                <!-- <a href="{% url 'create_steadfast_parcel' order.id %}?type=home" class="dropdown-item">🏠 Home Delivery</a><br>
+                    <a href="{% url 'create_steadfast_parcel' order.id %}?type=point" class="dropdown-item">📍 Point Delivery</a> -->
+
+                <!-- Dropdown -->
+                <div class="steadfast-dropdown" 
+                    style="display: none; position: absolute; top: 100%; left: 0; min-width: 150px;
+                            background: white; border: 1px solid #ccc; padding: 8px; border-radius: 6px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 100;">
+                    <!-- <a class="steadfast-dropdown-item dropdown-item" href="{% url 'create_steadfast_parcel' order.id %}?type=home">🏠 Home Delivery</a><br>
+                    <a class="steadfast-dropdown-item dropdown-item" href="{% url 'create_steadfast_parcel' order.id %}?type=point">📍 Point Delivery</a> -->
+                </div>
+
+                <!-- Error message -->
+                <p class="error-message" style="color: red; margin-top: 10px;"></p>
+
+                <!-- Hidden inputs -->
+                <input type="hidden" class="delivery-address" value="{{ order.delivery_address }}">
+                <input type="hidden" class="phone-number" 
+                    value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
+            </div>
+
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const rows = document.querySelectorAll('.steadfast-row');
+
+                // Utility: close সব dropdown
+                function closeAllDropdowns() {
+                    document.querySelectorAll('.steadfast-dropdown').forEach(d => d.style.display = 'none');
+                }
+
+                rows.forEach(row => {
+                    const button = row.querySelector('.steadfast-btn');
+                    const dropdown = row.querySelector('.steadfast-dropdown');
+                    const deliveryAddress = row.querySelector('.delivery-address');
+                    const phoneNumber = row.querySelector('.phone-number');
+                    const errorMessage = row.querySelector('.error-message');
+
+                    // Validate ওই রো এর জন্য
+                    function validateConditions() {
+                        const addressValid = (deliveryAddress && deliveryAddress.value) ? deliveryAddress.value.trim().length > 10 : false;
+                        const phoneValid = (phoneNumber && phoneNumber.value) ? phoneNumber.value.trim().length === 11 : false;
+
+                        if (addressValid && phoneValid) {
+                            button.style.pointerEvents = 'auto';
+                            button.style.opacity = '1';
+                            errorMessage.textContent = '';
+                        } else {
+                            button.style.pointerEvents = 'none';
+                            button.style.opacity = '0.5';
+                            if (!phoneValid) {
+                                errorMessage.textContent = 'Phone number must be exactly 11 digits.';
+                            } else if (!addressValid) {
+                                errorMessage.textContent = 'Delivery address must be more than 10 characters.';
+                            } else {
+                                errorMessage.textContent = '';
+                            }
+                        }
+                    }
+
+                    // প্রথমবার চেক
+                    validateConditions();
+
+                    // যদি আপনার ডেটা JS দিয়ে আপডেট হয়, সেই JS-এ validateConditions() কল করবেন
+                    // অথবা নিচের লাইন আনকমেন্ট করে input সাপোর্ট করুন (hidden হলে browser সাধারণত input ফায়ার করে না)
+                    // deliveryAddress.addEventListener('input', validateConditions);
+                    // phoneNumber.addEventListener('input', validateConditions);
+
+                    // Button click toggles dropdown, stop propagation so document click doesn't immediately close it
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (button.style.pointerEvents === 'none') return;
+                        const isOpen = dropdown.style.display === 'block';
+                        closeAllDropdowns();
+                        dropdown.style.display = isOpen ? 'none' : 'block';
+                    });
+
+                    // Prevent clicks inside dropdown from bubbling up and closing it
+                    dropdown.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                    });
+                });
+
+                // Click anywhere else: close all
+                document.addEventListener('click', function () {
+                    closeAllDropdowns();
+                });
+
+                // Optional: ESC closes dropdowns
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') closeAllDropdowns();
+                });
+            });
+            </script>
