@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-from .views import OrderListView
+from .views2 import add_new_order2
 
 urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
@@ -30,4 +30,8 @@ urlpatterns = [
     
     
     path('order/<int:id>/invoice/', print_invoice, name='generate_pdf'),
+
+
+    # New Update URL Testing Mode-----------
+    path('order/add-new-2/', add_new_order2, name="add_new_order2"),
 ]

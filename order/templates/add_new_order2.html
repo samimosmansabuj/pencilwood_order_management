@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+
+{% block dashboard_title %}
+<title>Add New Order - Pencilwood</title>
+{% endblock dashboard_title %}
+
+{% block dashboard_body %}
+<main>
+
+
+   <!-- {{order_customer_form}}
+   {{order_form}} -->
+
+   <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="container-fluid">
+         <h1 class="mt-4">Add New Order</h1>
+
+         <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+               <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+               <li class="breadcrumb-item"><a href="{% url 'order_list' %}">All Order</a></li>
+            </div>
+            <li class="breadcrumb-item ml-auto">
+               <a href="{% url 'add_new_order' %}" class="btn btn-primary" style="margin-left: 10px;">
+                  Add Order
+               </a>
+            </li>
+         </ol>
+
+         {% if messages %}
+         {% for messages in messages %}
+         <ol class="breadcrumb mb-4">
+            <div class="alert alert-{{messages.tags}} alert-dismissible fade show" role="alert">
+               <strong>Dear {{request.user}}!</strong> {{messages}}
+               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+               </button>
+            </div>
+         </ol>
+         {% endfor %}
+         {% endif %}
+
+
+         <div class="row">
+
+            <!-- ---------------Person Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Personal Info
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.company.label}} (Optional)</label>
+                              {{order_customer_form.company}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.name.label}}</label>
+                              {{order_customer_form.name}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_customer_form.email.label}}</label>
+                              {{order_customer_form.email}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_customer_form.phone_number.label}}</label>
+                              {{order_customer_form.phone_number}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_customer_form.second_phone_number.label}} (Optional)</label>
+                              {{order_customer_form.second_phone_number}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.design_file.label}} (Optional)</label>
+                              {{order_form.design_file}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_customer_form.source.label}}</label>
+                              {{order_customer_form.source}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_address.label}}</label>
+                              {{order_form.delivery_address}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.order_date.label}}</label>
+                              {{order_form.order_date}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <p>Is it urgent? {{order_form.urgent}}</p>
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Person Info End--------------- -->
+
+
+            <!-- ---------------Product Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Product info
+                  </div>
+                  <div class="card-body">
+
+                     <!-- <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <label for="product-list">Product List</label>
+                              <select id="product-list" name="product-list" required class="form-control">
+                                 <option disabled selected>-- Select Product --</option>
+                                 {% for product in products %}
+                                 <option value="{{product.slug}}">{{product.name}}</option>
+                                 {% endfor %}
+                              </select>
+                           </div>
+                        </div>
+                     </div> -->
+                     <!-- /row-->
+
+                     <!-- Product Selection -->
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="form-group">
+                              <label for="product-list">Product List</label>
+                              <select id="product-list" class="form-control">
+                                 <option disabled selected>-- Select Product --</option>
+                                 {% for product in products %}
+                                 <option value="{{ product.slug }}" data-name="{{ product.name }}"
+                                    data-price="{{ product.price }}">
+                                    {{ product.name }}
+                                 </option>
+                                 {% endfor %}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+
+
+                     <!-- I need Selected Product List - All product have (title, unit price, quantity, total price, remove_icon) -->
+                     <!-- **** Importnat selected_product_table -->
+                     <!-- Selected Products Table -->
+                     <div class="row mt-4">
+                        <div class="col-md-12">
+                           <table id="selected-products-table" class="table table-bordered">
+                              <thead>
+                                 <tr>
+                                    <th>Title</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total Price</th>
+                                    <!-- <td class="total-price">${price.toFixed(2)}</td> -->
+                                    <th>Action</th>
+                                 </tr>
+                              </thead>
+                              <tbody></tbody>
+                           </table>
+                        </div>
+                     </div>
+
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Product Info Start--------------- -->
+
+
+            <!-- ---------------Amount Info Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Amount info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_charge.label}}</label>
+                              {{order_form.delivery_charge}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_charge_cost.label}}</label>
+                              {{order_form.delivery_charge_cost}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_status.label}}</label>
+                              {{order_form.payment_status}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Amount Info End--------------- -->
+
+
+            <!-- ---------------Payment Info Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Payment info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.advance_amount.label}} (Optional)</label>
+                              {{order_form.advance_amount}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_number.label}} (Optional)</label>
+                              {{order_form.payment_number}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.payment_method.label}} (Optional)</label>
+                              {{order_form.payment_method}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.transaction_id.label}} (Optional)</label>
+                              {{order_form.transaction_id}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Payment Info End--------------- -->
+
+            <!-- ---------------Status Info Start--------------- -->
+            <div class="col-xl-12">
+               <div class="card mb-4">
+                  <div class="card-header">
+                     Status info
+                  </div>
+                  <div class="card-body">
+
+                     <div class="row">
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.status.label}}</label>
+                              {{order_form.status}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.work_assign.label}} (Optional)</label>
+                              {{order_form.work_assign}}
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <label>{{order_form.delivery_date.label}} (Optional)</label>
+                              {{order_form.delivery_date}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.remark.label}} (Optional)</label>
+                              {{order_form.remark}}
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label>{{order_form.special_instructions.label}} (Optional)</label>
+                              {{order_form.special_instructions}}
+                           </div>
+                        </div>
+                     </div>
+                     <!-- /row-->
+
+                  </div>
+               </div>
+            </div>
+            <!-- ---------------Status Info Start--------------- -->
+
+
+         </div>
+         <div class="text-right mb-4">
+            <button type="submit" class="btn btn-success">
+               <i class="feather-send"></i> SAVE
+            </button>
+         </div>
+      </div>
+   </form>
+</main>
+
+
+<script>
+   // --- JavaScript Section ---
+   document.addEventListener('DOMContentLoaded', function () {
+      const productList = document.getElementById('product-list');
+      const tableBody = document.querySelector('#selected-products-table tbody');
+
+      // Store selected products
+      const selectedProducts = {};
+
+      // When user selects a product
+      productList.addEventListener('change', function () {
+         const selectedOption = this.options[this.selectedIndex];
+         const slug = selectedOption.value;
+         const name = selectedOption.dataset.name;
+         const price = parseFloat(selectedOption.dataset.price);
+
+         // Skip if product already added
+         if (selectedProducts[slug]) {
+            alert(`${name} already added!`);
+            return;
+         }
+
+         selectedProducts[slug] = { name, price, quantity: 1 };
+
+         // Create table row
+         const row = document.createElement('tr');
+         row.setAttribute('data-slug', slug);
+
+         row.innerHTML = `
+         <td>${name}</td>
+         <td><input type="number" class="form-control unit-price-input" style="width:100%;" value="${price.toFixed(2)}" name="unit-price"></td>
+         <td><input type="number" min="1" value="1" class="form-control quantity-input" style="width:100%;" name="quantity"></td>
+         <td class="total-price">${price * 1}</td>
+         <td><button class="btn btn-danger btn-sm remove-btn">🗑️</button></td>
+      `;
+
+         tableBody.appendChild(row);
+      });
+
+      // Handle quantity/unit price updates and remove
+      tableBody.addEventListener('input', function (e) {
+         const row = e.target.closest('tr');
+         if (!row) return;
+         const slug = row.dataset.slug;
+
+         // When quantity or unit price changes
+         if (e.target.classList.contains('quantity-input') || e.target.classList.contains('unit-price-input')) {
+            const quantityInput = row.querySelector('.quantity-input');
+            const unitPriceInput = row.querySelector('.unit-price-input');
+
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const unitPrice = parseFloat(unitPriceInput.value) || 0;
+            const total = quantity * unitPrice;
+
+            // Update total price cell
+            row.querySelector('.total-price').textContent = total.toFixed(2);
+
+            // Update stored product info
+            selectedProducts[slug].quantity = quantity;
+            selectedProducts[slug].price = unitPrice;
+         }
+      });
+
+      tableBody.addEventListener('click', function (e) {
+         if (e.target.classList.contains('remove-btn')) {
+            const row = e.target.closest('tr');
+            const slug = row.dataset.slug;
+            delete selectedProducts[slug];
+            row.remove();
+         }
+      });
+   });
+</script>
+{% endblock dashboard_body %}

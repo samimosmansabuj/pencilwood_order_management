@@ -10,6 +10,7 @@ import random, string
 
 class Product(models.Model):
     name = models.CharField(max_length=250)
+    price = models.PositiveIntegerField(blank=True, null=True)
     slug = models.SlugField(max_length=250, blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     
