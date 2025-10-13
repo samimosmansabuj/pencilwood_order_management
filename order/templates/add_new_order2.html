@@ -125,158 +125,254 @@
 
 
             <!-- ---------------Product Info Start--------------- -->
+            <style>
+               .card-header {
+                  background-color: #f8f9fa;
+                  font-weight: bold;
+               }
+
+               /* --- NEW MOBILE STYLES for a single-line, scrollable table --- */
+               @media (max-width: 767.98px) {
+
+                  /* This is the key change: Make the table scroll horizontally */
+                  .table-responsive {
+                     overflow-x: auto;
+                     -webkit-overflow-scrolling: touch;
+                     /* Smooth scrolling on iOS */
+                  }
+
+                  /* Make table elements smaller and more compact */
+                  #selected-products-table th,
+                  #selected-products-table td {
+                     padding: 0.5rem 0.4rem;
+                     /* Reduce padding */
+                     font-size: 0.8rem;
+                     /* Make font size much smaller */
+                     white-space: nowrap;
+                     /* Prevent text from wrapping to the next line */
+                  }
+
+                  #selected-products-table .form-control {
+                     font-size: 0.8rem;
+                     padding: 0.2rem 0.4rem;
+                     height: auto;
+                  }
+
+                  /* Set minimum widths for columns to prevent them from becoming too small */
+                  #selected-products-table th:nth-child(1),
+                  #selected-products-table td:nth-child(1) {
+                     /* প্রোডাক্ট নাম */
+                     min-width: 150px;
+                  }
+
+                  #selected-products-table th:nth-child(2),
+                  #selected-products-table td:nth-child(2) {
+                     /* ইউনিট প্রাইস */
+                     min-width: 100px;
+                  }
+
+                  #selected-products-table th:nth-child(3),
+                  #selected-products-table td:nth-child(3) {
+                     /* পরিমাণ */
+                     min-width: 70px;
+                  }
+
+                  #selected-products-table th:nth-child(4),
+                  #selected-products-table td:nth-child(4) {
+                     /* টোটাল প্রাইস */
+                     min-width: 100px;
+                  }
+
+                  /* Footer Styles */
+                  #selected-products-table tfoot .form-control {
+                     font-size: 0.75rem;
+                  }
+
+                  #selected-products-table tfoot input::placeholder {
+                     font-size: 0.7rem;
+                  }
+
+                  #selected-products-table tfoot td {
+                     padding: 0.5rem;
+                  }
+               }
+            </style>
+            <!-- <div class="container-fluid my-4"> -->
             <div class="col-xl-12">
                <div class="card mb-4">
                   <div class="card-header">
                      Product info
                   </div>
                   <div class="card-body">
-
-                     <!-- <div class="row">
-                        <div class="col-md-12">
-                           <div class="form-group">
-                              <label for="product-list">Product List</label>
-                              <select id="product-list" name="product-list" required class="form-control">
-                                 <option disabled selected>-- Select Product --</option>
-                                 {% for product in products %}
-                                 <option value="{{product.slug}}">{{product.name}}</option>
-                                 {% endfor %}
-                              </select>
-                           </div>
-                        </div>
-                     </div> -->
-                     <!-- /row-->
-
-                     <!-- Product Selection -->
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="form-group">
-                              <label for="product-list">Product List</label>
-                              <select id="product-list" class="form-control">
-                                 <option disabled selected>-- Select Product --</option>
-                                 {% for product in products %}
-                                 <option value="{{ product.slug }}" data-name="{{ product.name }}"
-                                    data-price="{{ product.price }}">
-                                    {{ product.name }}
-                                 </option>
-                                 {% endfor %}
-                              </select>
-                           </div>
-                        </div>
+                     <div class="form-group">
+                        <label for="product-list">Product List</label>
+                        <select id="product-list" class="form-control">
+                           <option disabled selected>-- Select Product --</option>
+                           {% for product in products %}
+                           <option value="{{ product.slug }}" data-name="{{ product.name }}"
+                              data-price="{{ product.price }}">
+                              {{ product.name }}
+                           </option>
+                           {% endfor %}
+                        </select>
                      </div>
 
-
-                     <!-- I need Selected Product List - All product have (title, unit price, quantity, total price, remove_icon) -->
-                     <!-- **** Importnat selected_product_table -->
-                     <!-- Selected Products Table -->
-                     <div class="row mt-4">
-                        <div class="col-md-12">
-                           <table id="selected-products-table" class="table table-bordered">
-                              <thead>
-                                 <tr>
-                                    <th>Title</th>
-                                    <th>Unit Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total Price</th>
-                                    <!-- <td class="total-price">${price.toFixed(2)}</td> -->
-                                    <th>Action</th>
-                                 </tr>
-                              </thead>
-                              <tbody></tbody>
-                           </table>
-                        </div>
+                     <div class="table-responsive mt-4">
+                        <table id="selected-products-table" class="table table-bordered text-center">
+                           <thead class="thead-light">
+                              <tr>
+                                 <th>Title</th>
+                                 <th>Unit Price</th>
+                                 <th>Quantity</th>
+                                 <th>Total Price</th>
+                                 <th>Action</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <td colspan="3" class="text-right font-weight-bold">Deal Value</td>
+                                 <td id="grand-total" class="font-weight-bold text-left">0.00</td>
+                                 <td></td>
+                              </tr>
+                              <tr>
+                                 <td colspan="5" class="p-0">
+                                    <div class="row no-gutters">
+                                       <div class="col-4">
+                                          <input type="number" id="shipping-collect" class="form-control"
+                                             placeholder="Shipping Charge (Collect)">
+                                       </div>
+                                       <div class="col-4">
+                                          <input type="number" id="shipping-cost" class="form-control"
+                                             placeholder="Shipping Charge (Cost)">
+                                       </div>
+                                       <div class="col-4">
+                                          <input type="number" id="advanced-payment" class="form-control"
+                                             placeholder="Advanced Payment">
+                                       </div>
+                                    </div>
+                                 </td>
+                              </tr>
+                              <tr class="bg-light">
+                                 <td colspan="5" class="p-0">
+                                    <div class="row no-gutters">
+                                       <div class="col-6">
+                                          <b class="text-right font-weight-bold">Total Amount</b>
+                                          <p id="total-amount" class="font-weight-bold text-left">0.00</p>
+                                       </div>
+                                       <div class="col-6">
+                                          <b class="text-right font-weight-bold">Total Due</b>
+                                          <p id="total-due" class="font-weight-bold text-left">0.00</p>
+                                       </div>
+                                    </div>
+                                 </td>
+                              </tr>
+                           </tfoot>
+                        </table>
                      </div>
-
-
                   </div>
                </div>
             </div>
+            <!-- </div> -->
+            <script>
+               document.addEventListener('DOMContentLoaded', function () {
+                  const productList = document.getElementById('product-list');
+                  const tableBody = document.querySelector('#selected-products-table tbody');
+                  const grandTotalCell = document.getElementById('grand-total');
+                  const totalDueCell = document.getElementById('total-due');
+                  const totalAmountCell = document.getElementById('total-amount');
+                  const totalRowsCell = document.getElementById('total-rows');
+                  const shippingCostInput = document.getElementById('shipping-cost');
+                  const advancedPaymentInput = document.getElementById('advanced-payment');
+                  const shippingCollectInput = document.getElementById('shipping-collect');
+
+                  const selectedProducts = {};
+
+                  function updateTotals() {
+                     let grandTotal = 0;
+                     const rows = tableBody.querySelectorAll('tr');
+
+                     rows.forEach(row => {
+                        const totalCell = row.querySelector('.total-price');
+                        grandTotal += parseFloat(totalCell.textContent) || 0;
+                     });
+
+                     grandTotalCell.textContent = grandTotal.toFixed(2);
+
+                     const shippingCollect = parseFloat(shippingCollectInput.value) || 0;
+                     const shippingCost = parseFloat(shippingCostInput.value) || 0;
+                     const advancedPayment = parseFloat(advancedPaymentInput.value) || 0;
+
+                     const totalDue = (grandTotal + shippingCollect) - advancedPayment;
+                     totalDueCell.textContent = totalDue.toFixed(2);
+                     const totalAmount = (grandTotal + shippingCollect) - shippingCost;
+                     totalAmountCell.textContent = totalAmount.toFixed(2);
+
+                     totalRowsCell.textContent = rows.length;
+                  }
+
+                  productList.addEventListener('change', function () {
+                     const selectedOption = this.options[this.selectedIndex];
+                     const slug = selectedOption.value;
+                     const name = selectedOption.dataset.name;
+                     const price = parseFloat(selectedOption.dataset.price);
+
+                     this.selectedIndex = 0;
+
+                     if (selectedProducts[slug]) {
+                        alert(`'${name}' already added!`);
+                        return;
+                     }
+
+                     selectedProducts[slug] = true;
+
+                     const row = document.createElement('tr');
+                     row.setAttribute('data-slug', slug);
+
+                     row.innerHTML = `
+                        <td>${name}</td>
+                        <td><input type="number" class="form-control unit-price-input" value="${price.toFixed(2)}"></td>
+                        <td><input type="number" min="1" value="1" class="form-control quantity-input"></td>
+                        <td class="total-price">${price.toFixed(2)}</td>
+                        <td><button class="btn btn-danger btn-sm remove-btn">🗑️</button></td>
+                    `;
+
+                     tableBody.appendChild(row);
+                     updateTotals();
+                  });
+
+                  tableBody.addEventListener('input', function (e) {
+                     const target = e.target;
+                     if (target.classList.contains('quantity-input') || target.classList.contains('unit-price-input')) {
+                        const row = target.closest('tr');
+                        if (!row) return;
+
+                        const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
+                        const unitPrice = parseFloat(row.querySelector('.unit-price-input').value) || 0;
+                        const total = quantity * unitPrice;
+
+                        row.querySelector('.total-price').textContent = total.toFixed(2);
+                        updateTotals();
+                     }
+                  });
+
+                  tableBody.addEventListener('click', function (e) {
+                     if (e.target.classList.contains('remove-btn')) {
+                        const row = e.target.closest('tr');
+                        const slug = row.dataset.slug;
+                        delete selectedProducts[slug];
+                        row.remove();
+                        updateTotals();
+                     }
+                  });
+
+                  shippingCostInput.addEventListener('input', updateTotals);
+                  advancedPaymentInput.addEventListener('input', updateTotals);
+                  shippingCollectInput.addEventListener('input', updateTotals);
+               });
+            </script>
             <!-- ---------------Product Info Start--------------- -->
-
-
-            <!-- ---------------Amount Info Info Start--------------- -->
-            <div class="col-xl-12">
-               <div class="card mb-4">
-                  <div class="card-header">
-                     Amount info
-                  </div>
-                  <div class="card-body">
-
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.delivery_charge.label}}</label>
-                              {{order_form.delivery_charge}}
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.delivery_charge_cost.label}}</label>
-                              {{order_form.delivery_charge_cost}}
-                           </div>
-                        </div>
-                     </div>
-                     <!-- /row-->
-
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.payment_status.label}}</label>
-                              {{order_form.payment_status}}
-                           </div>
-                        </div>
-                     </div>
-                     <!-- /row-->
-
-                  </div>
-               </div>
-            </div>
-            <!-- ---------------Amount Info End--------------- -->
-
-
-            <!-- ---------------Payment Info Info Start--------------- -->
-            <div class="col-xl-12">
-               <div class="card mb-4">
-                  <div class="card-header">
-                     Payment info
-                  </div>
-                  <div class="card-body">
-
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.advance_amount.label}} (Optional)</label>
-                              {{order_form.advance_amount}}
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.payment_number.label}} (Optional)</label>
-                              {{order_form.payment_number}}
-                           </div>
-                        </div>
-                     </div>
-                     <!-- /row-->
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.payment_method.label}} (Optional)</label>
-                              {{order_form.payment_method}}
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>{{order_form.transaction_id.label}} (Optional)</label>
-                              {{order_form.transaction_id}}
-                           </div>
-                        </div>
-                     </div>
-                     <!-- /row-->
-
-                  </div>
-               </div>
-            </div>
-            <!-- ---------------Payment Info End--------------- -->
 
             <!-- ---------------Status Info Start--------------- -->
             <div class="col-xl-12">
@@ -339,78 +435,9 @@
    </form>
 </main>
 
-
 <script>
-   // --- JavaScript Section ---
-   document.addEventListener('DOMContentLoaded', function () {
-      const productList = document.getElementById('product-list');
-      const tableBody = document.querySelector('#selected-products-table tbody');
-
-      // Store selected products
-      const selectedProducts = {};
-
-      // When user selects a product
-      productList.addEventListener('change', function () {
-         const selectedOption = this.options[this.selectedIndex];
-         const slug = selectedOption.value;
-         const name = selectedOption.dataset.name;
-         const price = parseFloat(selectedOption.dataset.price);
-
-         // Skip if product already added
-         if (selectedProducts[slug]) {
-            alert(`${name} already added!`);
-            return;
-         }
-
-         selectedProducts[slug] = { name, price, quantity: 1 };
-
-         // Create table row
-         const row = document.createElement('tr');
-         row.setAttribute('data-slug', slug);
-
-         row.innerHTML = `
-         <td>${name}</td>
-         <td><input type="number" class="form-control unit-price-input" style="width:100%;" value="${price.toFixed(2)}" name="unit-price"></td>
-         <td><input type="number" min="1" value="1" class="form-control quantity-input" style="width:100%;" name="quantity"></td>
-         <td class="total-price">${price * 1}</td>
-         <td><button class="btn btn-danger btn-sm remove-btn">🗑️</button></td>
-      `;
-
-         tableBody.appendChild(row);
-      });
-
-      // Handle quantity/unit price updates and remove
-      tableBody.addEventListener('input', function (e) {
-         const row = e.target.closest('tr');
-         if (!row) return;
-         const slug = row.dataset.slug;
-
-         // When quantity or unit price changes
-         if (e.target.classList.contains('quantity-input') || e.target.classList.contains('unit-price-input')) {
-            const quantityInput = row.querySelector('.quantity-input');
-            const unitPriceInput = row.querySelector('.unit-price-input');
-
-            const quantity = parseFloat(quantityInput.value) || 0;
-            const unitPrice = parseFloat(unitPriceInput.value) || 0;
-            const total = quantity * unitPrice;
-
-            // Update total price cell
-            row.querySelector('.total-price').textContent = total.toFixed(2);
-
-            // Update stored product info
-            selectedProducts[slug].quantity = quantity;
-            selectedProducts[slug].price = unitPrice;
-         }
-      });
-
-      tableBody.addEventListener('click', function (e) {
-         if (e.target.classList.contains('remove-btn')) {
-            const row = e.target.closest('tr');
-            const slug = row.dataset.slug;
-            delete selectedProducts[slug];
-            row.remove();
-         }
-      });
-   });
+   
 </script>
+
+
 {% endblock dashboard_body %}
