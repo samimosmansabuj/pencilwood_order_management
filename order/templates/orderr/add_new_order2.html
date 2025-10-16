@@ -11,7 +11,7 @@
    <!-- {{order_customer_form}}
    {{order_form}} -->
 
-   <form method="POST" enctype="multipart/form-data">
+   <form method="POST" enctype="multipart/form-data" >
       {% csrf_token %}
       <div class="container-fluid">
          <h1 class="mt-4">Add New Order</h1>
@@ -240,16 +240,13 @@
                                  <td colspan="5" class="p-0">
                                     <div class="row no-gutters">
                                        <div class="col-4">
-                                          <input type="number" id="shipping-collect" class="form-control"
-                                             placeholder="Shipping Charge (Collect)">
+                                          {{ order_form.delivery_charge }}
                                        </div>
                                        <div class="col-4">
-                                          <input type="number" id="shipping-cost" class="form-control"
-                                             placeholder="Shipping Charge (Cost)">
+                                          {{ order_form.delivery_charge_cost }}
                                        </div>
                                        <div class="col-4">
-                                          <input type="number" id="advanced-payment" class="form-control"
-                                             placeholder="Advanced Payment">
+                                          {{ order_form.advance_amount }}
                                        </div>
                                     </div>
                                  </td>
@@ -283,9 +280,9 @@
                   const totalDueCell = document.getElementById('total-due');
                   const totalAmountCell = document.getElementById('total-amount');
                   const totalRowsCell = document.getElementById('total-rows');
-                  const shippingCostInput = document.getElementById('shipping-cost');
+                  const shippingCostInput = document.getElementById('inputDeliveryChargeCost');
                   const advancedPaymentInput = document.getElementById('advanced-payment');
-                  const shippingCollectInput = document.getElementById('shipping-collect');
+                  const shippingCollectInput = document.getElementById('inputDeliveryCharge');
 
                   const selectedProducts = {};
 
@@ -331,9 +328,9 @@
                      row.setAttribute('data-slug', slug);
 
                      row.innerHTML = `
-                        <td>${name}</td>
-                        <td><input type="number" class="form-control unit-price-input" value="${price.toFixed(2)}"></td>
-                        <td><input type="number" min="1" value="1" class="form-control quantity-input"></td>
+                        <td>${name}<input type="text" hidden value="${slug}" name="slug"></td>
+                        <td><input type="number" class="form-control unit-price-input" value="${price.toFixed(2)}" name="unit_price"></td>
+                        <td><input type="number" min="1" value="1" class="form-control quantity-input" name="quantity"></td>
                         <td class="total-price">${price.toFixed(2)}</td>
                         <td><button class="btn btn-danger btn-sm remove-btn">🗑️</button></td>
                     `;

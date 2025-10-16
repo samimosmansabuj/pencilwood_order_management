@@ -73,7 +73,7 @@ class OrderForm(forms.ModelForm):
     }))
 
     advance_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'id': 'inputAdvanceAmount', 'placeholder': 'Enter Advance Amount'
+        'class': 'form-control', 'id': 'advanced-payment', 'placeholder': 'Enter Advance Amount'
     }))
 
     due_amount = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={

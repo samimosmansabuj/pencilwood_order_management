@@ -6,7 +6,7 @@ urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
     path('update-order/<int:pk>/', update_order, name='update_order'),
     path('order/delete/<int:pk>/', OrderDeleteView.as_view(), name='order_delete'),
-    path('order/add-new/', add_new_order, name='add_new_order'),
+    path('order/add-new/', add_new_order2, name='add_new_order'),
     #logistic Company api connect========
     path('order/create-pathao-parcel/<int:id>/', create_pathao_parcel, name='create_pathao_parcel'),
     path('order/create-steadfast-parcel/<int:id>/', create_steadfast_parcel, name='create_steadfast_parcel'),
@@ -33,5 +33,5 @@ urlpatterns = [
 
 
     # New Update URL Testing Mode-----------
-    path('order/add-new-2/', add_new_order2, name="add_new_order2"),
+    # path('order/add-new-2/', add_new_order2, name="add_new_order2"),
 ]

@@ -138,7 +138,7 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         quantity = self.quantity or 0
         unit_price = self.unit_price or 0
-        self.total = unit_price * quantity
+        self.total = float(unit_price) * int(quantity)
         super(OrderItem, self).save(*args, **kwargs)
     
     def __str__(self):
@@ -245,12 +245,11 @@ class Order(models.Model):
         self.extra_cost = extra_cost
         self.total_amount = deal_value - extra_cost
         
-        print(due_amount < deal_value+delivery_charge)
         if due_amount == 0:
             self.payment_status = 'Paid'
         elif due_amount < deal_value+delivery_charge:
             self.payment_status = 'Partial'
-        elif due_amount == deal_value+delivery_charge:
+        else:
             self.payment_status = 'Unpaid'
         
         if self.request_order:
