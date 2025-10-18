@@ -11,7 +11,7 @@
     <link href="{{website_setting.fav_icon.url}}" rel="icon">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/invoice_custom.css' %}">
-    <!-- <link rel="stylesheet" type="text/css" href="media-query.css"> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/media-query.css' %}">
 
     
     <style>
@@ -258,22 +258,21 @@
     </div>
     
     <!--Invoice Wrap End here -->
-    <!-- <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/jspdf.min.js"></script>
-    <script src="../assets/js/html2canvas.min.js"></script> -->
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/jspdf.min.js' %}"></script>
+    <script src="{% static 'assets/js/html2canvas.min.js' %}"></script>
+    <script src="{% static 'assets/js/invoice_custom.js' %}"></script>
 
     <!-- html2canvas -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
 
 
     <!-- jsPDF UMD -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
 
-    <!-- Your custom script -->
-    <!-- <script src="{% static 'assets/js/invoice_custom.js' %}"></script> -->
 
-    <script>
+    <!-- <script>
     document.getElementById('generatePDF').addEventListener('click', function() {
         // Get the invoice element
         var element = document.getElementById('download_section');
@@ -293,7 +292,7 @@
             alert('PDF generation failed! Check console.');
         });
     });
-    </script>
+    </script> -->
 
 
 </body>
