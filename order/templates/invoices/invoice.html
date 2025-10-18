@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Invoice - {{ order.tracking_ID }}</title>
+
+    <link href="{{website_setting.fav_icon.url}}" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/invoice_custom.css' %}">
+    <!-- <link rel="stylesheet" type="text/css" href="media-query.css"> -->
+
+    
+    <style>
+    @media print {
+        #invo_header {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background-color: green !important;
+            border-radius: 20px 20px 0 0 !important;
+            color: white !important;
+        }
+    }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <!--Invoice Wrap Start here -->
+    <div class="invoice_wrap">
+        <div class="invoice-container">
+            <div class="invoice-content-wrap" id="download_section">
+                <!--Header Start Here -->
+                <header class="invoice-header text-invoice content-min-width" id="invo_header" style="padding: 10px 50px; background: green; border-radius: 20px 20px 0 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                <!-- <header class="invoice-header text-invoice content-min-width" id="invo_header" style="padding: 10px 50px; background: green; border-radius: 20px 20px 0 0;"> -->
+                    <div class="invoice-logo-content">
+                        <div class="invoice-logo">
+                            <a class="logo"><img src="{{ website_setting.invoice_logo.url }}" alt="pencilwoodbd"></a>
+                        </div>
+                        <div class="invo-head-content">
+                            <div class="invo-head-wrap">
+                                <div class="invo-num-title invo-no inter-700">Invoice No:</div>
+                                <div class="invo-num inter-400">#{{ order.tracking_ID }}</div>
+                            </div>
+                            <div class="invo-head-wrap">
+                                <div class="invo-num-title invo-date inter-700">Invoice Date:</div>
+                                <div class="invo-num inter-400">{{ order.order_date }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-header-contact" style="display: flex; align-items: center; gap: 25px;">
+                        <div class="invo-cont-wrap" style="display: flex; align-items: center; gap: 6px;">
+                            <div class="invo-social-icon">
+                                <i class="fa-solid fa-phone" style="color: #00baff;"></i>
+                            </div>
+                            <div class="invo-social-name">
+                                <a href="tel:8801810447799" class="invo-hedaer-contact inter-400">+8801810447799</a>
+                            </div>
+                        </div>
+                        <div class="invo-cont-wrap" style="display: flex; align-items: center; gap: 6px;">
+                            <div class="invo-social-icon">
+                                <i class="fa-solid fa-envelope" style="color: #00baff;"></i>
+                            </div>
+                            <div class="invo-social-name">
+                                <a href="mailto:pencilwoodbd@gmail.com" class="invo-hedaer-mail inter-400">pencilwoodbd@gmail.com</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-header-contact" style="display: flex; align-items: center; gap: 25px; padding-top: 10px;">
+                        <!-- Website -->
+                        <div class="invo-cont-wrap" style="display: flex; align-items: center; gap: 6px;">
+                            <div class="invo-social-icon">
+                                <i class="fa-solid fa-globe" style="color: #00baff;"></i>
+                            </div>
+                            <div class="invo-social-name">
+                                <a href="https://pencilwoodbd.com" target="_blank" class="invo-hedaer-website inter-400">
+                                    www.pencilwoodbd.com
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Address -->
+                        <div class="invo-cont-wrap" style="display: flex; align-items: center; gap: 6px;">
+                            <div class="invo-social-icon">
+                                <i class="fa-solid fa-location-dot" style="color: #00baff;"></i>
+                            </div>
+                            <div class="invo-social-name">
+                                <span class="invo-hedaer-address inter-400">
+                                    Advance Police Town, Savar, Bangladesh
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </header>
+                <!--Header End Here -->
+                
+                <!--Invoice content start here -->
+                <section class="agency-service-content" id="agency_service" style="padding: 10px 0px;">
+                    <div class="container">
+                        <!--invoice custom name content -->
+                        <div class="invoice-owner-conte-wrap">
+                            <div class="invo-to-wrap">
+                                <div class="invoice-to-content">
+                                    <p class="invo-to inter-700 medium-font mtb-0">Customer Info:</p>
+                                    <h1 class="invo-to-owner inter-700 md-lg-font">
+                                        {% if order.request_order %}
+                                        {{ order.request_order.name }}
+                                        {% else %}
+                                        {{ order.order_customer.name }}
+                                        {% endif %}
+                                    </h1>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0">Phone: 
+                                        {% if order.request_order %}
+                                        {{ order.request_order.phone_number }}
+                                        {% else %}
+                                        {{ order.order_customer.phone_number }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0">Email: 
+                                        {% if order.request_order %}
+                                        {{ order.request_order.email }}
+                                        {% else %}
+                                        {{ order.order_customer.email }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0">Address: {{ order.delivery_address }}</p>
+                                </div>
+                            </div>
+                            <div class="invo-pay-to-wrap">
+                                <div class="invoice-pay-content">
+                                    <p class="invo-to inter-700 medium-font mtb-0">Payment Details:</p>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0" style="margin-top: 10px;">
+                                        {% if order.payment_method %} {{ order.payment_method }} {% else %} COD {% endif %} : Payment Method
+                                    </p>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0">
+                                        {{ order.payment_status }} : Payment Status
+                                    </p>
+                                    <p class="invo-owner-address medium-font inter-400 mtb-0">
+                                        {{ order.status }} : Order Status
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Invoice Table Data Start here -->
+                        <div class="table-wrapper agency-service-table" style="padding: 10px 0px 10px 0px;">
+                            <table class="invoice-table">
+                                <thead>
+                                    <tr class="invo-tb-header">
+                                        <th class="invo-table-title serv-wid inter-700 medium-font">Product</th>
+                                        <th class="invo-table-title qty-wid inter-700 medium-font">Qty</th>
+                                        <th class="invo-table-title pric-wid inter-700 medium-font">Price</th>
+                                        <th class="invo-table-title tota-wid inter-700 medium-font total-head">Total
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invo-tb-body">
+                                    {% for order_item in order.order_item.all %}
+                                    <tr class="invo-tb-row">
+                                        <td class="invo-tb-data" style="padding: 5px 0px;">{{order_item.product.name}}</td>
+                                        <td class="invo-tb-data" style="padding: 5px 0px;">{{ order_item.quantity }}</td>
+                                        <td class="invo-tb-data" style="padding: 5px 0px;">{{ order_item.unit_price }}</td>
+                                        <td class="invo-tb-data total-data" style="padding: 5px 0px;">{{ order_item.total }} BDT</td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--Invoice Table Data End here -->
+                        <!--Invoice additional info start here -->
+                        <div class="invo-addition-wrap">
+                            <div class="invo-add-info-content">
+                            </div>
+                            <div class="invo-bill-total">
+                                <p style="display: none;" id="deal_value">{{ order.deal_value|default:'0' }}</p>
+                                <table class="invo-total-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="inter-700 medium-font b-text hotel-sub">Delivery Charge:</td>
+                                            <td class="invo-total-data inter-400 medium-font second-color" id="delivery_charge">
+                                                {% if order.delivery_charge %}
+                                                {{ order.delivery_charge }} BDT
+                                                {% else %}
+                                                Free
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="inter-700 medium-font b-text hotel-sub">Advanced Amount:</td>
+                                            <td class="invo-total-data inter-400 medium-font second-color">
+                                                {{ order.advance_amount|default:'0' }} BDT
+                                            </td>
+                                        </tr>
+                                        <tr class="bottom-border">
+                                            <td class="inter-700 medium-font b-text hotel-sub">Due Amount</td>
+                                            <td class="invo-total-data inter-400 medium-font second-color">
+                                                {{ order.due_amount }} BDT
+                                            </td>
+                                        </tr>
+                                        <tr class="invo-grand-total">
+                                            <td class="inter-700 sm-text primary-color hotel-sub">Grand Total:</td>
+                                            <td class="sm-text b-text invo-total-price" id="grand_total">$967.60</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <script>
+                            let dealValue = parseFloat(document.getElementById("deal_value").textContent.trim()) || 0;
+                            let deliveryChargeText = document.getElementById("delivery_charge").textContent.trim();
+
+                            let deliveryCharge = 0
+                            if (deliveryChargeText.toLowerCase().includes("free")){
+                                deliveryCharge = 0;
+                            } else{
+                                deliveryCharge = parseFloat(deliveryChargeText.replace(/[^0-9.]/g, "")) || 0;
+                            }
+                            let grandTotal = dealValue + deliveryCharge;
+                            document.getElementById("grand_total").textContent = grandTotal.toFixed(2) + " BDT";
+                        </script>
+                        <!--Invoice additional info end here -->
+
+                        <p style="text-align: center; color: black; padding: 5px 0px; margin: auto;">Thank you for your Order!</p>
+                    </div>
+                </section>
+                <!--Invoice content end here -->
+            </div>
+
+            <!--bottom content start here -->
+            <section class="agency-bottom-content d-print-none" id="agency_bottom">
+                <div class="container">
+                    <!--print-download content start here -->
+                    <div class="invo-buttons-wrap">
+                        <div class="invo-print-btn invo-btns">
+                            <a href="javascript:window.print()" class="print-btn">
+                                <i class="fa-solid fa-print fa-xl" style="color: white; margin: auto;"></i>
+                                
+                                <span class="inter-700 medium-font">Print</span>
+                            </a>
+                        </div>
+                        <div class="invo-down-btn invo-btns">
+                            <a class="download-btn" id="generatePDF">
+                                <i class="fa-solid fa-download fa-xl" style="color: white; margin: auto;"></i>
+                                <span class="inter-700 medium-font">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                    <!--print-download content end here -->
+                </div>
+            </section>
+            <!--bottom content end here -->
+        </div>
+    </div>
+    
+    <!--Invoice Wrap End here -->
+    <!-- <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jspdf.min.js"></script>
+    <script src="../assets/js/html2canvas.min.js"></script> -->
+
+    <!-- html2canvas -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+    <!-- jsPDF UMD -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+
+    <!-- Your custom script -->
+    <!-- <script src="{% static 'assets/js/invoice_custom.js' %}"></script> -->
+
+    <script>
+    document.getElementById('generatePDF').addEventListener('click', function() {
+        // Get the invoice element
+        var element = document.getElementById('download_section');
+
+        // PDF options
+        var opt = {
+            margin: 0.2,
+            filename: 'invoice.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Generate and save PDF
+        html2pdf().set(opt).from(element).save().catch(function(err) {
+            console.error('PDF generation failed:', err);
+            alert('PDF generation failed! Check console.');
+        });
+    });
+    </script>
+
+
+</body>
+
+</html>
