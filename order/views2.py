@@ -3,6 +3,7 @@ from .models import Product, OrderItem, Order
 from .forms import OrderCustomerForm, OrderForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from dashboard.models import InvoiceColorDesign
 
 @login_required
 def add_new_order2(request):
@@ -48,6 +49,9 @@ def add_new_order2(request):
 
 @login_required
 def new_generate_invoice(request, id):
+    design = InvoiceColorDesign.objects.all().first()
     order = get_object_or_404(Order, id=id)
-    context = {'order': order}
+    context = {'order': order, 'design': design}
+
+    print("header_bg: ", design.header_bg)
     return render(request, 'invoices/invoice.html', context)

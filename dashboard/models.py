@@ -91,3 +91,15 @@ class Remainder(models.Model):
     def __str__(self):
         return f'{self.date} | {self.order if self.order else None} - {self.order_request if self.order_request else None}'
 
+
+class InvoiceColorDesign(models.Model):
+    header_bg = models.CharField(max_length=10, blank=True, null=True)
+    footer_bg = models.CharField(max_length=10, blank=True, null=True)
+    footer_text_text = models.CharField(max_length=10, blank=True, null=True)
+    header_text_color = models.CharField(max_length=10, blank=True, null=True)
+    highlight_color = models.CharField(max_length=10, blank=True, null=True)
+    table_header_text = models.CharField(max_length=10, blank=True, null=True)
+
+    def __call__(self, *args, **kwds):
+        return f"Invoice Color Config - {self.pk}"
+

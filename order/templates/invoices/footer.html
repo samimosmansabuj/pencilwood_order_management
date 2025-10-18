@@ -1,0 +1,76 @@
+{% load static %}
+<style>
+    /* ===== Footer Styling ===== */
+    #invo_footer {
+        padding: 10px 50px;
+        background: #fec219 !important;
+        border-radius: 0px 0px 20px 20px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color: #000 !important;
+    }
+
+    /* Container Flex Layout */
+    #invo_footer .footer-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; /* Responsive support */
+        width: 100%;
+        gap: 10px;
+    }
+
+    /* Each item */
+    #invo_footer .footer-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #000 !important;
+    }
+
+    #invo_footer .footer-item a {
+        color: #000 !important;
+        text-decoration: none;
+    }
+
+    /* ===== Responsive Design ===== */
+    @media (max-width: 768px) {
+        #invo_footer .footer-container {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    }
+
+    #invo_footer,
+    #invo_footer * {
+        color: #000000 !important;
+    }
+    #invo_footer a {
+        color: #000000 !important;
+        text-decoration: none; /* Optional: লিঙ্কের আন্ডারলাইন বন্ধ করতে */
+    }
+</style>
+
+
+<footer id="invo_footer">
+    <div class="footer-container">
+        <!-- Website (Left) -->
+        <div class="footer-item">
+            <i class="fa-solid fa-globe" style="color: #00baff;"></i>
+            <a href="https://pencilwoodbd.com" target="_blank">www.pencilwoodbd.com</a>
+        </div>
+
+        <!-- Email (Center) -->
+        <div class="footer-item">
+            <i class="fa-solid fa-envelope" style="color: #00baff;"></i>
+            <a href="mailto:pencilwoodbd@gmail.com">pencilwoodbd@gmail.com</a>
+        </div>
+
+        <!-- Phone (Right) -->
+        <div class="footer-item">
+            <i class="fa-solid fa-phone" style="color: #00baff;"></i>
+            <a href="tel:8801810447799">+8801810447799</a>
+        </div>
+    </div>
+</footer>

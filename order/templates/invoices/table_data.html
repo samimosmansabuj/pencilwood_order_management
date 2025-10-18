@@ -1,0 +1,37 @@
+{% load static %}
+<!-- <style>
+    #table_header,
+    #table_header * {
+        color: #6f00ff !important;
+    }
+
+    #table_header a {
+        color: #6f00ff !important;
+        text-decoration: none;
+    }
+</style> -->
+
+<div class="table-wrapper agency-service-table" style="padding: 10px 0px 10px 0px;">
+    <table class="invoice-table">
+        <thead id="table_header">
+            <tr class="invo-tb-header">
+                <th class="invo-table-title serv-wid inter-700 medium-font">Product</th>
+                <th class="invo-table-title qty-wid inter-700 medium-font">Qty</th>
+                <th class="invo-table-title pric-wid inter-700 medium-font">Price</th>
+                <th class="invo-table-title tota-wid inter-700 medium-font total-head">Total
+                </th>
+            </tr>
+        </thead>
+        <tbody class="invo-tb-body">
+            {% for order_item in order.order_item.all %}
+            <tr class="invo-tb-row">
+                <td class="invo-tb-data" style="padding: 5px 0px;">{{order_item.product.name}}</td>
+                <td class="invo-tb-data" style="padding: 5px 0px;">{{ order_item.quantity }}</td>
+                <td class="invo-tb-data" style="padding: 5px 0px;">{{ order_item.unit_price }}</td>
+                <td class="invo-tb-data total-data" style="padding: 5px 0px;">{{ order_item.total }} BDT</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>

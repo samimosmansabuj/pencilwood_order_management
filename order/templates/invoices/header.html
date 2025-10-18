@@ -1,0 +1,32 @@
+{% load static %}
+<style>
+    #invo_header,
+    #invo_header * {
+        color: #000000 !important;
+    }
+
+    #invo_header a {
+        color: #000000 !important;
+        text-decoration: none;
+        /* Optional: লিঙ্কের আন্ডারলাইন বন্ধ করতে */
+    }
+</style>
+
+<header class="invoice-header text-invoice content-min-width" id="invo_header"
+    style="padding: 10px 50px; background: #{{ invoice_design.header_bg }} !important; border-radius: 20px 20px 0 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+    <div class="invoice-logo-content">
+        <div class="invoice-logo">
+            <a class="logo"><img src="{{ website_setting.invoice_logo.url }}" alt="pencilwoodbd"></a>
+        </div>
+        <div class="invo-head-content">
+            <div class="invo-head-wrap">
+                <div class="invo-num-title invo-no inter-700">Invoice No:</div>
+                <div class="invo-num inter-400">#{{ order.tracking_ID }}</div>
+            </div>
+            <div class="invo-head-wrap">
+                <div class="invo-num-title invo-date inter-700">Invoice Date:</div>
+                <div class="invo-num inter-400">{{ order.order_date }}</div>
+            </div>
+        </div>
+    </div>
+</header>
