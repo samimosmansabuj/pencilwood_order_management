@@ -23,15 +23,9 @@
                 value="{% if order.request_order %}{{ order.request_order.name }}{% else %}{{ order.order_customer.name }}{% endif %}" style="width: 150px;">
         </td>
         <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            {% if order.request_order %}
-            {% for product in order.request_order.product.all %}
-            {{ product.name }},
+            {% for orderitem in order.order_item.all %}
+            {{ orderitem.product.name }}
             {% endfor %}
-            {% else %}
-            {% for product in order.order_customer.product.all %}
-            {{ product.name }},
-            {% endfor %}
-            {% endif %}
         </td>
         {% if request.user.user_type != 'Factory Staff' %}
         <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
