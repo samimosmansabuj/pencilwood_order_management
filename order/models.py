@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.db import models
 import random, string
+from .utils import generate_unique_slug
 
 
 class Product(models.Model):
@@ -18,8 +19,8 @@ class Product(models.Model):
         ordering = ['name']
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
+        __object = Product.objects.get(pk=self.pk) if self.pk else None
+        self.slug = generate_unique_slug(Product, self.name, __object.slug if __object else None)
         super(Product, self).save(*args, **kwargs)
     
     def __str__(self) -> str:

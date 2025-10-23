@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 import json
 import os
+from django.utils.text import slugify
 
 API_BASE_URL = "https://api-hermes.pathao.com"
 
@@ -59,3 +60,18 @@ def create_steadfast_order(order_data):
     }
     return requests.post(url, headers=headers, json=order_data)
 
+
+
+def generate_unique_slug(model_object, field_value, old_slug=None):
+    slug = slugify(field_value)
+    if slug != old_slug:
+        unique_slug = slug
+        num = 1
+        while model_object.objects.filter(slug=unique_slug).exists():
+            if unique_slug == old_slug:
+                return old_slug
+            unique_slug = f'{slug}-{num}'
+            num+=1
+        return unique_slug
+    else:
+        return old_slug
