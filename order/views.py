@@ -130,9 +130,11 @@ class OrderListView(LoginRequiredMixin, ListView):
         
         # Filter by Product
         if product_id and product_id.isdigit():
+            
+
             queryset = queryset.filter(
                 Q(request_order__product__id__icontains=product_id) |
-                Q(order_customer__product__id__icontains=product_id)
+                Q(order_item__product__id=product_id)
             ).distinct()
             
         if work_assign and work_assign.isdigit():
@@ -414,30 +416,6 @@ class OrderDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('order_list')
 
 
-# @login_required
-# def add_new_order(request):
-#     if request.method == 'POST':
-#         order_customer_form = OrderCustomerForm(request.POST)
-#         order_form = OrderForm(request.POST, request.FILES)
-
-#         if order_customer_form.is_valid() and order_form.is_valid():
-#             order_customer = order_customer_form.save()
-#             order = order_form.save(commit=False)
-#             order.order_customer = order_customer
-#             order.save()
-#             return redirect('order_success', id=order.id)
-#         else:
-#             messages.warning(
-#                 request, f"{order_customer_form.errors} and {order_form.errors}")
-#             return redirect(request.META['HTTP_REFERER'])
-#     else:
-#         order_customer_form = OrderCustomerForm()
-#         order_form = OrderForm()
-
-#     return render(request, 'order/add_new_order.html', {
-#         'order_customer_form': order_customer_form,
-#         'order_form': order_form
-#     })
 
 
 @login_required
