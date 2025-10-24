@@ -417,21 +417,43 @@
                                 <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create Pathao Parcel Repeat
                                 </a> -->
-                                <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel" style="pointer-events: none; opacity: 0.5;">
+                                <!-- <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel" style="pointer-events: none; opacity: 0.5;">
                                     Create SteadFast Parcel Repeat
-                                </a>
-                                <p id="error-message" style="color: red; margin-top: 10px;"></p>
-                                {% else %}
-
-                                <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel" style="pointer-events: none; opacity: 0.5;">
-                                    Create Pathao Parcel
                                 </a> -->
-                                <a href="{% url 'create_steadfast_parcel' order.id %}" class="btn btn-primary btn-block" id="create-steadfast-parcel" style="pointer-events: none; opacity: 0.5;">
-                                    Create SteadFast Parcel
-                                </a>
 
-                                <p id="error-message" style="color: red; margin-top: 10px;"></p>
+                                <div class="steadfast-row" data-order-id="{{ order.id }}" data-base-url="{% url 'create_steadfast_parcel' order.id %}" style="position: relative; display: flex; gap: 10px; margin: 8px; align-items: center;">
 
+                                    <button type="button"  class="btn btn-primary steadfast-btn" data-account="pencilwood" style="width: 50%;">
+                                        SteadFast Pencilwood
+                                    </button>
+                                    <button type="button"  class="btn btn-success steadfast-btn" data-account="kid" style="width: 50%;">
+                                        SteadFast Kid
+                                    </button>
+
+                                    <p class="error-message" style="color: red; margin-top: 10px;"></p>
+
+                                    <input type="hidden" class="delivery-address" value="{{ order.delivery_address|default:'' }}">
+                                    <input type="hidden" class="phone-number" value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}">
+                                </div>
+
+
+
+                                <!-- <p id="error-message" style="color: red; margin-top: 10px;"></p> -->
+                                {% else %}
+                                <div class="steadfast-row" data-order-id="{{ order.id }}" data-base-url="{% url 'create_steadfast_parcel' order.id %}" style="position: relative; display: flex; gap: 10px; margin: 8px; align-items: center;">
+
+                                    <button type="button"  class="btn btn-primary steadfast-btn" data-account="pencilwood" style="width: 50%;">
+                                        SteadFast Pencilwood
+                                    </button>
+                                    <button type="button"  class="btn btn-success steadfast-btn" data-account="kid" style="width: 50%;">
+                                        SteadFast Kid
+                                    </button>
+
+                                    <p class="error-message" style="color: red; margin-top: 10px;"></p>
+
+                                    <input type="hidden" class="delivery-address" value="{{ order.delivery_address|default:'' }}">
+                                    <input type="hidden" class="phone-number" value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}">
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
@@ -444,7 +466,138 @@
             <input type="hidden" id="delivery-address" value="{{ order.delivery_address }}">
             <input type="hidden" id="phone-number" value="{% if order.request_order %}{{order.request_order.phone_number}}{% else %}{{order.order_customer.phone_number}}{% endif %}">
 
+
             <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // initial validation: for every row set enabled/disabled
+                    document.querySelectorAll('.steadfast-row').forEach(row => {
+                        const buttons = row.querySelectorAll('.steadfast-btn'); // ✅ সব বাটন (Pencilwood + Kid)
+                        const addr = (row.querySelector('.delivery-address')?.value || '').trim();
+                        const ph = (row.querySelector('.phone-number')?.value || '').trim();
+                        const err = row.querySelector('.error-message');
+
+                        function setInvalid(message) {
+                            buttons.forEach(btn => {
+                                btn.style.pointerEvents = 'none';
+                                btn.style.opacity = '0.5';
+                            });
+                            if (err) err.textContent = message || '';
+                        }
+
+                        function setValid() {
+                            buttons.forEach(btn => {
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.opacity = '1';
+                            });
+                            if (err) err.textContent = '';
+                        }
+                        
+                        if (addr.length > 10 && ph.length === 11) {
+                            setValid();
+                        } else {
+                            if (ph.length !== 11) setInvalid('Phone number must be exactly 11 digits.');
+                            else if (addr.length <= 10) setInvalid('Delivery address must be more than 10 characters.');
+                            else setInvalid('');
+                        }
+                    });
+
+                    
+                    const steadfastButtons = document.querySelectorAll('.steadfast-btn');
+                    let currentDropdown = null;
+
+                    steadfastButtons.forEach(btn => {
+                        btn.addEventListener('click', function (e) {
+                            e.preventDefault(); // stop button from submitting form
+                            e.stopPropagation(); // stop bubbling
+
+                            const account = this.dataset.account;
+                            const parent = this.closest('.steadfast-row');
+                            const baseUrl = parent.dataset.baseUrl;
+
+                            if (currentDropdown && currentDropdown.dataset.account === account) {
+                                currentDropdown.remove();
+                                currentDropdown = null;
+                                return;
+                            }
+
+                            if (currentDropdown) {
+                                currentDropdown.remove();
+                                currentDropdown = null;
+                            }
+
+                            // নতুন dropdown তৈরি করি
+                            const dropdown = document.createElement('div');
+                            dropdown.classList.add('steadfast-dropdown');
+                            dropdown.dataset.account = account;
+                            dropdown.style.position = 'absolute';
+                            dropdown.style.width = '100%';
+                            dropdown.style.textAlign = 'center';
+                            dropdown.style.top = '100%';
+                            dropdown.style.left = '0';
+                            dropdown.style.background = 'white';
+                            dropdown.style.border = '1px solid #ccc';
+                            dropdown.style.padding = '8px';
+                            dropdown.style.borderRadius = '6px';
+                            dropdown.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                            dropdown.style.zIndex = '9999';
+                            dropdown.style.animation = 'fadeIn 0.2s ease-in-out';
+                            dropdown.innerHTML = `
+                                <a href="${baseUrl}?type=home&account=${account}" class="dropdown-item">🏠 Home Delivery</a><br>
+                                <a href="${baseUrl}?type=point&account=${account}" class="dropdown-item">📍 Point Delivery</a>
+                            `;
+
+                            parent.appendChild(dropdown);
+                            currentDropdown = dropdown;
+                        });
+                    });
+
+                    document.addEventListener('click', function () {
+                        if (currentDropdown) {
+                            currentDropdown.remove();
+                            currentDropdown = null;
+                        }
+                    });
+
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && currentDropdown) {
+                            currentDropdown.remove();
+                            currentDropdown = null;
+                        }
+                    });
+
+                    // optional fade-in animation
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-5px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+
+                        // Optional: If your hidden inputs can change dynamically via JS/AJAX, call this function to re-validate a row
+                    window.steadfastRevalidateRow = function (rowElement) {
+                        if (!rowElement) return;
+                        const btn = rowElement.querySelector('.steadfast-btn');
+                        const addr = (rowElement.querySelector('.delivery-address')?.value || '').trim();
+                        const ph = (rowElement.querySelector('.phone-number')?.value || '').trim();
+                        const err = rowElement.querySelector('.error-message');
+                        if (addr.length > 10 && ph.length === 11) {
+                        btn.style.pointerEvents = 'auto'; btn.style.opacity = '1'; if (err) err.textContent = '';
+                        } else {
+                        btn.style.pointerEvents = 'none'; btn.style.opacity = '0.5';
+                        if (err) {
+                            if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
+                            else err.textContent = 'Delivery address must be more than 10 characters.';
+                        }
+                        }
+                    };
+
+                });
+            </script>
+
+            <!-- <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     // Get elements
                     // const button = document.getElementById('create-pathao-parcel');
@@ -484,7 +637,7 @@
                     deliveryAddress.addEventListener('input', validateConditions);
                     phoneNumber.addEventListener('input', validateConditions);
                 });
-            </script>
+            </script> -->
             <!-- -------Place Order Section End------- -->
 
 

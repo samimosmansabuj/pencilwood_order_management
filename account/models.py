@@ -16,5 +16,19 @@ class Custom_User(AbstractUser):
     
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}' if self.first_name else f'{self.username} | {self.email}'
-    
+
+
+class SteadFastAPI(models.Model):
+    ACCOUNT = (
+        ("pencilwood", "pencilwood"),
+        ("kid", "kid")
+    )
+    account = models.CharField(max_length=50, choices=ACCOUNT)
+    base_url = models.URLField(max_length=255)
+    api_key = models.CharField(max_length=255)
+    secret_key = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f"SteadFast API Credential for {self.account}"
 

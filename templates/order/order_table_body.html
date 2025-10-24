@@ -1,54 +1,59 @@
 {% load static %}
 
 {% for order in orders %}
-<tr role="row" class="odd text-red-{{ order.id }} {% if forloop.counter|divisibleby:2 %}even-row{% else %}odd-row{% endif %}">
+<tr role="row"
+    class="odd text-red-{{ order.id }} {% if forloop.counter|divisibleby:2 %}even-row{% else %}odd-row{% endif %}">
     <form id="update-order-form-{{ order.id }}">
-    {% csrf_token %}
+        {% csrf_token %}
         <td>
-            <button type="button" class="btn btn-primary update-order-btn" data-order-id="{{ order.id }}">Update</button>
+            <button type="button" class="btn btn-primary update-order-btn"
+                data-order-id="{{ order.id }}">Update</button>
             <a href="{% url 'generate_pdf' id=order.id %}" class="btn btn-primary mt-1" target="_blank">Invoice</a>
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {{ order.order_date }}
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             <a href="{% url 'order_view' order.id %}" target="_blank">{{ order.tracking_ID }}</a>
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            <input type="text" name="company" class="form-control" 
-                value="{% if order.request_order %}{{ order.request_order.company }}{% else %}{{ order.order_customer.company }}{% endif %}" style="width: 150px;">
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
+            <input type="text" name="company" class="form-control"
+                value="{% if order.request_order %}{{ order.request_order.company }}{% else %}{{ order.order_customer.company }}{% endif %}"
+                style="width: 150px;">
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            <input type="text" name="name" class="form-control" 
-                value="{% if order.request_order %}{{ order.request_order.name }}{% else %}{{ order.order_customer.name }}{% endif %}" style="width: 150px;">
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
+            <input type="text" name="name" class="form-control"
+                value="{% if order.request_order %}{{ order.request_order.name }}{% else %}{{ order.order_customer.name }}{% endif %}"
+                style="width: 150px;">
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {% for orderitem in order.order_item.all %}
             {{ orderitem.product.name }}
             {% endfor %}
         </td>
         {% if request.user.user_type != 'Factory Staff' %}
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            <input type="text" name="phone_number" class="form-control" 
-                value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}" style="width: 120px;">
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
+            <input type="text" name="phone_number" class="form-control"
+                value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}"
+                style="width: 120px;">
         </td>
         {% endif %}
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {{ order.total_quantity }}
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             <select name="status" class="form-control" style="width: 100px;">
                 {% for choice, display in order.get_status_choices %}
                 <option value="{{ choice }}" {% if choice == order.status %}selected{% endif %}>{{ display }}</option>
                 {% endfor %}
             </select>
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             <textarea name="remark" id="" class="form-control" style="width: 200px;">{{ order.remark }}</textarea>
         </td>
 
         {% if request.user.user_type != 'Factory Staff' %}
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             <select name="work_assign" class="form-control" style="width: 150px;">
                 {% for user in users %}
                 <option value="{{ user.id }}" {% if user.id == order.work_assign_id %}selected{% endif %}>
@@ -57,15 +62,16 @@
                 {% endfor %}
             </select>
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
-            <input type="text" name="delivery_address" class="form-control" value="{{ order.delivery_address }}" style="width: 200px;">
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
+            <input type="text" name="delivery_address" class="form-control" value="{{ order.delivery_address }}"
+                style="width: 200px;">
         </td>
         {% endif %}
 
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             <input type="date" name="delivery_date" class="form-control" value="{{ order.delivery_date|date:'Y-m-d' }}">
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {% if order.design_file %}
             <a href="{{ order.design_file.url }}" target="_blank">Open</a>
             {% else %}
@@ -73,179 +79,172 @@
             {% endif %}
         </td>
         {% if request.user.user_type != 'Factory Staff' %}
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {{ order.deal_value }}
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {{ order.due_amount }}
         </td>
-        <td {% if order.urgent %}style="color: red; font-weight: bold;"{% endif %}>
+        <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {% if order.pathao_parcel_id or order.steadfast_parcel_id %}
-                {% if order.pathao_parcel_id %}
-                <a href="https://merchant.pathao.com/courier/orders/{{ order.pathao_parcel_id }}" 
+            {% if order.pathao_parcel_id %}
+            <a href="https://merchant.pathao.com/courier/orders/{{ order.pathao_parcel_id }}"
                 class="btn btn-success btn-block" target="_blank">Pathao Tracking</a>
-                {% endif %}
+            {% endif %}
 
-                {% if order.steadfast_parcel_id %}
-                <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}" 
+            {% if order.steadfast_parcel_id %}
+            <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}"
                 class="btn btn-success btn-block" target="_blank">SteadFast Tracking</a>
-                {% endif %}
+            {% endif %}
             {% else %}
 
-            <!-- <a href="{% url 'create_pathao_parcel' order.id %}" class="btn btn-primary btn-block" id="create-pathao-parcel-{{order.id}}" style="pointer-events: none; opacity: 0.5;">
-                Create Pathao
-            </a> -->
+            <div class="steadfast-row" data-order-id="{{ order.id }}" data-base-url="{% url 'create_steadfast_parcel' order.id %}"
+                style="position: relative; display: flex; gap: 10px; margin: 8px; align-items: center;">
 
-            <div class="steadfast-row" data-order-id="{{ order.id }}" style="position: relative; display: inline-block; margin: 8px;">
-                <!-- Button (use javascript:void(0) to avoid navigation) -->
-                <a href="javascript:void(0)" class="btn btn-primary btn-block steadfast-btn" aria-expanded="false"
-                    style="pointer-events: none; opacity: 0.5; background-color: white; cursor: pointer;">
-                    <img src="{% static 'assets/img/logo.svg' %}" alt="steadfast-logo">
-                </a>
+                <button type="button"  class="btn btn-primary steadfast-btn" data-account="pencilwood">Pencilwood</button>
+                <button type="button"  class="btn btn-success steadfast-btn" data-account="kid">Kid</button>
 
-                <!-- Dropdown -->
-                <div class="steadfast-dropdown" role="menu" style="display: none; position: absolute; top: 100%; left: 0; min-width: 160px; background: white; border: 1px solid #ccc; padding: 8px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;">
-                    <a href="{% url 'create_steadfast_parcel' order.id %}?type=home" class="dropdown-item">🏠 Home Delivery</a><br>
-                    <a href="{% url 'create_steadfast_parcel' order.id %}?type=point" class="dropdown-item">📍 Point Delivery</a>
-                </div>
-
-                <!-- Error message -->
                 <p class="error-message" style="color: red; margin-top: 6px;"></p>
 
-                <!-- Hidden inputs (or use data-* attributes) -->
                 <input type="hidden" class="delivery-address" value="{{ order.delivery_address|default:'' }}">
                 <input type="hidden" class="phone-number" value="{% if order.request_order %}{{ order.request_order.phone_number }}{% else %}{{ order.order_customer.phone_number }}{% endif %}">
             </div>
 
 
+
             <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const DEBUG = true;
-                if (DEBUG) console.log('[steadfast] script loaded');
+                document.addEventListener('DOMContentLoaded', function () {
+                    // initial validation: for every row set enabled/disabled
+                    document.querySelectorAll('.steadfast-row').forEach(row => {
+                        const buttons = row.querySelectorAll('.steadfast-btn'); // ✅ সব বাটন (Pencilwood + Kid)
+                        const addr = (row.querySelector('.delivery-address')?.value || '').trim();
+                        const ph = (row.querySelector('.phone-number')?.value || '').trim();
+                        const err = row.querySelector('.error-message');
 
-                // small helper to close all dropdowns
-                function closeAllDropdowns() {
-                    document.querySelectorAll('.steadfast-dropdown.show').forEach(d => {
-                    d.classList.remove('show');
-                    d.style.display = 'none';
-                    });
-                    document.querySelectorAll('.steadfast-btn[aria-expanded="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
-                }
-
-                // initial validation: for every row set enabled/disabled
-                document.querySelectorAll('.steadfast-row').forEach(row => {
-                    const btn = row.querySelector('.steadfast-btn');
-                    const addr = (row.querySelector('.delivery-address')?.value || '').trim();
-                    const ph = (row.querySelector('.phone-number')?.value || '').trim();
-                    const err = row.querySelector('.error-message');
-
-                    function setInvalid(message) {
-                    btn.style.pointerEvents = 'none';
-                    btn.style.opacity = '0.5';
-                    if (err) err.textContent = message || '';
-                    }
-                    function setValid() {
-                    btn.style.pointerEvents = 'auto';
-                    btn.style.opacity = '1';
-                    if (err) err.textContent = '';
-                    }
-
-                    if (addr.length > 10 && ph.length === 11) {
-                    setValid();
-                    } else {
-                    if (ph.length !== 11) setInvalid('Phone number must be exactly 11 digits.');
-                    else if (addr.length <= 10) setInvalid('Delivery address must be more than 10 characters.');
-                    else setInvalid('');
-                    }
-                });
-
-                // document-level click: handle button toggles & outside clicks (delegation)
-                document.addEventListener('click', function (e) {
-                    // If clicked on a button (or its child), handle toggle
-                    const btn = e.target.closest('.steadfast-btn');
-                    if (btn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const row = btn.closest('.steadfast-row');
-                    if (!row) {
-                        if (DEBUG) console.log('[steadfast] no row found for button');
-                        return;
-                    }
-
-                    // Validate on click (fresh)
-                    const addr = (row.querySelector('.delivery-address')?.value || '').trim();
-                    const ph = (row.querySelector('.phone-number')?.value || '').trim();
-                    const err = row.querySelector('.error-message');
-                    if (!(addr.length > 10 && ph.length === 11)) {
-                        // invalid: keep disabled and show message
-                        btn.style.pointerEvents = 'none';
-                        btn.style.opacity = '0.5';
-                        if (err) {
-                        if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
-                        else err.textContent = 'Delivery address must be more than 10 characters.';
+                        function setInvalid(message) {
+                            buttons.forEach(btn => {
+                                btn.style.pointerEvents = 'none';
+                                btn.style.opacity = '0.5';
+                            });
+                            if (err) err.textContent = message || '';
                         }
-                        if (DEBUG) console.log('[steadfast] row invalid, dropdown not opening', { addr, ph });
-                        return;
-                    }
 
-                    // valid: toggle its dropdown, close others first
-                    closeAllDropdowns();
-                    const dropdown = row.querySelector('.steadfast-dropdown');
-                    if (!dropdown) return;
-                    const open = dropdown.classList.toggle('show');
-                    dropdown.style.display = open ? 'block' : 'none';
-                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        function setValid() {
+                            buttons.forEach(btn => {
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.opacity = '1';
+                            });
+                            if (err) err.textContent = '';
+                        }
+                        
+                        if (addr.length > 10 && ph.length === 11) {
+                            setValid();
+                        } else {
+                            if (ph.length !== 11) setInvalid('Phone number must be exactly 11 digits.');
+                            else if (addr.length <= 10) setInvalid('Delivery address must be more than 10 characters.');
+                            else setInvalid('');
+                        }
+                    });
 
-                    // position dropdown if needed (ensures visible under button)
-                    const rect = btn.getBoundingClientRect();
-                    // using relative positioning in markup; adjust top in case button height changed
-                    dropdown.style.top = (btn.offsetHeight + 6) + 'px';
-                    dropdown.style.left = '0px';
+                    
+                    const steadfastButtons = document.querySelectorAll('.steadfast-btn');
+                    let currentDropdown = null;
 
-                    if (DEBUG) console.log('[steadfast] toggled dropdown for row', row.dataset.orderId, 'open=', open);
-                    return;
-                    }
+                    steadfastButtons.forEach(btn => {
+                        btn.addEventListener('click', function (e) {
+                            e.preventDefault(); // stop button from submitting form
+                            e.stopPropagation(); // stop bubbling
 
-                    // If click not on any btn, but inside dropdown, prevent closing
-                    const insideDropdown = e.target.closest('.steadfast-dropdown');
-                    if (insideDropdown) {
-                    // allow clicks inside dropdown (links will navigate)
-                    e.stopPropagation();
-                    return;
-                    }
+                            const account = this.dataset.account;
+                            const parent = this.closest('.steadfast-row');
+                            const baseUrl = parent.dataset.baseUrl;
 
-                    // Otherwise clicked outside => close all
-                    closeAllDropdowns();
+                            if (currentDropdown && currentDropdown.dataset.account === account) {
+                                currentDropdown.remove();
+                                currentDropdown = null;
+                                return;
+                            }
+
+                            if (currentDropdown) {
+                                currentDropdown.remove();
+                                currentDropdown = null;
+                            }
+
+                            // নতুন dropdown তৈরি করি
+                            const dropdown = document.createElement('div');
+                            dropdown.classList.add('steadfast-dropdown');
+                            dropdown.dataset.account = account;
+                            dropdown.style.position = 'absolute';
+                            dropdown.style.top = '100%';
+                            dropdown.style.left = '0';
+                            dropdown.style.background = 'white';
+                            dropdown.style.border = '1px solid #ccc';
+                            dropdown.style.padding = '8px';
+                            dropdown.style.borderRadius = '6px';
+                            dropdown.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                            dropdown.style.zIndex = '9999';
+                            dropdown.style.animation = 'fadeIn 0.2s ease-in-out';
+                            dropdown.innerHTML = `
+                                <a href="${baseUrl}?type=home&account=${account}" class="dropdown-item">🏠 Home Delivery</a><br>
+                                <a href="${baseUrl}?type=point&account=${account}" class="dropdown-item">📍 Point Delivery</a>
+                            `;
+
+                            parent.appendChild(dropdown);
+                            currentDropdown = dropdown;
+                        });
+                    });
+
+                    document.addEventListener('click', function () {
+                        if (currentDropdown) {
+                            currentDropdown.remove();
+                            currentDropdown = null;
+                        }
+                    });
+
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && currentDropdown) {
+                            currentDropdown.remove();
+                            currentDropdown = null;
+                        }
+                    });
+
+                    // optional fade-in animation
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-5px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+
+                        // Optional: If your hidden inputs can change dynamically via JS/AJAX, call this function to re-validate a row
+                    window.steadfastRevalidateRow = function (rowElement) {
+                        if (!rowElement) return;
+                        const btn = rowElement.querySelector('.steadfast-btn');
+                        const addr = (rowElement.querySelector('.delivery-address')?.value || '').trim();
+                        const ph = (rowElement.querySelector('.phone-number')?.value || '').trim();
+                        const err = rowElement.querySelector('.error-message');
+                        if (addr.length > 10 && ph.length === 11) {
+                        btn.style.pointerEvents = 'auto'; btn.style.opacity = '1'; if (err) err.textContent = '';
+                        } else {
+                        btn.style.pointerEvents = 'none'; btn.style.opacity = '0.5';
+                        if (err) {
+                            if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
+                            else err.textContent = 'Delivery address must be more than 10 characters.';
+                        }
+                        }
+                    };
+
                 });
-
-                // ESC key closes all
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') closeAllDropdowns();
-                });
-
-                // Optional: If your hidden inputs can change dynamically via JS/AJAX, call this function to re-validate a row
-                window.steadfastRevalidateRow = function (rowElement) {
-                    if (!rowElement) return;
-                    const btn = rowElement.querySelector('.steadfast-btn');
-                    const addr = (rowElement.querySelector('.delivery-address')?.value || '').trim();
-                    const ph = (rowElement.querySelector('.phone-number')?.value || '').trim();
-                    const err = rowElement.querySelector('.error-message');
-                    if (addr.length > 10 && ph.length === 11) {
-                    btn.style.pointerEvents = 'auto'; btn.style.opacity = '1'; if (err) err.textContent = '';
-                    } else {
-                    btn.style.pointerEvents = 'none'; btn.style.opacity = '0.5';
-                    if (err) {
-                        if (ph.length !== 11) err.textContent = 'Phone number must be exactly 11 digits.';
-                        else err.textContent = 'Delivery address must be more than 10 characters.';
-                    }
-                    }
-                };
-            });
             </script>
+
+
             {% endif %}
         </td>
         {% endif %}
-        
+
     </form>
 </tr>
 {% endfor %}

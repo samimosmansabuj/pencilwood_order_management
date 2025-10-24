@@ -7,3 +7,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ['user_type']
     search_fields = ["*"]
 
+
+
+
+admin.site.register(SteadFastAPI)

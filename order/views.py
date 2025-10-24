@@ -519,9 +519,11 @@ def create_steadfast_parcel(request, id):
     recipient = order.request_order or order.order_customer
     
     type = request.GET.get("type")
-    if type.lower() == "home":
+    account = request.GET.get("account")
+
+    if type and type.lower() == "home":
         delivery_type = 0
-    elif type.lower() == "point":
+    elif type and type.lower() == "point":
         delivery_type = 1
     else:
         delivery_type = 0
@@ -539,8 +541,10 @@ def create_steadfast_parcel(request, id):
         # "total_lot": sum(item.quantity for item in order.order_item.all()),
         "delivery_type": delivery_type
     }
-    response = create_steadfast_order(order_data)
-    if response.status_code == 200:
+    response = create_steadfast_order(order_data, account)
+    if response is None:
+        messages.error(request, f"Failed to get Steadfast account for {account}")
+    elif response.status_code == 200:
         response_data = response.json()
         consignment = response_data.get("consignment", {})
         if response_data.get("status") == 200 and consignment:
