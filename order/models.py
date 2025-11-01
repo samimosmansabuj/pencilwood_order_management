@@ -82,15 +82,17 @@ class OrderRequest(models.Model):
         if not self.pk or not self.created_by_id:
             self.created_by = get_current_user()
         self.last_updated_by = get_current_user()
-        
+
         if not self.tracking_ID:
-            unique = False
-            while not unique:
-                tracking_ID_candidate = ''.join(random.choices(string.digits, k=5))
-                if not OrderRequest.objects.filter(tracking_ID=tracking_ID_candidate).exists():
-                    self.tracking_ID = tracking_ID_candidate
-                    unique = True
+            self.tracking_ID = self.generate_order_tracking_id()
+        
         super().save(*args, **kwargs)
+    
+    def generate_order_tracking_id(self):
+        while True:
+            tracking_ID_candidate = ''.join(random.choices(string.digits, k=5))
+            if not OrderRequest.objects.filter(tracking_ID=tracking_ID_candidate).exists():
+                return tracking_ID_candidate
             
 
 
@@ -117,11 +119,17 @@ class OrderCustomer(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.tracking_ID:
-            self.tracking_ID = ''.join(random.choices(string.digits, k=6))
+            self.tracking_ID = self.generate_order_tracking_id()
         super().save(*args, **kwargs)
         
         if Order.objects.filter(order_customer=self).exists():
             Order.objects.get(order_customer=self).save()
+    
+    def generate_order_tracking_id(self):
+        while True:
+            tracking_ID_candidate = ''.join(random.choices(string.digits, k=7))
+            if not OrderCustomer.objects.filter(tracking_ID=tracking_ID_candidate).exists():
+                return tracking_ID_candidate
         
     
     def __str__(self):
