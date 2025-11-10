@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-from .views2 import add_new_order2, new_generate_invoice
+from .views2 import add_new_order2, new_generate_invoice, token_generate
 
 urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
@@ -30,5 +30,5 @@ urlpatterns = [
     
     
     path('order/<int:id>/invoice/', new_generate_invoice, name='generate_pdf'),
-    # path('order/<int:id>/invoice/', print_invoice, name='generate_pdf'),
+    path('order/<int:id>/token/', token_generate, name='generate_token'),
 ]

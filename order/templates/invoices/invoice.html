@@ -186,38 +186,6 @@
     <script src="{% static 'assets/js/html2canvas.min.js' %}"></script>
     <script src="{% static 'assets/js/invoice_custom.js' %}"></script>
 
-    <!-- html2canvas -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
-
-
-    <!-- jsPDF UMD -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
-
-
-    <!-- <script>
-    document.getElementById('generatePDF').addEventListener('click', function() {
-        // Get the invoice element
-        var element = document.getElementById('download_section');
-
-        // PDF options
-        var opt = {
-            margin: 0.2,
-            filename: 'invoice.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-
-        // Generate and save PDF
-        html2pdf().set(opt).from(element).save().catch(function(err) {
-            console.error('PDF generation failed:', err);
-            alert('PDF generation failed! Check console.');
-        });
-    });
-    </script> -->
-
-
 </body>
 
 </html>

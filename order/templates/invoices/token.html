@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Parcel Token - {{ order.tracking_ID }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        @page {
+            size: 4in 3in;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        .token-container {
+            width: 4in;
+            height: 3in;
+            background: #fff;
+            border: 2px solid #cb842a;
+            border-radius: 10px;
+            padding: 10px 14px;
+            box-sizing: border-box;
+            position: relative;
+            margin: 10px auto;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .token-header {
+            border-bottom: 2px dashed #cb842a;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .token-header h2 {
+            font-size: 14px;
+            margin: 0;
+            color: #cb842a;
+        }
+
+        .token-body p {
+            margin: 2px 0;
+            color: #000;
+            line-height: 1.3;
+        }
+
+        .product-list {
+            border-top: 1px dashed #ccc;
+            margin-top: 5px;
+            padding-top: 4px;
+        }
+
+        .product-list strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #000;
+        }
+
+        .product-list ul {
+            padding-left: 15px;
+            margin: 0;
+        }
+
+        .product-list li {
+            font-size: 12px;
+            margin: 1px 0;
+        }
+
+        .footer-note {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* Print button section */
+        .print-section {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .print-btn {
+            background: #cb842a;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .print-btn:hover {
+            background: #b36d1f;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+
+            .print-section {
+                display: none;
+            }
+
+            .token-container {
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="token-container">
+        <div class="token-header">
+            <h2>Parcel Token</h2>
+            <div class="token-id"><strong>ID:</strong> #{{ order.tracking_ID }}</div>
+        </div>
+
+        <div class="token-body">
+            <p><strong>Name:</strong>
+                {% if order.request_order %}
+                {{ order.request_order.name }}
+                {% else %}
+                {{ order.order_customer.name }}
+                {% endif %}
+            </p>
+            <p><strong>Address:</strong> {{ order.delivery_address }}</p>
+
+            <div class="product-list">
+                <strong>Products:</strong>
+                <ul>
+                    {% for item in order.order_item.all %}
+                    <li>{{ item.product.name }} — x{{ item.quantity }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Thank you for shopping with {{ website_setting.website_name|default:"Our Store" }}
+        </div>
+    </div>
+
+    <!-- <div class="print-section">
+        <button class="print-btn" onclick="window.print()">
+            🖨️ Print Token
+        </button>
+    </div> -->
+    <!-- <script>
+        window.onload = function() {
+            window.print();
+            setTimeout(() => window.close(), 500);
+        };
+    </script> -->
+</body>
+
+</html>

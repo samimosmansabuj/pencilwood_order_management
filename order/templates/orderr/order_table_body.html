@@ -6,9 +6,17 @@
     <form id="update-order-form-{{ order.id }}">
         {% csrf_token %}
         <td>
-            <button type="button" class="btn btn-primary update-order-btn"
-                data-order-id="{{ order.id }}">Update</button>
-            <a href="{% url 'generate_pdf' id=order.id %}" class="btn btn-primary mt-1" target="_blank">Invoice</a>
+            <button type="button" class="btn btn-primary update-order-btn" data-order-id="{{ order.id }}">
+                Update
+            </button>
+            <a href="{% url 'generate_pdf' id=order.id %}" class="btn btn-primary mt-1" target="_blank">
+                Invoice
+            </a>
+
+            <script src="{% static 'assets/js/invoice_custom.js' %}"></script>
+            <button type="button" class="btn btn-primary mt-1 tokenButton" data-order-id="{{ order.id }}">
+                Token
+            </button>
         </td>
         <td {% if order.urgent %}style="color: red; font-weight: bold;" {% endif %}>
             {{ order.order_date }}

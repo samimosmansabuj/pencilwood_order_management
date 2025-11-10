@@ -52,6 +52,10 @@ def new_generate_invoice(request, id):
     design = InvoiceColorDesign.objects.all().first()
     order = get_object_or_404(Order, id=id)
     context = {'order': order, 'design': design}
-
-    print("header_bg: ", design.header_bg)
     return render(request, 'invoices/invoice.html', context)
+
+@login_required
+def token_generate(request, id):
+    order = get_object_or_404(Order, id=id)
+    context = {'order': order}
+    return render(request, 'invoices/token.html', context)

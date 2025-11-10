@@ -72,7 +72,7 @@ def update_order(request, pk):
 
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
-    template_name = 'order/order.html'
+    template_name = 'orderr/order.html'
     paginate_by = 20
     context_object_name = 'orders'
     ordering = ['-order_date']
