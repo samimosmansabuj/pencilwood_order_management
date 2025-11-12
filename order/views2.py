@@ -58,4 +58,4 @@ def new_generate_invoice(request, id):
 def token_generate(request, id):
     order = get_object_or_404(Order, id=id)
     context = {'order': order}
-    return render(request, 'invoices/token3.html', context)
+    return render(request, 'invoices/token.html', context)
