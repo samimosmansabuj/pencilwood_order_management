@@ -72,16 +72,22 @@
             flex-direction: column;
             align-items: flex-start;
         }
-        .header-left img {
+        .header-left p {
+            margin: auto;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        /* .header-left img {
             height: 13px;
             margin-bottom: 2px;
-        }
+        } */
         .header-left a {
             font-size: 9px;
             color: #000;
             text-decoration: none;
             margin-left: 1px;
             line-height: 1.3;
+            font-weight: 600;
         }
         .header-right {
             text-align: right;
@@ -250,7 +256,8 @@
         <!-- Header -->
         <div class="header">
             <div class="header-left">
-                <img src="{% static 'assets/img/token_company_logo.png' %}" alt="pencilwood-token-logo">
+                <!-- <img src="{% static 'assets/img/token_company_logo.png' %}" alt="pencilwood-token-logo"> -->
+                <p>PENCILWOOD</p>
                 <a href="tel:8801810447799">+8801810447799</a>
             </div>
             <div class="header-right">
