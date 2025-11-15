@@ -102,21 +102,23 @@
         }
 
         .customer-left {
-            width: 50%;
+            width: 90%;
             font-size: 11px;
         }
 
         .customer-left p {
             margin: 1px 0;
+            /* font-size: 9px; */
         }
 
         .customer-right {
             text-align: right;
-            width: 50%;
+            width: 10%;
+            display: none;
         }
 
         .barcode {
-            display: block;
+            /* display: none; */
             font-family: 'Libre Barcode 39', monospace;
             font-size: 35px;
         }
@@ -130,6 +132,7 @@
 
         .customer-address p {
             margin: auto;
+            /* font-size: 10px; */
         }
 
         /* COURIER SECTION */
@@ -269,13 +272,13 @@
         <!-- Customer Info -->
         <div class="customer">
             <div class="customer-left">
-                <p><strong>
+                <p>
                         {% if order.request_order %}
-                        {{ order.request_order.name }}
+                        <strong>{{ order.request_order.name }}</strong> ({% if order.request_order.company %} <span>{{ order.request_order.company }}</span> {% endif %})
                         {% else %}
-                        {{ order.order_customer.name }}
+                        <strong>{{ order.order_customer.name }}</strong> ({% if order.order_customer.company %} <span>{{ order.order_customer.company }}</span> {% endif %})
                         {% endif %}
-                    </strong></p>
+                </p>
                 <p><i class="fa fa-phone" style="color: black; font-size: 13px;"></i>
                     {% if order.request_order %}
                     {{ order.request_order.phone_number }}
@@ -310,10 +313,10 @@
             <div class="barcode">
                 {% if order.pathao_parcel_id or order.steadfast_parcel_id %}
                 {% if order.pathao_parcel_id %}
-                {{ order.pathao_parcel_id }}
+                *{{ order.pathao_parcel_id }}*
                 {% endif %}
                 {% if order.steadfast_parcel_id %}
-                {{order.steadfast_parcel_id}}
+                *{{order.steadfast_parcel_id}}*
                 {% endif %}
                 {% endif %}
             </div>
