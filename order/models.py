@@ -47,7 +47,7 @@ class OrderRequest(models.Model):
     )
     created_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='request_created_by')
     last_updated_by = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='request_last_updated_by')
-    tracking_ID = models.CharField(max_length=5, unique=True, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=9, unique=True, blank=True, null=True)
     
     company = models.CharField(max_length=250, blank=True, null=True)
     name = models.CharField(max_length=250)
@@ -93,8 +93,6 @@ class OrderRequest(models.Model):
             tracking_ID_candidate = ''.join(random.choices(string.digits, k=5))
             if not OrderRequest.objects.filter(tracking_ID=tracking_ID_candidate).exists():
                 return tracking_ID_candidate
-            
-
 
 class OrderCustomer(models.Model):
     SOURCE = (
@@ -103,7 +101,7 @@ class OrderCustomer(models.Model):
         ('Website', 'Website'),
         ('Others', 'Others'),
     )
-    tracking_ID = models.CharField(max_length=6, blank=True, null=True)
+    tracking_ID = models.CharField(max_length=10, blank=True, null=True)
     company = models.CharField(max_length=250, blank=True, null=True)
     name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20)
@@ -181,7 +179,7 @@ class Order(models.Model):
     request_order = models.OneToOneField(OrderRequest, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     order_customer = models.OneToOneField(OrderCustomer, on_delete=models.CASCADE, blank=True, null=True, related_name='order')
     
-    tracking_ID = models.CharField(max_length=6, blank=True, null=True, unique=True)
+    tracking_ID = models.CharField(max_length=10, blank=True, null=True, unique=True)
     pathao_parcel_id = models.CharField(max_length=20, blank=True, null=True)
     steadfast_parcel_id = models.CharField(max_length=20, blank=True, null=True)
     delivery_address = models.CharField(max_length=500, blank=True, null=True)
