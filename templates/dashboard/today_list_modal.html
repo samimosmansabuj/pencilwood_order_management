@@ -60,7 +60,6 @@
                             </tr>
                         </thead>
                         <tbody id="todayListTableBody">
-                            <!-- JS দিয়ে রো যোগ হবে -->
                         </tbody>
                     </table>
                 </div>
@@ -111,6 +110,12 @@
                         `;
                         tbody.insertAdjacentHTML("beforeend", totalOrderRow);
 
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr style="background:#e8f0fe;">
+                                <td colspan="2" style="text-align: center;"><b>--- Products ---</b></td>
+                            </tr>
+                        `);
+
                         data.products.forEach(product => {
                             const row = `
                                 <tr>
@@ -120,6 +125,22 @@
                             `;
                             tbody.insertAdjacentHTML("beforeend", row);
                         });
+
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr style="background:#ffe6cc;">
+                                <td colspan="2" style="text-align: center;"><b>--- Packaging Products ---</b></td>
+                            </tr>
+                        `);
+
+                        data.packaging_products.forEach(item => {
+                            tbody.insertAdjacentHTML("beforeend", `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.total_quantity}</td>
+                                </tr>
+                            `);
+                        });
+
                     } else {
                         console.log("Something Wrong!")
                     }
