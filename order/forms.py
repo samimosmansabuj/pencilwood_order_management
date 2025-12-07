@@ -1,8 +1,8 @@
 from django import forms
 from .models import Order, OrderRequest, Product, OrderCustomer, OrderItem
 from account.models import Custom_User
-from django.core.files.storage import default_storage
-import os
+# from django.core.files.storage import default_storage
+# import os
 
 # ----------------Order Section Start----------------
 class OrderCustomerForm(forms.ModelForm):
@@ -228,7 +228,7 @@ class OrderRequestForm(forms.ModelForm):
         model = OrderRequest
         fields = [
             'company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'product',
-            'status', 'remark', 'logo', 'picture1',
+            'status', 'remark', 'logo', 'picture1', 'delivery_address',
             'picture2', 'picture3', 'picture4', 'picture5', 'work_assign', 'created_at', 'urgent'
         ]
 
@@ -240,8 +240,12 @@ class OrderRequestForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
     })
     )
-    email = forms.EmailField(max_length=255, widget=forms.EmailInput(attrs={
+    email = forms.EmailField(max_length=255, required=False, widget=forms.EmailInput(attrs={
         'class': 'form-control', 'id': 'inputEmail', 'placeholder': 'Enter email'
+    })
+    )
+    delivery_address = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryAddress', 'placeholder': 'Enter delivery address'
     })
     )
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={
@@ -310,7 +314,7 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderRequest
         fields = [
-            'company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at', 'urgent'
+            'company', 'name', 'email', 'phone_number', 'second_phone_number', 'source', 'status', 'remark', 'product', 'work_assign', 'created_at', 'urgent', 'delivery_address'
         ]
     company = forms.CharField(required=False, label='Company Name', max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control', 'id': 'inputCompany', 'placeholder': 'Enter Company Name'
@@ -324,8 +328,12 @@ class OrderRequestStatusUpdateForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
     })
     )
-    email = forms.EmailField(max_length=50, widget=forms.EmailInput(attrs={
-        'class': 'form-control', 'id': 'inputName', 'placeholder': 'Enter Name'
+    email = forms.EmailField(max_length=50, required=False, widget=forms.EmailInput(attrs={
+        'class': 'form-control', 'id': 'inputEmail', 'placeholder': 'Enter Email'
+    })
+    )
+    delivery_address = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'id': 'inputDeliveryAddress', 'placeholder': 'Enter Delivery Address'
     })
     )
     phone_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={

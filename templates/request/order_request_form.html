@@ -32,25 +32,16 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{form.company.label}} (Optional)</label>
                                         {{form.company}}
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{form.name.label}}</label>
                                         {{form.name}}
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /row-->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>{{form.email.label}}</label>
-                                        {{form.email}}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -59,12 +50,27 @@
                                         {{form.phone_number}}
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                            <!-- /row-->
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{form.email.label}}</label>
+                                        {{form.email}}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>{{form.second_phone_number.label}} (Optional)</label>
                                         {{form.second_phone_number}}
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{form.delivery_address.label}}</label>
+                                        {{form.delivery_address}}
+                                    </div>
+                                </div>                                
                             </div>
                             <!-- /row-->
                             <div class="row">
