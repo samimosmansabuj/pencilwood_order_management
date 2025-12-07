@@ -41,7 +41,7 @@
   {% include './navbar.html' %}
 
   <div id="layoutSidenav">
-    <div id="layoutSidenav_nav">
+    <div id="layoutSidenav_nav" style="height: 100%;">
       {% include './side_navbar.html' %}
     </div>
 
@@ -56,7 +56,8 @@
       <footer class="py-4 bg-light mt-auto">
         <div class="container-fluid">
           <div class="d-flex align-items-center justify-content-between small">
-            <div class="text-muted">Copyright &copy; {{website_setting.copyright_company}} {{website_setting.copyright_year}}</div>
+            <div class="text-muted">Copyright &copy; {{website_setting.copyright_company}}
+              {{website_setting.copyright_year}}</div>
             <div>
               <a href="">Privacy Policy</a>
               &middot;
@@ -69,6 +70,17 @@
   </div>
 
   {% include './model_box.html' %}
+
+  <script>
+    document.body.style.zoom = "0.8";
+    if (navigator.userAgent.toLowerCase().includes("firefox")) {
+      const el = document.getElementById("root");
+      el.style.transform = "scale(0.8)";
+      el.style.transformOrigin = "0 0";
+      el.style.width = "111%";
+      
+    }
+  </script>
 
   <!-- Jquery -->
   <script src="{% static 'assets/js/jquery.min.js' %}"></script>
