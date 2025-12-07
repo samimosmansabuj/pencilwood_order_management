@@ -1,0 +1,254 @@
+<!-- Todo Add Modal -->
+<style>
+    .modal-body {
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 0 !important;
+    }
+
+    .table-fixed-header {
+        max-height: 550px;
+        overflow-y: auto;
+    }
+
+    .table-fixed-header thead th {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 10;
+    }
+
+    .today-spinner {
+        position: absolute;
+        inset: 0;
+        /* top:0; right:0; bottom:0; left:0 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 50;
+    }
+
+    .d-none {
+        display: none !important;
+    }
+</style>
+<div class="modal fade" id="TodayListModal" tabindex="-1" role="dialog" aria-labelledby="today_list_modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Today Work List Count</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-fixed-header" style="position: relative;">
+                    <!-- Spinner overlay -->
+                    <div id="todayListSpinner" class="today-spinner d-none" aria-hidden="true">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" width="100%">
+                        <thead>
+                            <tr>
+                                <th style="background-color: #e0cdcd">Title</th>
+                                <th style="background-color: #e0cdcd">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayListTableBody">
+                            <!-- JS দিয়ে রো যোগ হবে -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                Date: <span id="today_date_get"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Todo Add Modal -->
+
+
+<script>
+    document.addEventListener("click", function (e) {
+        const todayListBtn = e.target.closest(".today_list_modal");
+        if (todayListBtn) {
+            fetch(`api/v1/today-work-list/`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            }).then(
+                response => response.json()
+            ).then(
+                data => {
+                    if (data.status) {
+                        document.getElementById("today_date_get").innerText = data.today_date
+
+                        const tbody = document.getElementById("todayListTableBody");
+                        tbody.innerHTML = "";
+
+                        const urgentRow = `
+                            <tr>
+                                <td><b>Urgent Orders</b></td>
+                                <td>${data.urgent_orders_count}</td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML("beforeend", urgentRow);
+
+                        const totalOrderRow = `
+                            <tr>
+                                <td><b>Total Orders</b></td>
+                                <td>${data.total_orders}</td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML("beforeend", totalOrderRow);
+
+                        data.products.forEach(product => {
+                            const row = `
+                                <tr>
+                                    <td>${product.product_name}</td>
+                                    <td>${product.total_quantity}</td>
+                                </tr>
+                            `;
+                            tbody.insertAdjacentHTML("beforeend", row);
+                        });
+                    } else {
+                        console.log("Something Wrong!")
+                    }
+                }
+            ).catch(
+                error => {
+                    console.log("error: ", error)
+                }
+            )
+        }
+    })
+
+
+    $('#TodayListModal').on('hidden.bs.modal', function () {
+        document.getElementById("todayListTableBody").innerHTML = "";
+        document.getElementById("today_date_get").innerText = "";
+    });
+</script>
+
+<!-- <script>
+    (function () {
+        function showSpinner() {
+            const s = document.getElementById("todayListSpinner");
+            if (s) s.classList.remove("d-none");
+        }
+        function hideSpinner() {
+            const s = document.getElementById("todayListSpinner");
+            if (s) s.classList.add("d-none");
+        }
+
+        function clearModalContents() {
+            const tbody = document.getElementById("todayListTableBody");
+            const dateSpan = document.getElementById("today_date_get");
+            if (tbody) tbody.innerHTML = "";
+            if (dateSpan) dateSpan.innerText = "";
+        }
+
+        async function fetchAndRenderTodayList() {
+            try {
+                showSpinner();
+                const res = await fetch('api/v1/today-work-list/', {
+                    method: "GET",
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                });
+
+                const data = await res.json();
+
+                hideSpinner();
+
+                if (!data || !data.status) {
+                    console.error("API returned error or invalid response", data);
+                    return;
+                }
+
+                const dateSpan = document.getElementById("today_date_get");
+                if (dateSpan) dateSpan.innerText = data.today_date || "";
+
+                const tbody = document.getElementById("todayListTableBody");
+                if (!tbody) return;
+                tbody.innerHTML = "";
+
+                tbody.insertAdjacentHTML("beforeend", `
+                <tr>
+                    <td><b>Urgent Orders</b></td>
+                    <td>${data.urgent_orders_count ?? 0}</td>
+                </tr>
+            `);
+
+                tbody.insertAdjacentHTML("beforeend", `
+                <tr>
+                    <td><b>Total Orders</b></td>
+                    <td>${data.total_orders ?? 0}</td>
+                </tr>
+            `);
+
+                (data.products || []).forEach(product => {
+                    tbody.insertAdjacentHTML("beforeend", `
+                    <tr>
+                        <td>${product.product_name}</td>
+                        <td>${product.total_quantity}</td>
+                    </tr>
+                `);
+                });
+
+            } catch (err) {
+                hideSpinner();
+                console.error("Fetch error:", err);
+            }
+        }
+
+        const modalEl = document.getElementById('TodayListModal');
+
+        if (modalEl && modalEl.addEventListener) {
+            modalEl.addEventListener('show.bs.modal', function (event) {
+                fetchAndRenderTodayList();
+            });
+
+            modalEl.addEventListener('hidden.bs.modal', function (event) {
+                clearModalContents();
+            });
+        }
+
+        if (window.jQuery) {
+            const $modal = jQuery('#TodayListModal');
+
+            $modal.off('show.bs.modal.fetchToday'); // prevent duplicate handlers
+            $modal.on('show.bs.modal.fetchToday', function () {
+                fetchAndRenderTodayList();
+            });
+
+            $modal.off('hidden.bs.modal.clearToday');
+            $modal.on('hidden.bs.modal.clearToday', function () {
+                clearModalContents();
+            });
+        }
+
+        document.addEventListener("click", function (e) {
+            const todayListBtn = e.target.closest(".today_list_modal");
+            if (todayListBtn) {
+                if (window.jQuery) {
+                    jQuery('#TodayListModal').modal('show');
+                } else if (modalEl && window.bootstrap && bootstrap.Modal) {
+                    const modalObj = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modalObj.show();
+                } else {
+                    fetchAndRenderTodayList();
+                }
+            }
+        });
+
+    })();
+</script> -->

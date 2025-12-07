@@ -11,8 +11,16 @@
 <main></main>
 <div class="container-fluid">
     <h1 class="mt-4">Dashboard</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Dashboard</li>
+    <ol class="breadcrumb mb-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <li class="breadcrumb-item active"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        </div>
+        <li class="breadcrumb-item ml-auto">
+            <a href="#TodayListModal" data-toggle="modal" class="btn btn-primary today_list_modal" style="margin-left: 10px;">
+                Today List
+            </a>
+            <!-- data-bs-toggle="modal" data-bs-target="#ProductAddUpdateModal" -->
+        </li>
     </ol>
 
 
@@ -20,16 +28,17 @@
     <div class="row">
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white mb-4">
-                <div class="card-body">{{ today_orders.count }} Today Order!  <b style="color: black;">(BDT{{ today_total_deal_value }})</b></div>
+                <div class="card-body">{{ today_orders.count }} Today Order! <b style="color: black;">(BDT{{ today_total_deal_value }})</b></div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'order_list' %}?today_orders=true">View Details</a>
+                    <a class="small text-white stretched-link" href="{% url 'order_list' %}?today_orders=true">View
+                        Details</a>
                     <div class="small text-white"><i class="fa fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card bg-primary text-white mb-4">
-                <div class="card-body">{{order.count}} Total Order!  <b style="color: black;">(BDT{{ all_order_total_deal_value  }})</b></div>
+                <div class="card-body">{{order.count}} Total Order! <b style="color: black;">(BDT{{ all_order_total_deal_value }})</b></div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
                     <a class="small text-white stretched-link" href="{% url 'order_list' %}">View Details</a>
                     <div class="small text-white"><i class="fa fa-angle-right"></i></div>
@@ -68,26 +77,28 @@
     <div class="row">
         <h3 style="text-align: center;">Order Status</h3>
         {% for status, display_name in order.model.STATUS %}
-            <div class="col-md-3">
-                <a class="btn btn-info mb-2 w-100" style="color: white;" href="{% url 'order_list' %}?status={{ display_name }}">
-                    {{ display_name }} 
-                    <span class="badge badge-light">{{ order_status_counts|get_item:status|default:0 }}</span>
-                </a>
-            </div>
+        <div class="col-md-3">
+            <a class="btn btn-info mb-2 w-100" style="color: white;"
+                href="{% url 'order_list' %}?status={{ display_name }}">
+                {{ display_name }}
+                <span class="badge badge-light">{{ order_status_counts|get_item:status|default:0 }}</span>
+            </a>
+        </div>
         {% endfor %}
     </div>
-    
+
     {% if request.user.user_type != 'Factory Staff' %}
     <hr>
     <div class="row">
         <h3 style="text-align: center;">Order Request Status</h3>
         {% for status, display_name in order_request.model.STATUS_CHOICES %}
-            <div class="col-md-3">
-                <a class="btn btn-info mb-2 w-100" style="color: white;" href="{% url 'order_request_list' %}?status={{ display_name }}">
-                    {{ display_name }} 
-                    <span class="badge badge-light">{{ request_status_counts|get_item:status|default:0 }}</span>
-                </a>
-            </div>
+        <div class="col-md-3">
+            <a class="btn btn-info mb-2 w-100" style="color: white;"
+                href="{% url 'order_request_list' %}?status={{ display_name }}">
+                {{ display_name }}
+                <span class="badge badge-light">{{ request_status_counts|get_item:status|default:0 }}</span>
+            </a>
+        </div>
         {% endfor %}
     </div>
     {% endif %}
@@ -110,8 +121,7 @@
                                 <!-- Filter and Reset Buttons -->
                                 <div class="col-12 d-md-none mb-1">
                                     <div class="form-group">
-                                        <button type="button"
-                                            class="form-control form-control-sm btn btn-primary"
+                                        <button type="button" class="form-control form-control-sm btn btn-primary"
                                             id="filterButton">Filter</button>
                                     </div>
                                 </div>
@@ -148,8 +158,7 @@
                                         <div class="form-group">
                                             <label for="start_date">From:</label>
                                             <input type="date" name="start_date" id="start_date"
-                                                class="form-control form-control-sm"
-                                                value="{{request.GET.start_date}}">
+                                                class="form-control form-control-sm" value="{{request.GET.start_date}}">
                                         </div>
                                     </div>
 
@@ -158,8 +167,7 @@
                                         <div class="form-group">
                                             <label for="end_date">To:</label>
                                             <input type="date" name="end_date" id="end_date"
-                                                class="form-control form-control-sm"
-                                                value="{{request.GET.end_date}}">
+                                                class="form-control form-control-sm" value="{{request.GET.end_date}}">
                                         </div>
                                     </div>
 
@@ -169,8 +177,7 @@
                                             <label for="search">Search:</label>
                                             <input type="text" name="search" id="search"
                                                 placeholder="Search by tracking ID or customer name"
-                                                class="form-control form-control-sm"
-                                                value="{{ request.GET.search }}">
+                                                class="form-control form-control-sm" value="{{ request.GET.search }}">
                                         </div>
                                     </div>
 
@@ -179,8 +186,7 @@
                                     <div class="col-12 col-sm-6 col-md-2 mb-1">
                                         <div class="form-group">
                                             <label>&nbsp;</label>
-                                            <input type="submit"
-                                                class="form-control form-control-sm btn btn-primary"
+                                            <input type="submit" class="form-control form-control-sm btn btn-primary"
                                                 aria-controls="dataTable" value="Search">
                                         </div>
                                     </div>
@@ -210,46 +216,39 @@
                     <!-- -------------Order Section------------- -->
                     <div class="row">
                         <div class="col-sm-12">
-                            <table class="table table-bordered dataTable no-footer" id="dataTable"
-                                width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info"
-                                style="width: 100%;">
+                            <table class="table table-bordered dataTable no-footer" id="dataTable" width="100%"
+                                cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
                                 <thead>
                                     <tr class="text-uppercase" role="row">
-                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="ID: activate to sort column ascending"
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="ID: activate to sort column ascending"
                                             style="width: fixed;">ID</th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Title: activate to sort column ascending">Title
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Title: activate to sort column ascending">Title
                                         </th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Complete: activate to sort column ascending">Complete
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Complete: activate to sort column ascending">
+                                            Complete
                                         </th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Work Assign: activate to sort column ascending">Work Assign
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Work Assign: activate to sort column ascending">Work
+                                            Assign
                                         </th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Priority: activate to sort column ascending">Priority
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Priority: activate to sort column ascending">
+                                            Priority
                                         </th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Created Date: activate to sort column ascending">
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Created Date: activate to sort column ascending">
                                             Created Date</th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Updated Date: activate to sort column ascending">
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Updated Date: activate to sort column ascending">
                                             Updated Date</th>
-                                        <th class=" sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Last Update By: activate to sort column ascending">
+                                        <th class=" sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Last Update By: activate to sort column ascending">
                                             Last Update By</th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTable"
-                                            rowspan="1" colspan="1"
-                                            aria-label="Action: activate to sort column ascending">Action
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1"
+                                            colspan="1" aria-label="Action: activate to sort column ascending">Action
                                         </th>
                                     </tr>
                                 </thead>
@@ -287,8 +286,7 @@
                                             {{todo.last_update_user}}
                                         </td>
                                         <td>
-                                            <a href="{% url 'todo_update' todo.id %}"
-                                                class="btn btn-primary btn-sm">
+                                            <a href="{% url 'todo_update' todo.id %}" class="btn btn-primary btn-sm">
                                                 View
                                             </a>
                                             <a href="{% url 'todo_delete' todo.id %}" class="btn btn-primary btn-sm">
@@ -315,8 +313,7 @@
                     <!-- -------------Pagination Section------------- -->
                     <div class="row">
                         <div class="col-sm-12 col-md-5">
-                            <div class="dataTables_info" id="dataTable_info" role="status"
-                                aria-live="polite">
+                            <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
                                 Showing {{todos.start_index}} to {{todos.end_index}} of
                                 {{todos.paginator.count}} entries
                             </div>
@@ -377,4 +374,5 @@
 
 </div>
 </main>
+{% include './today_list_modal.html' %}
 {% endblock dashboard_body %}

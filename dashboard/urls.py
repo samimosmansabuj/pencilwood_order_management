@@ -31,4 +31,8 @@ urlpatterns = [
     path('create-order-remainder/<int:id>/', create_order_remainder, name='create_order_remainder'),
     path('create-order-request-remainder/<int:id>/', create_order_request_remainder, name='create_order_request_remainder'),
     path('remainder-list/', RemainderListView.as_view(), name='remainder_list'),
+    
+    
+    # ====================API Endpoint View====================
+    path('api/v1/today-work-list/', TodayListWorkAPIView.as_view(), name="today-work-list")
 ]
