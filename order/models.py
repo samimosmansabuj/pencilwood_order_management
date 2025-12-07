@@ -59,6 +59,7 @@ class OrderRequest(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='None')
     remark = models.TextField(blank=True, null=True)
     work_assign = models.ForeignKey(Custom_User, on_delete=models.SET_NULL, blank=True, null=True, related_name='order_request_assign')
+    delivery_address = models.CharField(max_length=500, blank=True, null=True)
     order_created = models.BooleanField(default=False)
     urgent = models.BooleanField(blank=True, null=True)
     
