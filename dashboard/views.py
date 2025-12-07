@@ -574,10 +574,15 @@ class TodayListWorkAPIView(View):
             | Q(status="Processing")
             | Q(status="Sample")
         ).prefetch_related("order_item")
+        
+        packaging_orders = Order.objects.filter(status="Packaging").prefetch_related("order_item")
 
         # 01. Collect Product Quantity Summary
         product_summary = self.get_product_summary(orders)
         product_list = list(product_summary.values())
+        
+        packaging_product_summary = self.get_product_summary(packaging_orders)
+        packaging_product_list = list(packaging_product_summary.values())
 
         # 02. Urgent Order List + Count
         urgent_orders = orders.filter(urgent=True)
@@ -589,6 +594,7 @@ class TodayListWorkAPIView(View):
                 "message": "Today List",
                 "total_orders": orders.count(),
                 "products": product_list,
+                "packaging_products": packaging_product_list,
                 "urgent_orders_count": urgent_count,
                 "today_date": timezone.localdate()
             }
