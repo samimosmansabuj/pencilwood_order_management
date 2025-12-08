@@ -59,3 +59,40 @@ def token_generate(request, id):
     order = get_object_or_404(Order, id=id)
     context = {'order': order}
     return render(request, 'invoices/token.html', context)
+
+
+
+
+
+
+from django.http import JsonResponse
+from http import HTTPStatus
+from django.views import View
+from django.db.models import Q
+import json
+
+# ====================API Endpoint View====================
+# -----------------Buld Order Status Update Start-----------------------
+class OrderBuldUpdateView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            status = data.get("status")
+            ids = data.get("order_ids", [])
+            # print("ids: ", ids)
+            Order.objects.filter(id__in=ids).update(status=status)
+            return JsonResponse(
+                {
+                    "status": True,
+                    "message": "Buld Update Successfully!"
+                }
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": str(e),
+                }
+            )
+
+# -----------------Buld Order Status Update End-----------------------

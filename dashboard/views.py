@@ -541,7 +541,7 @@ class TodoDeleteView(DeleteView):
     success_url = reverse_lazy("todo_list")
 
 
-# -----------------Todo Section End-----------------------
+
 
 
 from django.http import JsonResponse
@@ -549,6 +549,7 @@ from http import HTTPStatus
 
 
 # ====================API Endpoint View====================
+# -----------------Todo Section End-----------------------
 class TodayListWorkAPIView(View):
     def get_product_summary(self, orders):
         product_summary = {}

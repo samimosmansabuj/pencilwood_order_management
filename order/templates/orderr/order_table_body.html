@@ -6,6 +6,9 @@
     <form id="update-order-form-{{ order.id }}">
         {% csrf_token %}
         <td>
+            <input type="checkbox" name="select_id_{{ order.id }}" id="select_id_{{ order.id }}" value="{{ order.id }}">
+        </td>
+        <td>
             <button type="button" class="btn btn-primary update-order-btn" data-order-id="{{ order.id }}">
                 Update
             </button>
