@@ -16,7 +16,8 @@
             <li class="breadcrumb-item active"><a href="{% url 'dashboard' %}">Dashboard</a></li>
         </div>
         <li class="breadcrumb-item ml-auto">
-            <a href="#TodayListModal" data-toggle="modal" class="btn btn-primary today_list_modal" style="margin-left: 10px;">
+            <a href="#TodayListModal" data-toggle="modal" class="btn btn-primary today_list_modal"
+                style="margin-left: 10px;">
                 Today List
             </a>
             <!-- data-bs-toggle="modal" data-bs-target="#ProductAddUpdateModal" -->
@@ -72,36 +73,188 @@
 
     </div>
 
-
-    <hr>
     <div class="row">
-        <h3 style="text-align: center;">Order Status</h3>
-        {% for status, display_name in order.model.STATUS %}
-        <div class="col-md-3">
-            <a class="btn btn-info mb-2 w-100" style="color: white;"
-                href="{% url 'order_list' %}?status={{ display_name }}">
-                {{ display_name }}
-                <span class="badge badge-light">{{ order_status_counts|get_item:status|default:0 }}</span>
-            </a>
+        <div class="col-md-8">
+            <hr>
+            <!-- Order Status Details============= -->
+            <div class="row">
+                <h3 style="text-align: center;">Order Status</h3>
+                {% for status, display_name in order.model.STATUS %}
+                <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6">
+                    <a class="btn btn-info mb-2 w-100" style="color: white;"
+                        href="{% url 'order_list' %}?status={{ display_name }}">
+                        {{ display_name }}
+                        <span class="badge badge-light">{{ order_status_counts|get_item:status|default:0 }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if request.user.user_type != 'Factory Staff' %}
+            <hr>
+            <!-- Order Request Status Details============= -->
+            <div class="row">
+                <h3 style="text-align: center;">Order Request Status</h3>
+                {% for status, display_name in order_request.model.STATUS_CHOICES %}
+                <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6">
+                    <a class="btn btn-info mb-2 w-100" style="color: white;"
+                        href="{% url 'order_request_list' %}?status={{ display_name }}">
+                        {{ display_name }}
+                        <span class="badge badge-light">{{ request_status_counts|get_item:status|default:0 }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
-        {% endfor %}
+        <div class="col-md-4">
+            <style>
+                .modal-body {
+                    max-height: 300px;
+                    overflow-y: auto;
+                    padding: 0 !important;
+                }
+
+                .table-fixed-header {
+                    max-height: 300px;
+                    overflow-y: auto;
+                }
+
+                .table-fixed-header thead th {
+                    position: sticky;
+                    top: 0;
+                    background: #fff;
+                    z-index: 10;
+                }
+
+                .today-spinner {
+                    position: absolute;
+                    inset: 0;
+                    /* top:0; right:0; bottom:0; left:0 */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(255, 255, 255, 0.7);
+                    z-index: 50;
+                }
+
+                .d-none {
+                    display: none !important;
+                }
+            </style>
+            <div class="modal-content" style="margin-bottom: 15px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Today Work List Count</h5>
+                </div>
+                <div class="modal-body-dashboard">
+                    <div class="table-fixed-header" style="position: relative;">
+                        <!-- Spinner overlay -->
+                        <div id="todayListSpinner" class="today-spinner d-none" aria-hidden="true">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="background-color: #e0cdcd">Title</th>
+                                    <th style="background-color: #e0cdcd">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todayListTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    Date: <span id="today_date_get"></span>
+                </div>
+            </div>
+
+            <script>
+                async function loadTodayWorkList() {
+                    const spinner = document.getElementById("todayListSpinner");
+                    const tbody = document.getElementById("todayListTableBody");
+
+                    try {
+                        spinner.classList.remove("d-none");
+
+                        const response = await fetch("api/v1/today-work-list/", {
+                            method: "GET",
+                            headers: { "X-Requested-With": "XMLHttpRequest" }
+                        });
+
+                        const data = await response.json();
+
+                        if (!data.status) {
+                            console.log("Something went wrong!");
+                            return;
+                        }
+
+                        document.getElementById("today_date_get").innerText = data.today_date;
+
+                        tbody.innerHTML = "";
+
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr>
+                                <td><b>Urgent Orders</b></td>
+                                <td>${data.urgent_orders_count}</td>
+                            </tr>
+                        `);
+
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr>
+                                <td><b>Total Orders</b></td>
+                                <td>${data.total_orders}</td>
+                            </tr>
+                        `);
+
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr style="background:#e8f0fe;">
+                                <td colspan="2" class="text-center"><b>--- Products ---</b></td>
+                            </tr>
+                        `);
+
+                        data.products.forEach(item => {
+                            tbody.insertAdjacentHTML("beforeend", `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.total_quantity}</td>
+                                </tr>
+                            `);
+                        });
+
+                        tbody.insertAdjacentHTML("beforeend", `
+                            <tr style="background:#ffe6cc;">
+                                <td colspan="2" class="text-center"><b>--- Packaging Products ---</b></td>
+                            </tr>
+                        `);
+
+                        data.packaging_products.forEach(item => {
+                            tbody.insertAdjacentHTML("beforeend", `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.total_quantity}</td>
+                                </tr>
+                            `);
+                        });
+
+                    } catch (error) {
+                        console.error("Fetch error:", error);
+                    } finally {
+                        spinner.classList.add("d-none");
+                    }
+                }
+
+                loadTodayWorkList();
+            </script>
+        </div>
     </div>
 
-    {% if request.user.user_type != 'Factory Staff' %}
-    <hr>
-    <div class="row">
-        <h3 style="text-align: center;">Order Request Status</h3>
-        {% for status, display_name in order_request.model.STATUS_CHOICES %}
-        <div class="col-md-3">
-            <a class="btn btn-info mb-2 w-100" style="color: white;"
-                href="{% url 'order_request_list' %}?status={{ display_name }}">
-                {{ display_name }}
-                <span class="badge badge-light">{{ request_status_counts|get_item:status|default:0 }}</span>
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+
 
 
     <div class="card mb-4">
@@ -374,5 +527,5 @@
 
 </div>
 </main>
-{% include './today_list_modal.html' %}
+
 {% endblock dashboard_body %}

@@ -219,6 +219,31 @@
                         </div>
                         <!-- -------------Order Filtering Section------------- -->
 
+                        <div id="bulkActionPanel" class="alert alert-warning d-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b id="selectedCount">0</b> item selected
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <!-- custom-select custom-select-sm form-control form-control-sm -->
+                                    <select id="bulkStatus" class="form-select">
+                                        <option value="">-- Select Status --</option>
+                                        <option value="Got Design">Got Design</option>
+                                        <option value="Processing">Processing</option>
+                                        <option value="Sample">Sample</option>
+                                        <option value="Packaging">Packaging</option>
+                                        <option value="Delivered">Delivered</option>
+                                        <option value="Return">Return</option>
+                                    </select>
+
+                                    <button id="bulkUpdateBtn" class="btn btn-primary">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- -------------Order Section------------- -->
                         <div class="table-responsive">
                             <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
@@ -227,6 +252,9 @@
                                         <table class="table table-bordered dataTable no-footer" id="dataTable" cellspacing="0" role="grid" aria-describedby="dataTable_info">
                                             <thead>
                                                 <tr class="text-uppercase" role="row">
+                                                    <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">
+                                                        <input type="checkbox" name="select_all" id="select_all">
+                                                    </th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">
                                                         Action
                                                     </th>
@@ -360,6 +388,86 @@
                                                 </tr>
                                             </tfoot>
                                         </table>
+
+                                        <script>
+                                            document.addEventListener("DOMContentLoaded", function () {
+                                                const selectAllCheckbox = document.getElementById("select_all");
+                                                const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="select_id_"]');
+
+                                                const bulkPanel = document.getElementById("bulkActionPanel");
+                                                const selectedCount = document.getElementById("selectedCount");
+
+                                                // Update panel visibility------------
+                                                function updatePanel() {
+                                                    const selected = document.querySelectorAll('input[type="checkbox"][id^="select_id_"]:checked').length;
+                                                    if (selected > 0) {
+                                                        selectedCount.textContent = selected;
+                                                        bulkPanel.classList.remove("d-none");
+                                                    } else {
+                                                        bulkPanel.classList.add("d-none");
+                                                    }
+                                                    selectAllCheckbox.checked = (selected === checkboxes.length);
+                                                }
+
+                                                // Select All Logic---------------------
+                                                selectAllCheckbox.addEventListener("change", function () {
+                                                    checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
+                                                    updatePanel();
+                                                });
+
+                                                // Individual Checkbox Logic-----------
+                                                checkboxes.forEach(cb => {
+                                                    cb.addEventListener("change", function () {
+                                                        updatePanel();
+                                                    });
+                                                });
+
+
+                                                // BULK UPDATE CALL
+                                                document.getElementById("bulkUpdateBtn").addEventListener("click", function () {
+                                                    const status = document.getElementById("bulkStatus").value;
+
+                                                    if (!status) {
+                                                        alert("Please select a status.");
+                                                        return;
+                                                    }
+
+                                                    const selectedIds = Array.from(checkboxes)
+                                                        .filter(cb => cb.checked)
+                                                        .map(cb => cb.id.replace("select_id_", ""));
+
+                                                    if (selectedIds.length === 0) {
+                                                        alert("No items selected.");
+                                                        return;
+                                                    }
+                                                    // console.log("selectedIds: ", selectedIds)
+                                                    // AJAX Post to Backend
+                                                    fetch("/api/v1/order-buld-update/", {
+                                                        method: "POST",
+                                                        headers: {
+                                                            "Content-Type": "application/json",
+                                                            "X-CSRFToken": "{{ csrf_token }}",
+                                                        },
+                                                        body: JSON.stringify({
+                                                            status: status,
+                                                            order_ids: selectedIds
+                                                        })
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        if (data.status) {
+                                                            alert(data.message);
+                                                            location.reload();
+                                                        } else {
+                                                            alert(data.message);
+                                                        }
+                                                    })
+                                                    .catch(err => console.log(err));
+                                                });
+
+                                            });
+                                        </script>
+
                                     </div>
                                 </div>
                             </div>
