@@ -283,8 +283,8 @@ class Order(models.Model):
         #     customer_order = self.order_customer
         #     customer_order.created_at = date
         #     customer_order.save()
-        
-        
+    
+
     def __str__(self):
         if self.request_order:
             return f"Order#{self.tracking_ID} for {self.request_order}"

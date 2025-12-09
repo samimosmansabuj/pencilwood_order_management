@@ -87,12 +87,10 @@
                                                                 {{request.GET.status}}</option>
                                                             {% endif %}
                                                             <option value="All">All</option>
+                                                            <option value="None">None</option>
                                                             <option value="Got Design">Got Design</option>
+                                                            <option value="Processing">Processing</option>
                                                             <option value="Sample">Sample</option>
-                                                            <option value="Cutting">Cutting</option>
-                                                            <option value="Cutout Ready">Cutout Ready</option>
-                                                            <option value="Engrave">Engrave</option>
-                                                            <option value="Finishing">Finishing</option>
                                                             <option value="Packaging">Packaging</option>
                                                             <option value="Delivered">Delivered</option>
                                                             <option value="Return">Return</option>
@@ -229,6 +227,7 @@
                                     <!-- custom-select custom-select-sm form-control form-control-sm -->
                                     <select id="bulkStatus" class="form-select">
                                         <option value="">-- Select Status --</option>
+                                        <option value="None">None</option>
                                         <option value="Got Design">Got Design</option>
                                         <option value="Processing">Processing</option>
                                         <option value="Sample">Sample</option>

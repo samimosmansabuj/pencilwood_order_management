@@ -68,7 +68,7 @@ def token_generate(request, id):
 from django.http import JsonResponse
 from http import HTTPStatus
 from django.views import View
-from django.db.models import Q
+from django.db.models import Q, When, Value, Case, BooleanField, F
 import json
 
 # ====================API Endpoint View====================
@@ -79,8 +79,19 @@ class OrderBuldUpdateView(View):
             data = json.loads(request.body)
             status = data.get("status")
             ids = data.get("order_ids", [])
-            # print("ids: ", ids)
-            Order.objects.filter(id__in=ids).update(status=status)
+            if status in ['Delivered', 'Return']:
+                Order.objects.filter(id__in=ids).update(status=status, urgent=False)
+            else:
+                Order.objects.filter(id__in=ids).update(status=status)
+            
+            # Order.objects.filter(id__in=ids).update(
+            #     status=status,
+            #     urgent=Case(
+            #         When(status__in=['Delivered', 'Return'], then=Value(False)),
+            #         default=F('urgent'),
+            #         output_field=BooleanField()
+            #     )
+            # )
             return JsonResponse(
                 {
                     "status": True,
