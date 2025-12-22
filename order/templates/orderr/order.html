@@ -224,15 +224,26 @@
                                 </div>
 
                                 <div class="d-flex gap-2">
-                                    <!-- custom-select custom-select-sm form-control form-control-sm -->
-                                    <select id="deliverySupport" class="form-select">
+                                    <button type="button" id="BulkTokenPrint" class="btn btn-primary" style="font-size: 14px; padding: 3px 10px; width: 100%;">
+                                        Bulk Token
+                                    </button>
+
+                                    <select id="workAssign" class="custom-select custom-select-sm form-control form-control-sm">
+                                        <option value="">-- Select User --</option>
+                                        {% for users in work_assign_choices %}
+                                        <option value="{{ users.id }}">{{ users.first_name }} {{ users.last_name }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <select id="deliverySupport" class="custom-select custom-select-sm form-control form-control-sm">
                                         <option value="">-- Select Delivery Support --</option>
                                         <option value="kid-home">Kids Home</option>
                                         <option value="kid-point">Kids Point</option>
                                         <option value="pencilwood-home">Pencilwood Home</option>
                                         <option value="pencilwood-point">Pencilwood Point</option>
                                     </select>
-                                    <select id="bulkStatus" class="form-select">
+
+                                    <select id="bulkStatus" class="custom-select custom-select-sm form-control form-control-sm">
                                         <option value="">-- Select Status --</option>
                                         <option value="None">None</option>
                                         <option value="Got Design">Got Design</option>
@@ -243,7 +254,7 @@
                                         <option value="Return">Return</option>
                                     </select>
 
-                                    <button id="bulkUpdateBtn" class="btn btn-primary">
+                                    <button id="bulkUpdateBtn" class="btn btn-primary" style="font-size: 14px; padding: 3px 10px;">
                                         Apply
                                     </button>
                                 </div>
@@ -428,14 +439,28 @@
                                                     });
                                                 });
 
+                                                // BULK TOKEN PRINT
+                                                document.getElementById("BulkTokenPrint").addEventListener("click", function () {
+                                                    const selectedIds = Array.from(checkboxes)
+                                                        .filter(cb => cb.checked)
+                                                        .map(cb => cb.id.replace("select_id_", ""));
+                                                    
+                                                    if (selectedIds.length === 0) {
+                                                        alert("No items selected.");
+                                                        return;
+                                                    }
+
+                                                    alert("Bulk Token Print for IDs: " + selectedIds.join(", "));
+                                                });
 
                                                 // BULK UPDATE CALL
                                                 document.getElementById("bulkUpdateBtn").addEventListener("click", function () {
                                                     const status = document.getElementById("bulkStatus").value;
                                                     const deliverySupport = document.getElementById("deliverySupport").value;
+                                                    const workAssign = document.getElementById("workAssign").value;
 
-                                                    if (!status && !deliverySupport) {
-                                                        alert("Please select a status or delivery support.");
+                                                    if (!status && !deliverySupport && !workAssign) {
+                                                        alert("Please select a status or delivery support or work assign.");
                                                         return;
                                                     }
 
@@ -457,6 +482,7 @@
                                                         body: JSON.stringify({
                                                             status: status,
                                                             deliverySupport: deliverySupport,
+                                                            workAssign: workAssign,
                                                             order_ids: selectedIds
                                                         })
                                                     })
