@@ -15,8 +15,7 @@
             <a href="{% url 'generate_pdf' id=order.id %}" class="btn btn-primary mt-1" target="_blank">
                 Invoice
             </a>
-
-            <script src="{% static 'assets/js/invoice_custom.js' %}"></script>
+            
             <button type="button" class="btn btn-primary mt-1 tokenButton" data-order-id="{{ order.id }}">
                 Token
             </button>
