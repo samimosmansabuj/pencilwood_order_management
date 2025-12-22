@@ -463,7 +463,6 @@
                                                     .then(res => res.json())
                                                     .then(data => {
                                                         if (data.status) {
-                                                            console.log("data: ", data);
                                                             if (data.report) {
                                                                 alert(`Bulk Update Successful!\nTotal: ${data.report.total}\nSuccessful: ${data.report.successful}\nFailed: ${data.report.failed}`);
                                                             } else {

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q, When, Value, Case, BooleanField, F
+from .utils import SteadFastOrderCreateAPI
+from django.db import transaction
 from django.http import JsonResponse
 from .models import Product, OrderItem, Order
 from .forms import OrderCustomerForm, OrderForm
@@ -67,7 +69,7 @@ def token_generate(request, id):
 
 
 
-from .utils import SteadFastOrderCreateAPI
+
 
 # ====================API Endpoint View====================
 # -----------------Buld Order Status Update Start-----------------------
@@ -88,64 +90,65 @@ class OrderBuldUpdateView(View):
             update_status = data.get("status")
             deliverySupport = data.get("deliverySupport")
             
+            # For Status Update======
             if update_status:
-                if update_status in ['Delivered', 'Return']:
-                    Order.objects.filter(id__in=ids).update(status=update_status, urgent=False)
-                else:
-                    Order.objects.filter(id__in=ids).update(status=update_status)
-                return JsonResponse(
-                    {
-                        "status": True,
-                        "message": "Buld  Status Update Successfully!"
-                    }, status=HTTPStatus.OK
-                )
+                with transaction.atomic():
+                    if update_status in ['Delivered', 'Return']:
+                        Order.objects.filter(id__in=ids).update(status=update_status, urgent=False)
+                    else:
+                        Order.objects.filter(id__in=ids).update(status=update_status)
+                    return JsonResponse(
+                        {
+                            "status": True,
+                            "message": "Buld  Status Update Successfully!"
+                        }, status=HTTPStatus.OK
+                    )
             
+            # For Bulk Steadfast Parcel Create======
             if deliverySupport:
                 success, failed = 0, 0
                 delivery_type, account = self.get_account_type(deliverySupport)
                 steadfast_api = SteadFastOrderCreateAPI(account=account)
-                
                 for id in ids:
                     try:
-                        order = Order.objects.select_for_update().get(id=id)
-                        recipient = order.request_order or order.order_customer
-                        order_data = {
-                            "invoice": order.tracking_ID,
-                            "recipient_name":recipient.name,
-                            "recipient_phone":recipient.phone_number,
-                            "alternative_phone": recipient.second_phone_number,
-                            "recipient_email": recipient.email,
-                            "recipient_address": order.delivery_address,
-                            "cod_amount": float(order.due_amount),
-                            "note": order.special_instructions,
-                            "item_description": order.remark,
-                            # "total_lot": sum(item.quantity for item in order.order_item.all()),
-                            "delivery_type": delivery_type
-                        }
-                        response = steadfast_api.create_order(order_data)
-                        
-                        consignment = response.get("consignment", {})
-                        if response.get("status") == 200 and consignment:
-                            order.steadfast_parcel_id = consignment.get("consignment_id")
-                            order.status = 'Delivered'
-                            order.save()
-                            success += 1
-                        else:
-                            failed += 1
+                        with transaction.atomic():
+                            order = Order.objects.select_for_update().get(id=id)
+                            recipient = order.request_order or order.order_customer
+                            order_data = {
+                                "invoice": order.tracking_ID,
+                                "recipient_name":recipient.name,
+                                "recipient_phone":recipient.phone_number,
+                                "alternative_phone": recipient.second_phone_number,
+                                "recipient_email": recipient.email,
+                                "recipient_address": order.delivery_address,
+                                "cod_amount": float(order.due_amount),
+                                "note": order.special_instructions,
+                                "item_description": order.remark,
+                                # "total_lot": sum(item.quantity for item in order.order_item.all()),
+                                "delivery_type": delivery_type
+                            }
+                            response = steadfast_api.create_order(order_data)
+                            
+                            consignment = response.get("consignment", {})
+                            if response.get("status") == 200 and consignment:
+                                order.steadfast_parcel_id = consignment.get("consignment_id")
+                                order.status = 'Delivered'
+                                order.save()
+                                success += 1
+                            else:
+                                failed += 1
                     except:
                         failed += 1
                         continue
-                report = {
-                    "total": len(ids),
-                    "successful": success,
-                    "failed": failed
-                }
-                print(report)
                 return JsonResponse(
                     {
-                        "status": False,
+                        "status": True,
                         "message": "Bulk Delivery Parcel Created!",
-                        "report": report
+                        "report": {
+                            "total": len(ids),
+                            "successful": success,
+                            "failed": failed
+                        }
                     }, status=HTTPStatus.OK
                 )
         except Exception as e:
