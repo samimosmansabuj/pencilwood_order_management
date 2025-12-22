@@ -72,8 +72,8 @@ def token_generate(request, id):
 
 
 # ====================API Endpoint View====================
-# -----------------Buld Order Status Update Start-----------------------
-class OrderBuldUpdateView(View):
+# -----------------Bulk Order Status Update Start-----------------------
+class OrderBulkUpdateView(View):
     def get_delivery_type(self, type):
         return 1 if type.lower() == "point" else 0
     
@@ -89,6 +89,7 @@ class OrderBuldUpdateView(View):
             ids = data.get("order_ids", [])
             update_status = data.get("status")
             deliverySupport = data.get("deliverySupport")
+            workAssign = data.get("workAssign")
             
             # For Status Update======
             if update_status:
@@ -100,7 +101,7 @@ class OrderBuldUpdateView(View):
                     return JsonResponse(
                         {
                             "status": True,
-                            "message": "Buld  Status Update Successfully!"
+                            "message": "Bulk  Status Update Successfully!"
                         }, status=HTTPStatus.OK
                     )
             
@@ -151,6 +152,16 @@ class OrderBuldUpdateView(View):
                         }
                     }, status=HTTPStatus.OK
                 )
+            
+            if workAssign and len(ids) > 0:
+                with transaction.atomic():
+                    Order.objects.filter(id__in=ids).update(work_assign_id=workAssign)
+                    return JsonResponse(
+                        {
+                            "status": True,
+                            "message": "Bulk Work Assign Update Successfully!"
+                        }, status=HTTPStatus.OK
+                    )
         except Exception as e:
             return JsonResponse(
                 {
@@ -159,4 +170,4 @@ class OrderBuldUpdateView(View):
                 }, statuss=HTTPStatus.BAD_REQUEST
             )
 
-# -----------------Buld Order Status Update End-----------------------
+# -----------------Bulk Order Status Update End-----------------------
