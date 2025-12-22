@@ -63,8 +63,28 @@ def create_steadfast_order(order_data, account):
         }
         return requests.post(url, headers=headers, json=order_data)
     return None
-    
 
+class SteadFastOrderCreateAPI:
+    def __init__(self, account):
+        self.account = account
+    
+    def get_steadfast_credentials(self):
+        try:
+            steadfast = SteadFastAPI.objects.get(account=self.account)
+            return steadfast
+        except SteadFastAPI.DoesNotExist:
+            return None
+
+    def create_order(self, order_data):
+        url = f"{self.get_steadfast_credentials().base_url}/create_order"
+        headers = {
+            "Content-Type": "application/json",
+            "Api-Key": self.get_steadfast_credentials().api_key,
+            "Secret-Key": self.get_steadfast_credentials().secret_key
+        }
+        response = requests.post(url, headers=headers, json=order_data)
+        response.raise_for_status()
+        return response.json()
 
 
 def generate_unique_slug(model_object, field_value, old_slug=None):

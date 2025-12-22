@@ -225,6 +225,13 @@
 
                                 <div class="d-flex gap-2">
                                     <!-- custom-select custom-select-sm form-control form-control-sm -->
+                                    <select id="deliverySupport" class="form-select">
+                                        <option value="">-- Select Delivery Support --</option>
+                                        <option value="kid-home">Kids Home</option>
+                                        <option value="kid-point">Kids Point</option>
+                                        <option value="pencilwood-home">Pencilwood Home</option>
+                                        <option value="pencilwood-point">Pencilwood Point</option>
+                                    </select>
                                     <select id="bulkStatus" class="form-select">
                                         <option value="">-- Select Status --</option>
                                         <option value="None">None</option>
@@ -425,9 +432,10 @@
                                                 // BULK UPDATE CALL
                                                 document.getElementById("bulkUpdateBtn").addEventListener("click", function () {
                                                     const status = document.getElementById("bulkStatus").value;
+                                                    const deliverySupport = document.getElementById("deliverySupport").value;
 
-                                                    if (!status) {
-                                                        alert("Please select a status.");
+                                                    if (!status && !deliverySupport) {
+                                                        alert("Please select a status or delivery support.");
                                                         return;
                                                     }
 
@@ -439,7 +447,6 @@
                                                         alert("No items selected.");
                                                         return;
                                                     }
-                                                    // console.log("selectedIds: ", selectedIds)
                                                     // AJAX Post to Backend
                                                     fetch("/api/v1/order-buld-update/", {
                                                         method: "POST",
@@ -449,13 +456,19 @@
                                                         },
                                                         body: JSON.stringify({
                                                             status: status,
+                                                            deliverySupport: deliverySupport,
                                                             order_ids: selectedIds
                                                         })
                                                     })
                                                     .then(res => res.json())
                                                     .then(data => {
                                                         if (data.status) {
-                                                            alert(data.message);
+                                                            console.log("data: ", data);
+                                                            if (data.report) {
+                                                                alert(`Bulk Update Successful!\nTotal: ${data.report.total}\nSuccessful: ${data.report.successful}\nFailed: ${data.report.failed}`);
+                                                            } else {
+                                                                alert(data.message);
+                                                            }
                                                             location.reload();
                                                         } else {
                                                             alert(data.message);

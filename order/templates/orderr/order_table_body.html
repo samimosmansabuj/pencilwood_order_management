@@ -163,8 +163,8 @@
 
                     steadfastButtons.forEach(btn => {
                         btn.addEventListener('click', function (e) {
-                            e.preventDefault(); // stop button from submitting form
-                            e.stopPropagation(); // stop bubbling
+                            e.preventDefault();
+                            e.stopPropagation();
 
                             const account = this.dataset.account;
                             const parent = this.closest('.steadfast-row');
@@ -181,7 +181,7 @@
                                 currentDropdown = null;
                             }
 
-                            // নতুন dropdown তৈরি করি
+                            
                             const dropdown = document.createElement('div');
                             dropdown.classList.add('steadfast-dropdown');
                             dropdown.dataset.account = account;

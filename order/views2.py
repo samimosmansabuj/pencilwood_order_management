@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q, When, Value, Case, BooleanField, F
+from django.http import JsonResponse
 from .models import Product, OrderItem, Order
 from .forms import OrderCustomerForm, OrderForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from dashboard.models import InvoiceColorDesign
+from http import HTTPStatus
+from django.views import View
+import json
 
 @login_required
 def add_new_order2(request):
@@ -62,48 +67,93 @@ def token_generate(request, id):
 
 
 
-
-
-
-from django.http import JsonResponse
-from http import HTTPStatus
-from django.views import View
-from django.db.models import Q, When, Value, Case, BooleanField, F
-import json
+from .utils import SteadFastOrderCreateAPI
 
 # ====================API Endpoint View====================
 # -----------------Buld Order Status Update Start-----------------------
 class OrderBuldUpdateView(View):
+    def get_delivery_type(self, type):
+        return 1 if type.lower() == "point" else 0
+    
+    def get_account_type(self, deliverySupport):
+        deliverySupport__ = deliverySupport.split("-")
+        if deliverySupport__[0] in ("kid", "pencilwood") and deliverySupport__[1] in ("home", "point"):
+            return self.get_delivery_type(deliverySupport__[1]), deliverySupport__[0]
+        
+
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
-            status = data.get("status")
             ids = data.get("order_ids", [])
-            if status in ['Delivered', 'Return']:
-                Order.objects.filter(id__in=ids).update(status=status, urgent=False)
-            else:
-                Order.objects.filter(id__in=ids).update(status=status)
+            update_status = data.get("status")
+            deliverySupport = data.get("deliverySupport")
             
-            # Order.objects.filter(id__in=ids).update(
-            #     status=status,
-            #     urgent=Case(
-            #         When(status__in=['Delivered', 'Return'], then=Value(False)),
-            #         default=F('urgent'),
-            #         output_field=BooleanField()
-            #     )
-            # )
-            return JsonResponse(
-                {
-                    "status": True,
-                    "message": "Buld Update Successfully!"
+            if update_status:
+                if update_status in ['Delivered', 'Return']:
+                    Order.objects.filter(id__in=ids).update(status=update_status, urgent=False)
+                else:
+                    Order.objects.filter(id__in=ids).update(status=update_status)
+                return JsonResponse(
+                    {
+                        "status": True,
+                        "message": "Buld  Status Update Successfully!"
+                    }, status=HTTPStatus.OK
+                )
+            
+            if deliverySupport:
+                success, failed = 0, 0
+                delivery_type, account = self.get_account_type(deliverySupport)
+                steadfast_api = SteadFastOrderCreateAPI(account=account)
+                
+                for id in ids:
+                    try:
+                        order = Order.objects.select_for_update().get(id=id)
+                        recipient = order.request_order or order.order_customer
+                        order_data = {
+                            "invoice": order.tracking_ID,
+                            "recipient_name":recipient.name,
+                            "recipient_phone":recipient.phone_number,
+                            "alternative_phone": recipient.second_phone_number,
+                            "recipient_email": recipient.email,
+                            "recipient_address": order.delivery_address,
+                            "cod_amount": float(order.due_amount),
+                            "note": order.special_instructions,
+                            "item_description": order.remark,
+                            # "total_lot": sum(item.quantity for item in order.order_item.all()),
+                            "delivery_type": delivery_type
+                        }
+                        response = steadfast_api.create_order(order_data)
+                        
+                        consignment = response.get("consignment", {})
+                        if response.get("status") == 200 and consignment:
+                            order.steadfast_parcel_id = consignment.get("consignment_id")
+                            order.status = 'Delivered'
+                            order.save()
+                            success += 1
+                        else:
+                            failed += 1
+                    except:
+                        failed += 1
+                        continue
+                report = {
+                    "total": len(ids),
+                    "successful": success,
+                    "failed": failed
                 }
-            )
+                print(report)
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Bulk Delivery Parcel Created!",
+                        "report": report
+                    }, status=HTTPStatus.OK
+                )
         except Exception as e:
             return JsonResponse(
                 {
                     "status": False,
                     "message": str(e),
-                }
+                }, statuss=HTTPStatus.BAD_REQUEST
             )
 
 # -----------------Buld Order Status Update End-----------------------
