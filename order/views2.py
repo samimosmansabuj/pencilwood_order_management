@@ -204,16 +204,6 @@ class SteadfastWebhookAPIView(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            # if request.content_type == "application/json":
-            #     if not request.body:
-            #         return JsonResponse(
-            #             {"status": False, "message": "Empty request body"},
-            #             status=HTTPStatus.BAD_REQUEST,
-            #         )
-            #     data = json.loads(request.body.decode("utf-8"))
-            # else:
-            #     data = json.loads(request.body.decode("utf-8"))
-            
             data = json.loads(request.body.decode("utf-8"))
 
             SteadFastWebhookLog.objects.create(
@@ -222,11 +212,11 @@ class SteadfastWebhookAPIView(View):
             )
 
             notification_type = data.get("notification_type")
-            if notification_type != "delivery_status":
-                return JsonResponse(
-                    {"status": False, "message": "Unsupported Notification Type"},
-                    status=HTTPStatus.BAD_REQUEST,
-                )
+            # if notification_type not in ("delivery_status", "tracking_update"):
+            #     return JsonResponse(
+            #         {"status": False, "message": "Unsupported Notification Type"},
+            #         status=HTTPStatus.BAD_REQUEST,
+            #     )
 
             consignment_id = data.get("consignment_id")
             invoice = data.get("invoice")
@@ -234,11 +224,11 @@ class SteadfastWebhookAPIView(View):
             status_value = data.get("status")
             tracking_message = data.get("tracking_message")
 
-            if not consignment_id or not status_value:
-                return JsonResponse(
-                    {"status": False, "message": "Missing required fields"},
-                    status=HTTPStatus.BAD_REQUEST,
-                )
+            # if not consignment_id or not status_value:
+            #     return JsonResponse(
+            #         {"status": False, "message": "Missing required fields"},
+            #         status=HTTPStatus.BAD_REQUEST,
+            #     )
 
             return JsonResponse(
                 {"status": True, "message": "Webhook Received Successfully"},
