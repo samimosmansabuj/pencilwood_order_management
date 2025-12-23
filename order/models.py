@@ -161,6 +161,7 @@ class Order(models.Model):
         ('Got Design', 'Got Design'),
         ('Processing', 'Processing'),
         ('Sample', 'Sample'),
+        ('Token Print', 'Token Print'),
         ('Packaging', 'Packaging'),
         ('Delivered', 'Delivered'),
         ('Return', 'Return'),
@@ -320,5 +321,13 @@ def reset_order_created(sender, instance, **kwargs):
             pre_delete.connect(reset_order_created, sender=Order)
 
 
+
+class SteadFastWebhookLog(models.Model):
+    received_at = models.DateTimeField(auto_now_add=True)
+    payload = models.JSONField()
+    tracking_message = models.CharField(max_length=255, blank=True, null=True)
+    
+    def __str__(self):
+        return f"SteadFast Webhook Log at {self.received_at}"
 
 
