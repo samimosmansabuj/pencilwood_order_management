@@ -323,9 +323,15 @@ def reset_order_created(sender, instance, **kwargs):
 
 
 class SteadFastWebhookLog(models.Model):
-    received_at = models.DateTimeField(auto_now_add=True)
+    TYPE = (
+        ('delivery_status', 'delivery_status'),
+        ('tracking_update', 'tracking_update') 
+    )
+    type = models.CharField(max_length=100, choices=TYPE, blank=True, null=True)
+    acocunt = models.CharField(max_length=100, blank=True, null=True)
     payload = models.JSONField()
     tracking_message = models.CharField(max_length=255, blank=True, null=True)
+    received_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"SteadFast Webhook Log at {self.received_at}"
