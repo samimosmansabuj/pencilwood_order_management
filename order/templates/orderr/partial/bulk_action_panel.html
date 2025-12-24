@@ -1,0 +1,46 @@
+<div id="bulkActionPanel" class="alert alert-warning d-none">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <b id="selectedCount">0</b> item selected
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="button" id="BulkTokenPrint" class="btn btn-primary"
+                style="font-size: 14px; padding: 3px 10px; width: 100%;">
+                Bulk Token
+            </button>
+
+            <select id="workAssign" class="custom-select custom-select-sm form-control form-control-sm">
+                <option value="">-- Select User --</option>
+                {% for users in work_assign_choices %}
+                <option value="{{ users.id }}">{{ users.first_name }} {{ users.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <select id="deliverySupport" class="custom-select custom-select-sm form-control form-control-sm">
+                <option value="">-- Select Delivery Support --</option>
+                <option value="kid-home">Kids Home</option>
+                <option value="kid-point">Kids Point</option>
+                <option value="pencilwood-home">Pencilwood Home</option>
+                <option value="pencilwood-point">Pencilwood Point</option>
+            </select>
+
+            <select id="bulkStatus" class="custom-select custom-select-sm form-control form-control-sm">
+                <option value="">-- Select Status --</option>
+                <option value="None">None</option>
+                <option value="Got Design">Got Design</option>
+                <option value="Processing">Processing</option>
+                <option value="Sample">Sample</option>
+                <option value="Token Print">Token Print</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Parcel Created">Parcel Created</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Return">Return</option>
+            </select>
+
+            <button id="bulkUpdateBtn" class="btn btn-primary" style="font-size: 14px; padding: 3px 10px;">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>

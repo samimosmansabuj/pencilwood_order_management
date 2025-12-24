@@ -1,0 +1,142 @@
+<form method="GET" id="filter-form">
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Filter and Reset Buttons -->
+            <div class="col-12 d-md-none mb-1">
+                <div class="form-group">
+                    <button type="button" class="form-control form-control-sm btn btn-primary"
+                        id="filterButton">Filter</button>
+                </div>
+            </div>
+            <div class="col-12 col-md-2">
+                <div class="form-group">
+                    <a href="{% url 'order_list' %}" class="form-control form-control-sm btn btn-primary">Reset</a>
+                </div>
+            </div>
+
+            <!-- Full Filtering Section (Hidden on Mobile) -->
+            <div id="filterSection" class="col-12 d-none d-md-flex">
+                <!-- Filter by Status -->
+                <div class="col-12 col-sm-6 col-md-1 mb-1">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select name="status" id="status"
+                            class="custom-select custom-select-sm form-control form-control-sm">
+                            {% if request.GET.status %}
+                            <option value="{{request.GET.status}}" selected>
+                                {{request.GET.status}}
+                            </option>
+                            {% endif %}
+                            <option value="All">All</option>
+                            <option value="None">None</option>
+                            <option value="Got Design">Got Design</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Sample">Sample</option>
+                            <option value="Token Print">Token Print</option>
+                            <option value="Packaging">Packaging</option>
+                            <option value="Parcel Created">Parcel Created</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Return">Return</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filter by Products -->
+                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                    <div class="form-group">
+                        <label for="product">Product</label>
+                        <select name="product" id="product" class="custom-select custom-select-sm form-control form-control-sm">
+                            <option value="">-- Select Product --</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}" {% if request.GET.product == product.id|stringformat:"d" %} selected {% endif %}>
+                                {{ product.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filter by Date From -->
+                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                    <div class="form-group">
+                        <label for="start_date">From:</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control form-control-sm"
+                            value="{{request.GET.start_date}}">
+                    </div>
+                </div>
+
+                <!-- Filter by Date To -->
+                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                    <div class="form-group">
+                        <label for="end_date">To:</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control form-control-sm"
+                            value="{{request.GET.end_date}}">
+                    </div>
+                </div>
+
+                <!-- Filter by Work Assign -->
+                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                    <div class="form-group">
+                        <label for="work_assign">Assign User</label>
+                        <select name="work_assign" id="work_assign"
+                            class="custom-select custom-select-sm form-control form-control-sm">
+                            <option value="">-- Select User --</option>
+                            {% for users in work_assign_choices %}
+                            <option value="{{ users.id }}" {% if request.GET.work_assign == users.id|stringformat:"d" %}
+                                selected {% endif %}>{{ users.first_name }} {{ users.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search by Tracking ID or Customer Name -->
+                <div class="col-12 col-sm-6 col-md-2 mb-1">
+                    <div class="form-group">
+                        <label for="search">Search:</label>
+                        <input type="text" name="search" id="search"
+                            placeholder="Search by tracking ID or customer name" class="form-control form-control-sm"
+                            value="{{ request.GET.search }}">
+                    </div>
+                </div>
+
+
+                <!-- Submit Button -->
+                <div class="col-12 col-sm-6 col-md-1 mb-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="submit" class="form-control form-control-sm btn btn-primary"
+                            aria-controls="dataTable" value="Search">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function () {
+            var filterSection = document.getElementById('filterSection');
+            if (filterSection.classList.contains('d-none')) {
+                filterSection.classList.remove('d-none');
+                filterSection.classList.add('d-md-flex');
+            } else {
+                filterSection.classList.add('d-none');
+                filterSection.classList.remove('d-md-flex');
+            }
+        });
+    </script>
+
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <button name="export" value="xlsx" class="btn btn-success">Download as Excel</button>
+            <button name="export" value="csv" class="btn btn-primary">Download as CSV</button>
+            <button name="urgent" value="true" class="btn btn{% if request.GET.urgent %}-danger{% endif %}">
+                Urgent
+            </button>
+            <button name="today_orders" value="true" class="btn btn{% if request.GET.today_orders %}-danger{% endif %}">
+                Today Orders
+            </button>
+        </div>
+    </div>
+
+</form>
