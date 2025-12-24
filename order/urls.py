@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
-from .views2 import add_new_order2, new_generate_invoice, token_generate, OrderBulkUpdateView, SteadfastWebhookAPIView
+from .views2 import add_new_order2, new_generate_invoice, token_generate, OrderBulkUpdateView
+from .api_views import SteadfastWebhookAPIView
 
 urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
