@@ -163,6 +163,7 @@ class Order(models.Model):
         ('Sample', 'Sample'),
         ('Token Print', 'Token Print'),
         ('Packaging', 'Packaging'),
+        ('Parcel Created', 'Parcel Created'),
         ('Delivered', 'Delivered'),
         ('Return', 'Return'),
     )
@@ -235,9 +236,10 @@ class Order(models.Model):
                 self.order_item.add(order_item)
     
     def save(self, *args, **kwargs):
-        if not self.pk or not self.created_by_id:
-            self.created_by = get_current_user()
-        self.last_updated_by = get_current_user()
+        if get_current_user() is not None:
+            if not self.pk or not self.created_by_id:
+                self.created_by = get_current_user()
+            self.last_updated_by = get_current_user()
         
         super(Order, self).save(*args, **kwargs)
         self.add_missing_order_items()
@@ -268,7 +270,7 @@ class Order(models.Model):
         elif self.order_customer:
             self.tracking_ID = self.order_customer.tracking_ID
         
-        if self.status == 'Delivered' or self.status == 'Return':
+        if self.status == 'Delivered' or self.status == 'Return' or self.status == 'Parcel Created':
             self.urgent = False
         
         super(Order, self).save(*args, **kwargs)
@@ -328,12 +330,13 @@ class SteadFastWebhookLog(models.Model):
         ('tracking_update', 'tracking_update') 
     )
     type = models.CharField(max_length=100, choices=TYPE, blank=True, null=True)
-    acocunt = models.CharField(max_length=100, blank=True, null=True)
+    account = models.CharField(max_length=100, blank=True, null=True)
     payload = models.JSONField()
     tracking_message = models.CharField(max_length=255, blank=True, null=True)
     received_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"SteadFast Webhook Log at {self.received_at}"
+        q = f"SteadFast Webhook Log at {self.received_at}"
+        return f"SteadFast {self.type} Webhook Log For {self.account} at {self.received_at}"
 
 

@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q, When, Value, Case, BooleanField, F
 from .utils import SteadFastOrderCreateAPI
 from django.db import transaction
 from django.http import JsonResponse
-from .models import Product, OrderItem, Order, SteadFastWebhookLog
+from .models import Product, OrderItem, Order
 from .forms import OrderCustomerForm, OrderForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -148,10 +147,8 @@ class OrderBulkUpdateView(View):
 
                             consignment = response.get("consignment", {})
                             if response.get("status") == 200 and consignment:
-                                order.steadfast_parcel_id = consignment.get(
-                                    "consignment_id"
-                                )
-                                order.status = "Delivered"
+                                order.steadfast_parcel_id = consignment.get("consignment_id")
+                                order.status = "Parcel Created"
                                 order.save()
                                 success += 1
                             else:
@@ -182,6 +179,7 @@ class OrderBulkUpdateView(View):
                         },
                         status=HTTPStatus.OK,
                     )
+        
         except Exception as e:
             return JsonResponse(
                 {
@@ -195,62 +193,4 @@ class OrderBulkUpdateView(View):
 # -----------------Bulk Order Status Update End-----------------------
 
 
-# Logistic / Delivery Company API Integration Code==========================
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
-@method_decorator(csrf_exempt, name="dispatch")
-class SteadfastWebhookAPIView(View):
-
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body.decode("utf-8"))
-
-            SteadFastWebhookLog.objects.create(
-                payload=data,
-                tracking_message=data.get("tracking_message", "")
-            )
-
-            notification_type = data.get("notification_type")
-            # if notification_type not in ("delivery_status", "tracking_update"):
-            #     return JsonResponse(
-            #         {"status": False, "message": "Unsupported Notification Type"},
-            #         status=HTTPStatus.BAD_REQUEST,
-            #     )
-
-            consignment_id = data.get("consignment_id")
-            invoice = data.get("invoice")
-            cod_amount = data.get("cod_amount")
-            status_value = data.get("status")
-            tracking_message = data.get("tracking_message")
-
-            # if not consignment_id or not status_value:
-            #     return JsonResponse(
-            #         {"status": False, "message": "Missing required fields"},
-            #         status=HTTPStatus.BAD_REQUEST,
-            #     )
-
-            return JsonResponse(
-                {"status": True, "message": "Webhook Received Successfully"},
-                status=HTTPStatus.OK,
-            )
-
-        except json.JSONDecodeError:
-            return JsonResponse(
-                {"status": False, "message": "Invalid JSON payload"},
-                status=HTTPStatus.BAD_REQUEST,
-            )
-
-        except Exception as e:
-            return JsonResponse(
-                {"status": False, "message": str(e)},
-                status=HTTPStatus.BAD_REQUEST,
-            )
-
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(
-            {"status": False, "message": "Invalid Request Method"},
-            status=HTTPStatus.METHOD_NOT_ALLOWED,
-        )
-
-# Logistic / Delivery Company API Integration Code==========================

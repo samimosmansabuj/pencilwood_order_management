@@ -549,16 +549,13 @@ def create_steadfast_parcel(request, id):
         consignment = response_data.get("consignment", {})
         if response_data.get("status") == 200 and consignment:
             order.steadfast_parcel_id = consignment.get("consignment_id")
-            order.status = 'Delivered'
+            order.status = "Parcel Created"
             order.save()
         elif response_data.get("status") == 400:
             error_message = ""
-            # error_messages = []
             for field, message in response_data.get("errors").items():
-                # error_messages.append(f"{field.replace('_', ' ').capitalize()}: {', '.join(message)}")
                 for message in message:
                     error_message += f"{message}"
-            # messages.error(request, "Failed to create consignment: " + " | ".join(error_messages))
             messages.error(request, error_message)
         else:
             messages.error(request, f"Failed to create consignment: {response_data.get('message')}")
