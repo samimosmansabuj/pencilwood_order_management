@@ -73,6 +73,7 @@ class SteadFastWebhookLogAdmin(admin.ModelAdmin):
         "id",
         "type",
         "account",
+        "status",
         "tracking_message",
         "payload",
         "received_at",

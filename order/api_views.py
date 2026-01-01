@@ -22,7 +22,7 @@ class SteadfastWebhookAPIView(View):
     def order_validation(self, order, status_value, invoice, cod_amount):
         validation_invoice = order.tracking_ID == invoice
         validation_order_cod = float(order.due_amount) == cod_amount
-        validation_order_status = True if status_value in ("delivered", "partial_delivered") and order.status != "Delivered" else \
+        validation_order_status = True if status_value.lower() in ("delivered", "partial_delivered") and order.status != "Delivered" else \
                                   True if status_value == "pending" and order.status != "Parcel Created" else False
         if order and validation_order_status and (validation_invoice or validation_order_cod):
             return True
@@ -36,7 +36,7 @@ class SteadfastWebhookAPIView(View):
         order_validation_result = self.order_validation(order, status_value, invoice, cod_amount)
         if order_validation_result:
             with transaction.atomic():
-                new_status = "Delivered" if status_value in ("delivered", "partial_delivered") else "Parcel Created"
+                new_status = "Delivered" if status_value.lower() in ("delivered", "partial_delivered") else "Parcel Created"
                 Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
         return True
     
