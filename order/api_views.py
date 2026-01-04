@@ -33,12 +33,18 @@ class SteadfastWebhookAPIView(View):
         invoice = data.get("invoice")
         cod_amount = data.get("cod_amount")
         order = self.get_order(data.get("consignment_id"))
-        order_validation_result = self.order_validation(order, status_value, invoice, cod_amount)
-        if order_validation_result:
-            with transaction.atomic():
-                new_status = "Delivered" if status_value.lower() in ("delivered", "partial_delivered") else "Parcel Created"
-                Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
-        return True
+        # order_validation_result = self.order_validation(order, status_value, invoice, cod_amount)
+        # if order_validation_result:
+        #     with transaction.atomic():
+        #         new_status = "Delivered" if status_value.lower() in ("delivered", "partial_delivered") else "Parcel Created"
+        #         Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
+        with transaction.atomic():
+            if status_value.lower() in ("delivered", "partial_delivered"):
+                new_status = "Delivered"
+            elif status_value.lower() in ("pending"):
+                new_status = "Shipped"
+            Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
+        # return True
     
     def create_log_entry(self, data, notification_type, account):
         SteadFastWebhookLog.objects.create(
@@ -56,29 +62,29 @@ class SteadfastWebhookAPIView(View):
             self.create_log_entry(data, notification_type, account)
             if notification_type == "delivery_status":
                 self.partial_workflow(data)
-                return JsonResponse(
-                    {"status": True, "message": "Webhook Received Successfully"},
-                    status=HTTPStatus.OK,
-                )
-            else:
-                return JsonResponse(
-                    {"status": False, "message": "Unsupported Notification Type"},
-                    status=HTTPStatus.BAD_REQUEST,
-                )
+            return JsonResponse(
+                {"status": "success", "message": "Webhook Received Successfully"},
+                status=HTTPStatus.OK,
+            )
+            # else:
+            #     return JsonResponse(
+            #         {"status": False, "message": "Unsupported Notification Type"},
+            #         status=HTTPStatus.BAD_REQUEST,
+            #     )
         except json.JSONDecodeError:
             return JsonResponse(
-                {"status": False, "message": "Invalid JSON payload"},
+                {"status": "error", "message": "Invalid JSON payload"},
                 status=HTTPStatus.BAD_REQUEST,
             )
         except Exception as e:
             return JsonResponse(
-                {"status": False, "message": str(e)},
+                {"status": "error", "message": str(e)},
                 status=HTTPStatus.BAD_REQUEST,
             )
 
     def get(self, request, *args, **kwargs):
         return JsonResponse(
-            {"status": False, "message": "Invalid Request Method"},
+            {"status": "error", "message": "Invalid Request Method"},
             status=HTTPStatus.METHOD_NOT_ALLOWED,
         )
 
