@@ -104,12 +104,29 @@
 
                             <div class="row">
                                 <div class="col-md-12">
+                                    <label for="product-list">Product List</label>
+                                    <select id="product-list" class="form-control">
+                                    <option disabled selected>-- Select Product --</option>
+                                    {% for product in products %}
+                                    <option value="{{ product.slug }}" data-name="{{ product.name }}"
+                                        data-price="{{ product.price }}">
+                                        {{ product.name }}
+                                    </option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <a class="">Product Name</a>
+                                </div>
+                            </div>
+                            <!-- <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label>{{form.product.label}}</label>
                                         {{form.product}}
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- /row-->
 
                             <div class="row">

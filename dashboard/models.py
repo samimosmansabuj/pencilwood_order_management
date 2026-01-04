@@ -9,7 +9,7 @@ class Site_Settings(models.Model):
     website_name = models.CharField(max_length=200, blank=True, null=True)
     website_title = models.CharField(max_length=1000, blank=True, null=True)
     copyright_company = models.CharField(max_length=200)
-    copyright_year = models.CharField(max_length=4)
+    copyright_year = models.CharField(max_length=10)
     
     def __str__(self) -> str:
         return f'Settings {self.id}'
