@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import *
 from .views2 import add_new_order2, new_generate_invoice, token_generate, OrderBulkUpdateView
-from .api_views import SteadfastWebhookAPIView
+from .api_views import SteadfastWebhookAPIView, SteadFastStatusCheckUpdate
 
 urlpatterns = [
     path('order-list/', OrderListView.as_view(), name='order_list'),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('order/create-pathao-parcel/<int:id>/', create_pathao_parcel, name='create_pathao_parcel'),
     path('order/create-steadfast-parcel/<int:id>/', create_steadfast_parcel, name='create_steadfast_parcel'),
     path('steadfast/webhook/api/', SteadfastWebhookAPIView.as_view(), name='steadfast_webhook_api_view'),
+    path('steadfast/status-check/api/', SteadFastStatusCheckUpdate.as_view(), name='steadfast_status_check_api_view'),
     #logistic Company api connect========
     
     path('order/item/delete/<int:id>/', DeleteOrderItem, name='DeleteOrderItem'),

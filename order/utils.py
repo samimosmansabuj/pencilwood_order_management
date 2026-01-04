@@ -65,7 +65,7 @@ def create_steadfast_order(order_data, account):
     return None
 
 class SteadFastOrderCreateAPI:
-    def __init__(self, account):
+    def __init__(self, account=None):
         self.account = account
     
     def get_steadfast_credentials(self):
@@ -85,6 +85,30 @@ class SteadFastOrderCreateAPI:
         response = requests.post(url, headers=headers, json=order_data)
         response.raise_for_status()
         return response.json()
+
+    def delivery_status_checking(self, consignment_id):
+        accounts = ["pencilwood", "kid"]
+        last_exception = None
+        for account in accounts:
+            try:
+                self.account = account
+                credentials = self.get_steadfast_credentials()
+                url = f"{credentials.base_url}/status_by_cid/{consignment_id}"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Api-Key": credentials.api_key,
+                    "Secret-Key": credentials.secret_key
+                }
+                response = requests.get(url=url, headers=headers, timeout=10)
+                response.raise_for_status()
+                data = response.json()
+                if "delivery_status" not in data:
+                    raise ValueError("Invalid response structure")
+                return True, data.get("delivery_status")
+            except Exception as e:
+                last_exception = e
+                continue
+        return False, f"Delivery status check failed for all accounts. Last error: {last_exception}"
 
 
 def generate_unique_slug(model_object, field_value, old_slug=None):

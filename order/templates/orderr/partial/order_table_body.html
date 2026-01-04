@@ -103,8 +103,8 @@
             {% endif %}
 
             {% if order.steadfast_parcel_id %}
-            <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}"
-                class="btn btn-success btn-block" target="_blank">SteadFast Tracking</a>
+            <a href="{% url 'steadfast_status_check_api_view' %}?consignment_id={{order.steadfast_parcel_id}}" class="btn btn-success btn-block" target="_blank">SteadFast Tracking</a>
+            <!-- <a href="https://steadfast.com.bd/user/consignment/{{order.steadfast_parcel_id}}" class="btn btn-success btn-block" target="_blank">SteadFast Tracking</a> -->
             {% endif %}
             {% else %}
 
