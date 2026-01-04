@@ -51,8 +51,93 @@ class OrderRequestAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ["tracking_ID", "status"]
-    search_fields = ["tracking_ID", "status", "steadfast_parcel_id", "pathao_parcel_id"]
+    list_display = (
+        'id',
+        'tracking_ID',
+        'order_customer',
+        'status',
+        'total_amount',
+        'urgent',
+        'order_date',
+        'delivery_date',
+    )
+    list_filter = (
+        'status',
+        'urgent',
+    )
+    search_fields = (
+        'tracking_ID',
+        'steadfast_parcel_id',
+        'pathao_parcel_id',
+    )
+    filter_horizontal = ('order_item',)
+
+    list_editable = (
+        'status',
+    )
+
+    readonly_fields = (
+        'last_update',
+    )
+
+    fieldsets = (
+        ("Customer & Request Info", {
+            'fields': (
+                'request_order',
+                'order_customer',
+            )
+        }),
+        ("Tracking & Delivery", {
+            'fields': (
+                'tracking_ID',
+                'pathao_parcel_id',
+                'steadfast_parcel_id',
+                'delivery_address',
+                'special_instructions',
+            )
+        }),
+        ("Order Items", {
+            'fields': (
+                'order_item',
+                'design_file',
+            )
+        }),
+        ("Payment Info", {
+            'fields': (
+                'deal_value',
+                'advance_amount',
+                'due_amount',
+                'delivery_charge',
+                'delivery_charge_cost',
+                'extra_cost',
+                'total_amount',
+                'payment_method',
+                'payment_status',
+                'payment_number',
+                'transaction_id',
+            )
+        }),
+        ("Order Status", {
+            'fields': (
+                'status',
+                'urgent',
+                'work_assign',
+                'remark',
+            )
+        }),
+        ("Meta Info", {
+            'fields': (
+                'created_by',
+                'last_updated_by',
+                'order_date',
+                'delivery_date',
+                'return_date',
+                'last_update',
+            )
+        }),
+    )
+
+    ordering = ('-last_update',)
 
 
 admin.site.register(Product)
