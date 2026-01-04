@@ -164,6 +164,7 @@ class Order(models.Model):
         ('Token Print', 'Token Print'),
         ('Packaging', 'Packaging'),
         ('Parcel Created', 'Parcel Created'),
+        ('Shipped', 'Shipped'),
         ('Delivered', 'Delivered'),
         ('Return', 'Return'),
     )
