@@ -49,15 +49,16 @@ class OrderRequestAdmin(admin.ModelAdmin):
     filter_horizontal = ("product",)
 
 
-# @admin.register(Order)
-# class OrderAdmin(admin.ModelAdmin):
-#     list_display = []
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ["tracking_ID", "status"]
+    search_fields = ["tracking_ID", "status", "steadfast_parcel_id", "pathao_parcel_id"]
 
 
 admin.site.register(Product)
 # admin.site.register(OrderRequest)
 admin.site.register(OrderCustomer)
-admin.site.register(Order)
+# admin.site.register(Order)
 admin.site.register(OrderItem)
 
 

@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from http import HTTPStatus
 from django.db import transaction
 from .models import Order, SteadFastWebhookLog
+from .utils import SteadFastOrderCreateAPI
 import json
+from django.shortcuts import redirect
 
 
 # Logistic / Delivery Company API Integration Code==========================
@@ -39,12 +41,13 @@ class SteadfastWebhookAPIView(View):
         #         new_status = "Delivered" if status_value.lower() in ("delivered", "partial_delivered") else "Parcel Created"
         #         Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
         with transaction.atomic():
+            new_status = None
             if status_value.lower() in ("delivered", "partial_delivered"):
                 new_status = "Delivered"
             elif status_value.lower() in ("pending"):
                 new_status = "Shipped"
-            Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
-        # return True
+            if new_status is not None:
+                Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
     
     def create_log_entry(self, data, notification_type, account):
         SteadFastWebhookLog.objects.create(
@@ -87,5 +90,33 @@ class SteadfastWebhookAPIView(View):
             {"status": "error", "message": "Invalid Request Method"},
             status=HTTPStatus.METHOD_NOT_ALLOWED,
         )
+
+class SteadFastStatusCheckUpdate(View):
+    def get_order(self, consignment_id):
+        try:
+            return Order.objects.select_for_update().get(
+                steadfast_parcel_id=consignment_id
+            )
+        except Order.DoesNotExist:
+            return None
+    
+    def partial_workflow(self, delivery_status, consignment_id):
+        order = self.get_order(consignment_id)
+        with transaction.atomic():
+            new_status = None
+            if delivery_status.lower() in ("delivered", "partial_delivered"):
+                new_status = "Delivered"
+            elif delivery_status.lower() in ("pending"):
+                new_status = "Shipped"
+            if new_status is not None:
+                Order.objects.filter(id=order.id).update(status=new_status, urgent=False)
+
+    def get(self, request, *args, **kwargs):
+        consignment_id = request.GET.get("consignment_id")
+        steadfast = SteadFastOrderCreateAPI()
+        status, delivery_status = steadfast.delivery_status_checking(consignment_id)
+        if status:
+            self.partial_workflow(delivery_status, consignment_id)
+        return redirect(f"https://steadfast.com.bd/user/consignment/{consignment_id}")
 
 # Logistic / Delivery Company API Integration Code==========================
