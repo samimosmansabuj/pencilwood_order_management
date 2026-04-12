@@ -164,7 +164,7 @@
                                 
                                                     <td><strong>{{ total_quantity }}</strong></td>
 
-                                                    {% if request.user.user_type != 'Factory Staff' %}
+                                                    {% if request.user.user_type == 'Admin' %}
                                                     <td colspan="6" class="text-right"></td>
                                                     <td><strong>{{ total_deal_value }}</strong></td>
                                                     <td><strong>{{ total_due_amount }}</strong></td>

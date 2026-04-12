@@ -29,7 +29,12 @@
     <div class="row">
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white mb-4">
-                <div class="card-body">{{ today_orders.count }} Today Order! <b style="color: black;">(BDT{{ today_total_deal_value }})</b></div>
+                <div class="card-body">
+                    {{ today_orders.count }} Today Order!
+                    {% if request.user.user_type == 'Admin' %}
+                    <b style="color: black;">(BDT{{ today_total_deal_value }})</b>
+                    {% endif %}
+                </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
                     <a class="small text-white stretched-link" href="{% url 'order_list' %}?today_orders=true">View
                         Details</a>
@@ -37,15 +42,23 @@
                 </div>
             </div>
         </div>
+
+        {% if request.user.user_type != 'Factory Staff' %}
         <div class="col-xl-3 col-md-6">
             <div class="card bg-primary text-white mb-4">
-                <div class="card-body">{{order.count}} Total Order! <b style="color: black;">(BDT{{ all_order_total_deal_value }})</b></div>
+                <div class="card-body">
+                    {{order.count}} Total Order! 
+                    {% if request.user.user_type == 'Admin' %}
+                    <b style="color: black;">(BDT{{ all_order_total_deal_value }})</b>
+                    {% endif %}
+                </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
                     <a class="small text-white stretched-link" href="{% url 'order_list' %}">View Details</a>
                     <div class="small text-white"><i class="fa fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
+        {% endif %}
 
         {% if request.user.user_type != 'Factory Staff' %}
         <div class="col-xl-3 col-md-6">
