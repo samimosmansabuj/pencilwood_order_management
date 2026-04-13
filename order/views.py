@@ -10,7 +10,7 @@ from django.utils.dateparse import parse_date
 from django.forms import modelformset_factory
 from openpyxl.utils import get_column_letter
 from django.views.generic import CreateView
-from .models import Order, OrderRequest
+from .models import Order, OrderRequest, Product
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -832,6 +832,14 @@ class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     form_class = OrderRequestForm
     template_name = 'request/order_request_form.html'
     success_url = reverse_lazy('order_request_list')
+    
+    # def get_context_data(self, **kwargs: reverse_lazy) -> dict[str, Any]:
+    #     return super().get_context_data(**kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = Product.objects.all()
+        return context
 
 
 class OrderRequestDeleteView(LoginRequiredMixin, DeleteView):
