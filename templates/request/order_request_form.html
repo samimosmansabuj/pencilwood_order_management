@@ -6,7 +6,7 @@
 
 {% block dashboard_body %}
 <main>
-    <form method="POST">
+    <form method="POST" id="order-request-form">
         {% csrf_token %}
         <div class="container-fluid">
             <h1 class="mt-4">Add Order Request</h1>
@@ -102,31 +102,68 @@
                         </div>
                         <div class="card-body">
 
-                            <!-- <div class="row">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <label for="product-list">Product List</label>
                                     <select id="product-list" class="form-control">
-                                    <option disabled selected>-- Select Product --</option>
-                                    {% for product in products %}
-                                    <option value="{{ product.slug }}" data-name="{{ product.name }}"
-                                        data-price="{{ product.price }}">
-                                        {{ product.name }}
-                                    </option>
-                                    {% endfor %}
+                                        <option disabled selected>-- Select Product --</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
+                                            {{ product.name }}
+                                        </option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-12">
-                                    <a class="">Product Name</a>
+                                    <div id="selected-products" class="mt-3"></div>
                                 </div>
-                            </div> -->
+                                <script>
+                                    let selectedProducts = [];
+                                    document.getElementById('product-list').addEventListener('change', function () {
+                                        let select = this;
+                                        let productId = select.value;
+                                        let productName = select.options[select.selectedIndex].dataset.name;
+                                        if (selectedProducts.includes(productId)) {
+                                            alert("Product already added!");
+                                            return;
+                                        }
+                                        selectedProducts.push(productId);
+                                        renderProducts();
+                                    });
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>{{form.product.label}}</label>
-                                        {{form.product}}
-                                    </div>
-                                </div>
+                                    function renderProducts() {
+                                        let container = document.getElementById('selected-products');
+                                        container.innerHTML = '';
+                                        selectedProducts.forEach((id, index) => {
+                                            let productName = document.querySelector(`#product-list option[value="${id}"]`).dataset.name;
+
+                                            container.innerHTML += `
+                                                <div class="d-flex justify-content-between align-items-center border p-2 mb-2">
+                                                    <span>${productName}</span>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct('${id}')">
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            `;
+                                        });
+
+                                        // let form = document.querySelector('form');
+                                        let form = document.getElementById('order-request-form');
+                                        document.querySelectorAll('input[name="product"]').forEach(e => e.remove());
+                                        selectedProducts.forEach(id => {
+                                            let input = document.createElement('input');
+                                            input.type = 'hidden';
+                                            input.name = 'product';
+                                            input.value = id;
+                                            form.appendChild(input);
+                                        });
+                                    }
+
+                                    function removeProduct(id) {
+                                        selectedProducts = selectedProducts.filter(p => p !== id);
+                                        renderProducts();
+                                    }
+                                </script>
                             </div>
                             <!-- /row-->
 

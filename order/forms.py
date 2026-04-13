@@ -260,17 +260,7 @@ class OrderRequestForm(forms.ModelForm):
         'class': 'form-control', 'id': 'inputSource'
     })
     )
-    # product = forms.ModelChoiceField(
-    #     queryset=Product.objects.all(),
-    #     required=False,
-    #     widget=forms.Select(attrs={
-    #         'class': 'form-control',
-    #         'id': 'inputProduct'
-    #     })
-    # )
-    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), required=False, widget=forms.CheckboxSelectMultiple(attrs={
-        'class': 'form-check-inline', 'id': 'inputProduct'
-    })
+    product = forms.ModelMultipleChoiceField(queryset=Product.objects.all(), required=False, widget=forms.MultipleHiddenInput()
     )
     status = forms.ChoiceField(choices=OrderRequest.STATUS_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-control', 'id': 'inputStatus'

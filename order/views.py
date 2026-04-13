@@ -833,13 +833,16 @@ class OrderRequestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'request/order_request_form.html'
     success_url = reverse_lazy('order_request_list')
     
-    # def get_context_data(self, **kwargs: reverse_lazy) -> dict[str, Any]:
-    #     return super().get_context_data(**kwargs)
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.all()
         return context
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        product_ids = self.request.POST.getlist('product')
+        self.object.product.set(product_ids)
+        return response
 
 
 class OrderRequestDeleteView(LoginRequiredMixin, DeleteView):
